@@ -1,6 +1,8 @@
-﻿namespace ComputerExam.Common
+﻿using ComputerExam.Common.Interfaces;
+
+namespace ComputerExam.Common
 {
-    public class UnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
     }
 }

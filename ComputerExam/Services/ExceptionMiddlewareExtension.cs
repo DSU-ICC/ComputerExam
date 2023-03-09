@@ -1,6 +1,26 @@
-﻿namespace ComputerExam.Services
+﻿using Microsoft.AspNetCore.Diagnostics;
+using Sentry;
+using System.Net;
+
+namespace ComputerExam.Services
 {
-    public class ExceptionMiddlewareExtension
+    public static class ExceptionMiddlewareExtension
     {
+        public static void ConfigureExceptionHandler(this IApplicationBuilder app)
+        {
+            app.UseExceptionHandler(appError =>
+            {
+                appError.Run(async context =>
+                {
+                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    context.Response.ContentType = "application/json";
+                    var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+                    if (contextFeature != null)
+                    {
+                        SentrySdk.CaptureException(contextFeature.Error);
+                    }
+                });
+            });
+        }
     }
 }

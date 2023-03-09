@@ -1,7 +1,11 @@
 using ComputerExam;
+using ComputerExam.Common;
+using ComputerExam.Common.Logger;
+using ComputerExam.DBService;
+using ComputerExam.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Sentry;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,30 +29,29 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddDbContext<BASEPERSONMDFContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("BasePerson"), providerOptions => providerOptions.EnableRetryOnFailure()));
 builder.Services.AddDbContext<DSUContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BaseDekanat"), providerOptions => providerOptions.EnableRetryOnFailure()));
-builder.Services.AddDbContext<ApplicationContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("EOR"), providerOptions => providerOptions.EnableRetryOnFailure()));
+//builder.Services.AddDbContext<BASEPERSONMDFContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("BasePerson"), providerOptions => providerOptions.EnableRetryOnFailure()));
+//builder.Services.AddDbContext<ApplicationContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("EOR"), providerOptions => providerOptions.EnableRetryOnFailure()));
 
-builder.Services.AddIdentity<EorDSU.Models.User, IdentityRole>(
-               opts =>
-               {
-                   opts.Password.RequiredLength = 2;
-                   opts.Password.RequireNonAlphanumeric = false;
-                   opts.Password.RequireLowercase = false;
-                   opts.Password.RequireUppercase = false;
-                   opts.Password.RequireDigit = false;
-               })
-               .AddEntityFrameworkStores<ApplicationContext>();
+//builder.Services.AddIdentity<EorDSU.Models.User, IdentityRole>(
+//               opts =>
+//               {
+//                   opts.Password.RequiredLength = 2;
+//                   opts.Password.RequireNonAlphanumeric = false;
+//                   opts.Password.RequireLowercase = false;
+//                   opts.Password.RequireUppercase = false;
+//                   opts.Password.RequireDigit = false;
+//               })
+//               .AddEntityFrameworkStores<ApplicationContext>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
     // Cookie settings
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.None;
-    //options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
 
     options.LoginPath = "/Account/Login";
     options.SlidingExpiration = true;
@@ -66,12 +69,38 @@ builder.WebHost.ConfigureServices(configure => SentrySdk.Init(o =>
     // Enable Global Mode if running in a client app
     o.IsGlobalModeEnabled = true;
 }));
-builder.Services.AddDBService();
+
+builder.Services.AddServiceCollection();
 builder.Services.AddAuthorization();
 
 builder.Logging.AddFile(Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration["FileLoggerFolder"]));
 
 var app = builder.Build();
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Models.User>>();
+//    var rolesManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+//    if (userManager.Users.ToList().Count == 0)
+//    {
+//        List<LoginViewModel> employees = new()
+//        {
+//            new LoginViewModel
+//            {
+//                Login = builder.Configuration["AdminLogin"],
+//                Password = builder.Configuration["AdminPassword"]
+//            },
+//            new LoginViewModel
+//            {
+//                Login = builder.Configuration["UMULogin"],
+//                Password = builder.Configuration["UMUPassword"],
+//            }
+//        };
+//        await RoleInitializer.InitializeAsync(employees, userManager, rolesManager);
+//    }
+//}
+
+app.ConfigureExceptionHandler();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -80,8 +109,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("MyAllowCredentialsPolicy");
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
