@@ -2,6 +2,7 @@ using ComputerExam;
 using ComputerExam.Common;
 using ComputerExam.Common.Logger;
 using ComputerExam.DBService;
+using ComputerExam.Models;
 using ComputerExam.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -31,21 +32,19 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddDbContext<DSUContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BaseDekanat"), providerOptions => providerOptions.EnableRetryOnFailure()));
-//builder.Services.AddDbContext<BASEPERSONMDFContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("BasePerson"), providerOptions => providerOptions.EnableRetryOnFailure()));
-//builder.Services.AddDbContext<ApplicationContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("EOR"), providerOptions => providerOptions.EnableRetryOnFailure()));
+builder.Services.AddDbContext<ApplicationContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CompExam"), providerOptions => providerOptions.EnableRetryOnFailure()));
 
-//builder.Services.AddIdentity<EorDSU.Models.User, IdentityRole>(
-//               opts =>
-//               {
-//                   opts.Password.RequiredLength = 2;
-//                   opts.Password.RequireNonAlphanumeric = false;
-//                   opts.Password.RequireLowercase = false;
-//                   opts.Password.RequireUppercase = false;
-//                   opts.Password.RequireDigit = false;
-//               })
-//               .AddEntityFrameworkStores<ApplicationContext>();
+builder.Services.AddIdentity<Employee, IdentityRole>(
+               opts =>
+               {
+                   opts.Password.RequiredLength = 2;
+                   opts.Password.RequireNonAlphanumeric = false;
+                   opts.Password.RequireLowercase = false;
+                   opts.Password.RequireUppercase = false;
+                   opts.Password.RequireDigit = false;
+               })
+               .AddEntityFrameworkStores<ApplicationContext>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -77,28 +76,17 @@ builder.Logging.AddFile(Path.Combine(Directory.GetCurrentDirectory(), builder.Co
 
 var app = builder.Build();
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Models.User>>();
-//    var rolesManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-//    if (userManager.Users.ToList().Count == 0)
-//    {
-//        List<LoginViewModel> employees = new()
-//        {
-//            new LoginViewModel
-//            {
-//                Login = builder.Configuration["AdminLogin"],
-//                Password = builder.Configuration["AdminPassword"]
-//            },
-//            new LoginViewModel
-//            {
-//                Login = builder.Configuration["UMULogin"],
-//                Password = builder.Configuration["UMUPassword"],
-//            }
-//        };
-//        await RoleInitializer.InitializeAsync(employees, userManager, rolesManager);
-//    }
-//}
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Employee>>();
+    var rolesManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    if (userManager.Users.ToList().Count == 0)
+    {
+        string adminLogin = builder.Configuration["AdminLogin"];
+        string password = builder.Configuration["AdminPassword"];
+        await RoleInitializer.InitializeAsync(adminLogin, password, userManager, rolesManager);
+    }
+}
 
 app.ConfigureExceptionHandler();
 
