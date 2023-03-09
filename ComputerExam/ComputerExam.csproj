@@ -18,6 +18,14 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Common\" />
+    <Folder Include="Models\" />
+    <Folder Include="Services\" />
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DSUContextDBService\DSUContextDBService.csproj" />
   </ItemGroup>
 
 </Project>
