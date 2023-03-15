@@ -1,12 +1,11 @@
-using ComputerExam;
 using ComputerExam.Common;
-using ComputerExam.Common.Logger;
-using ComputerExam.DBService;
-using ComputerExam.Models;
-using ComputerExam.Services;
+using DomainService.DBService;
+using DomainService.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sentry;
+using Infrastructure.Logger;
+using DSUContextDBService.DbServices;
 
 var builder = WebApplication.CreateBuilder(args);
 

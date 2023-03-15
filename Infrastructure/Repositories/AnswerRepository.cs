@@ -1,0 +1,15 @@
+﻿using DomainService.Entity;
+using Infrastructure.Common;
+using Infrastructure.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
+namespace Infrastructure.Repositories
+{
+    public class AnswerRepository : GenericRepository<Answer>, IAnswerRepository
+    {
+        public AnswerRepository(DbContext dbContext) : base(dbContext)
+        {
+
+        }
+    }
+}

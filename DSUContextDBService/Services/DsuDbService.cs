@@ -1,12 +1,7 @@
-﻿using ComputerExam;
+﻿using DSUContextDBService.DbServices;
 using DSUContextDBService.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DSUContextDBService.DbServices
+namespace DSUContextDBService.Services
 {
     public class DsuDbService : IDsuDbService
     {
