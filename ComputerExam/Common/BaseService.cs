@@ -1,4 +1,8 @@
-﻿using ComputerExam.Common.Interfaces;
+﻿using DSUContextDBService.Interface;
+using DSUContextDBService.Services;
+using Infrastructure.Common.Interfaces;
+using Infrastructure.Repositories;
+using Infrastructure.Repositories.Interfaces;
 
 namespace ComputerExam.Common
 {
@@ -6,8 +10,14 @@ namespace ComputerExam.Common
     {
         public static void AddServiceCollection(this IServiceCollection services)
         {
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IDsuDbService, DsuDbService>();
+
+            #region Repositories
+            services.AddScoped<IAnswerRepository, AnswerRepository>();
+            services.AddScoped<IExamenRepository, ExamenRepository>();
+            services.AddScoped<IExamStudentRepository, ExamStudentRepository>();
+            services.AddScoped<IQuestionRepository, QuestionRepository>();
+            #endregion
         }
     }
 }

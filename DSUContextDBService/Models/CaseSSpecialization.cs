@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ComputerExam
+﻿namespace DSUContextDBService
 {
     public partial class CaseSSpecialization
     {

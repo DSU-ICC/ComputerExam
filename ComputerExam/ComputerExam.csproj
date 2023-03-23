@@ -20,11 +20,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\" />
     <Folder Include="Common\Logger\LogFile\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DomainService\DomainService.csproj" />
     <ProjectReference Include="..\DSUContextDBService\DSUContextDBService.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
