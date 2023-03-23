@@ -1,5 +1,6 @@
-﻿using ComputerExam.Common.Interfaces;
-using ComputerExam.Models;
+﻿
+using DomainService.Entity;
+using Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,32 +10,32 @@ namespace ComputerExam.Controllers
     [Route("[controller]")]
     public class ExamenController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IExamenRepository _examenRepository;
 
-        public ExamenController(IUnitOfWork unitOfWork)
+        public ExamenController(IExamenRepository examenRepository)
         {
-            _unitOfWork = unitOfWork;
+            _examenRepository = examenRepository;
         }
 
         [Route("GetExamens")]
         [HttpGet]
         public async Task<ActionResult> GetExamensAsync()
         {
-            return Ok(await _unitOfWork.ExamenRepository.Get().ToListAsync());
+            return Ok(await _examenRepository.Get().ToListAsync());
         }
 
         [Route("GetExamenById")]
         [HttpGet]
         public ActionResult<Examen> GetExamenById(int id)
         {
-            return Ok(_unitOfWork.ExamenRepository.FindById(id));
+            return Ok(_examenRepository.FindById(id));
         }
 
         [Route("CreateExamen")]
         [HttpPost]
         public async Task<ActionResult<Examen>> CreateExamen(Examen examen)
         {
-            await _unitOfWork.ExamenRepository.Create(examen);
+            await _examenRepository.Create(examen);
             return Ok();
         }
 
@@ -42,7 +43,7 @@ namespace ComputerExam.Controllers
         [HttpPut]
         public async Task<ActionResult<Examen>> UpdateExamen(Examen examen)
         {
-            await _unitOfWork.ExamenRepository.Update(examen);
+            await _examenRepository.Update(examen);
             return Ok();
         }
 
@@ -50,7 +51,7 @@ namespace ComputerExam.Controllers
         [HttpDelete]
         public async Task<ActionResult<Examen>> DeleteExamen(int id)
         {
-            await _unitOfWork.ExamenRepository.Remove(id);
+            await _examenRepository.Remove(id);
             return Ok();
         }
     }

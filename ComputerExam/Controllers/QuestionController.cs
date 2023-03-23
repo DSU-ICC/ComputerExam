@@ -1,5 +1,5 @@
-﻿using ComputerExam.Common.Interfaces;
-using ComputerExam.Models;
+﻿using DomainService.Entity;
+using Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,32 +10,32 @@ namespace ComputerExam.Controllers
     [Route("[controller]")]
     public class QuestionController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IQuestionRepository _questionRepository;
 
-        public QuestionController(IUnitOfWork unitOfWork)
+        public QuestionController(IQuestionRepository questionRepository)
         {
-            _unitOfWork = unitOfWork;
+            _questionRepository = questionRepository;
         }
 
         [Route("GetQuestions")]
         [HttpGet]
         public async Task<ActionResult<Question>> GetQuestions()
         {
-            return Ok(await _unitOfWork.QuestionRepository.Get().ToListAsync());
+            return Ok(await _questionRepository.Get().ToListAsync());
         }
 
         [Route("GetQuestionById")]
         [HttpGet]
         public ActionResult<Question> GetQuestionById(int id)
         {
-            return Ok(_unitOfWork.QuestionRepository.FindById(id));
+            return Ok(_questionRepository.FindById(id));
         }
 
         [Route("CreateQuestion")]
         [HttpPost]
         public async Task<ActionResult<Question>> CreateQuestion(Question question)
         {
-            await _unitOfWork.QuestionRepository.Create(question);
+            await _questionRepository.Create(question);
             return Ok();
         }
 
@@ -43,7 +43,7 @@ namespace ComputerExam.Controllers
         [HttpPut]
         public async Task<ActionResult<Question>> UpdateQuestion(Question question)
         {
-            await _unitOfWork.QuestionRepository.Update(question);
+            await _questionRepository.Update(question);
             return Ok();
         }
 
@@ -51,7 +51,7 @@ namespace ComputerExam.Controllers
         [HttpDelete]
         public async Task<ActionResult<Question>> DeleteQuestion(Question question)
         {
-            await _unitOfWork.QuestionRepository.Remove(question);
+            await _questionRepository.Remove(question);
             return Ok();
         }
     }

@@ -1,10 +1,6 @@
 using ComputerExam.Common;
 using DomainService.DBService;
 using DomainService.Entity;
-using ComputerExam.Common.Logger;
-using ComputerExam.DBService;
-using ComputerExam.Models;
-using ComputerExam.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

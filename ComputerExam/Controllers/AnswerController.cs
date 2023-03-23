@@ -1,5 +1,5 @@
-﻿using ComputerExam.Common.Interfaces;
-using ComputerExam.Models;
+﻿using DomainService.Entity;
+using Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,31 +11,31 @@ namespace ComputerExam.Controllers
     [Route("[controller]")]
     public class AnswerController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IAnswerRepository _answerRepository;
 
-        public AnswerController(IUnitOfWork unitOfWork)
+        public AnswerController(IAnswerRepository answerRepository)
         {
-            _unitOfWork = unitOfWork;
+            _answerRepository = answerRepository;
         }
 
         [Route("GetAnswers")]
         [HttpGet]
         public async Task<ActionResult<Answer>> GetAnswers()
         {
-            return Ok(await _unitOfWork.AnswerRepository.Get().ToListAsync());
+            return Ok(await _answerRepository.Get().ToListAsync());
         }
 
         [Route("GetAnswerById")]
         [HttpGet]
         public ActionResult<Answer> GetAnswerById(int id)
         {
-            return Ok(_unitOfWork.AnswerRepository.FindById(id));
+            return Ok(_answerRepository.FindById(id));
         }
 
         [Route("CreateAnswer")]
         public async Task<ActionResult<Answer>> CreateAnswer(Answer answer)
         {
-            await _unitOfWork.AnswerRepository.Create(answer);
+            await _answerRepository.Create(answer);
             return Ok();
         }
 
@@ -43,7 +43,7 @@ namespace ComputerExam.Controllers
         [HttpPut]
         public async Task<ActionResult<Answer>> UpdateAnswer(Answer answer)
         {
-            await _unitOfWork.AnswerRepository.Update(answer);
+            await _answerRepository.Update(answer);
             return Ok();
         }
 
@@ -51,7 +51,7 @@ namespace ComputerExam.Controllers
         [HttpDelete]
         public async Task<ActionResult<Answer>> DeleteAnswer(Answer answer)
         {
-            await _unitOfWork.AnswerRepository.Remove(answer);
+            await _answerRepository.Remove(answer);
             return Ok();
         }
     }
