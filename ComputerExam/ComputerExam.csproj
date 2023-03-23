@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="Common\Logger\LogFile\" />
-    <Folder Include="Controllers\" />
   </ItemGroup>
 
   <ItemGroup>

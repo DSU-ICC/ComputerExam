@@ -4,5 +4,6 @@ namespace ComputerExam.Models
 {
     public class Employee : IdentityUser
     {
+        public int TeacherId { get; set; }
     }
 }
