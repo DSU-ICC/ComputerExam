@@ -1,4 +1,7 @@
-﻿namespace DSUContextDBService
+﻿using System;
+using System.Collections.Generic;
+
+namespace DSUContextDBService.Models
 {
     public partial class CaseSSpecialization
     {

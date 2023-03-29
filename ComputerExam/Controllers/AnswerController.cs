@@ -33,6 +33,7 @@ namespace ComputerExam.Controllers
         }
 
         [Route("CreateAnswer")]
+        [HttpPost]
         public async Task<ActionResult<Answer>> CreateAnswer(Answer answer)
         {
             await _answerRepository.Create(answer);

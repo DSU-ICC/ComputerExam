@@ -1,7 +1,6 @@
 using ComputerExam.Common;
 using DomainService.DBService;
 using DomainService.Entity;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sentry;

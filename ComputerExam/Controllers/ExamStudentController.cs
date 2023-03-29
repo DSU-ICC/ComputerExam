@@ -17,7 +17,6 @@ namespace ComputerExam.Controllers
             _examStudentRepository = examStudentRepository;
         }
 
-
         [HttpGet]
         [Route("GetExamStudents")]
         public async Task<ActionResult<ExamStudent>> GetExamStudents()

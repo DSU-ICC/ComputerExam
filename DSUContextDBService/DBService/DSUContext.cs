@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using DSUContextDBService.Models;
 
 namespace DSUContextDBService.DBService
 {
@@ -13,6 +17,7 @@ namespace DSUContextDBService.DBService
         {
         }
 
+        public virtual DbSet<CaseCFaculty> CaseCFaculties { get; set; } = null!;
         public virtual DbSet<CaseSDepartment> CaseSDepartments { get; set; } = null!;
         public virtual DbSet<CaseSSpecialization> CaseSSpecializations { get; set; } = null!;
         public virtual DbSet<CaseSStudent> CaseSStudents { get; set; } = null!;
@@ -20,6 +25,29 @@ namespace DSUContextDBService.DBService
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<CaseCFaculty>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("CASE_C_FACULTY");
+
+                entity.Property(e => e.Abr)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("ABR");
+
+                entity.Property(e => e.College).HasColumnName("COLLEGE");
+
+                entity.Property(e => e.Deleted).HasColumnName("DELETED");
+
+                entity.Property(e => e.FacId).HasColumnName("FAC_ID");
+
+                entity.Property(e => e.FacName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("FAC_NAME");
+            });
+
             modelBuilder.Entity<CaseSDepartment>(entity =>
             {
                 entity.HasNoKey();
@@ -93,6 +121,10 @@ namespace DSUContextDBService.DBService
 
                 entity.Property(e => e.AbiturId).HasColumnName("ABITUR_ID");
 
+                entity.Property(e => e.Course).HasColumnName("COURSE");
+
+                entity.Property(e => e.DepartmentId).HasColumnName("DEPARTMENT_ID");
+
                 entity.Property(e => e.FacId).HasColumnName("FAC_ID");
 
                 entity.Property(e => e.FilId).HasColumnName("FIL_ID");
@@ -101,10 +133,6 @@ namespace DSUContextDBService.DBService
                     .HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("FIRSTNAME");
-
-                entity.Property(e => e.Graddate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("GRADDATE");
 
                 entity.Property(e => e.Id)
                     .ValueGeneratedOnAdd()
@@ -115,6 +143,16 @@ namespace DSUContextDBService.DBService
                     .IsUnicode(false)
                     .HasColumnName("LASTNAME");
 
+                entity.Property(e => e.Ndiplom)
+                    .HasMaxLength(15)
+                    .IsUnicode(false)
+                    .HasColumnName("NDIPLOM");
+
+                entity.Property(e => e.Ngroup)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("NGROUP");
+
                 entity.Property(e => e.Nzachkn)
                     .HasMaxLength(10)
                     .IsUnicode(false)
@@ -124,6 +162,11 @@ namespace DSUContextDBService.DBService
                     .HasMaxLength(30)
                     .IsUnicode(false)
                     .HasColumnName("PATR");
+
+                entity.Property(e => e.Serdiplom)
+                    .HasMaxLength(6)
+                    .IsUnicode(false)
+                    .HasColumnName("SERDIPLOM");
 
                 entity.Property(e => e.Snils)
                     .HasMaxLength(50)

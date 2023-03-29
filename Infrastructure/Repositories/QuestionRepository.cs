@@ -1,4 +1,5 @@
-﻿using DomainService.Entity;
+﻿using DomainService.DBService;
+using DomainService.Entity;
 using Infrastructure.Common;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ namespace Infrastructure.Repositories
 {
     public class QuestionRepository : GenericRepository<Question>, IQuestionRepository
     {
-        public QuestionRepository(DbContext dbContext) : base(dbContext)
+        public QuestionRepository(ApplicationContext dbContext) : base(dbContext)
         {
 
         }
