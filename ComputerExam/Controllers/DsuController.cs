@@ -44,5 +44,12 @@ namespace ComputerExam.Controllers
             var students = await _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == departmentId && x.Course == course).ToListAsync();
             return Ok(students);
         }
+
+        [Route("GetTeachers")]
+        [HttpGet]
+        public async Task<IActionResult> GetTeachers()
+        {
+            return Ok(await _dsuDbService.GetCaseSTeachers().ToListAsync());
+        }
     }
 }

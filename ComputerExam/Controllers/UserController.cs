@@ -23,14 +23,14 @@ namespace ComputerExam.Controllers
 
         [Route("GetEmployees")]
         [HttpGet]
-        public ActionResult<Employee> GetEmployees()
+        public IActionResult GetEmployees()
         {
             return Ok(_userManager.Users);
         }
 
         [Route("EditEmployee")]
         [HttpPut]
-        public async Task<ActionResult<Employee>> EditEmployee(EditDto _editDto)
+        public async Task<IActionResult> EditEmployee(EditDto _editDto)
         {
             if (ModelState.IsValid)
             {

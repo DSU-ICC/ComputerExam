@@ -20,6 +20,15 @@ namespace ComputerExam.Controllers
             _signInManager = signInManager;
         }
 
+        [Route("Logout")]
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            // удаляем аутентификационные куки
+            await _signInManager.SignOutAsync();
+            return Ok();
+        }
+
         [Route("Register")]
         [HttpPost]
         public async Task<IActionResult> Register(RegistrationDto registrationDto)
@@ -64,15 +73,6 @@ namespace ComputerExam.Controllers
                 }
             }
             return BadRequest();
-        }
-
-        [Route("Logout")]
-        [HttpPost]
-        public async Task<IActionResult> Logout()
-        {
-            // удаляем аутентификационные куки
-            await _signInManager.SignOutAsync();
-            return Ok();
         }
     }
 }

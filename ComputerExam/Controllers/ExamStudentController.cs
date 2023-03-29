@@ -19,21 +19,21 @@ namespace ComputerExam.Controllers
 
         [HttpGet]
         [Route("GetExamStudents")]
-        public async Task<ActionResult<ExamStudent>> GetExamStudents()
+        public async Task<IActionResult> GetExamStudents()
         {
             return Ok(await _examStudentRepository.Get().ToListAsync());
         }
 
         [HttpGet]
         [Route("GetExamStudentById")]
-        public ActionResult<ExamStudent> GetExamSudent(int id)
+        public IActionResult GetExamSudent(int id)
         {
             return Ok(_examStudentRepository.FindById(id));
         }
 
         [HttpPost]
         [Route("CreateExamStudent")]
-        public async Task<ActionResult<ExamStudent>> CreateExamStudent(ExamStudent examStudent)
+        public async Task<IActionResult> CreateExamStudent(ExamStudent examStudent)
         {
             await _examStudentRepository.Create(examStudent);
             return Ok();
@@ -41,7 +41,7 @@ namespace ComputerExam.Controllers
 
         [HttpPut]
         [Route("UpdateExamStudent")]
-        public async Task<ActionResult<ExamStudent>> UpdateExamStudent(ExamStudent examStudent)
+        public async Task<IActionResult> UpdateExamStudent(ExamStudent examStudent)
         {
             await _examStudentRepository.Update(examStudent);
             return Ok();
@@ -49,7 +49,7 @@ namespace ComputerExam.Controllers
 
         [HttpDelete]
         [Route("DeleteExamStudent")]
-        public async Task<ActionResult<ExamStudent>> DeleteExamStudent(int id)
+        public async Task<IActionResult> DeleteExamStudent(int id)
         {
             await _examStudentRepository.Remove(id);
             return Ok();

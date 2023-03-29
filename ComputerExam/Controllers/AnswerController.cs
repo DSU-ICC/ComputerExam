@@ -1,9 +1,7 @@
 ﻿using DomainService.Entity;
 using Infrastructure.Repositories.Interfaces;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography.X509Certificates;
 
 namespace ComputerExam.Controllers
 {
@@ -20,21 +18,21 @@ namespace ComputerExam.Controllers
 
         [Route("GetAnswers")]
         [HttpGet]
-        public async Task<ActionResult<Answer>> GetAnswers()
+        public async Task<IActionResult> GetAnswers()
         {
             return Ok(await _answerRepository.Get().ToListAsync());
         }
 
         [Route("GetAnswerById")]
         [HttpGet]
-        public ActionResult<Answer> GetAnswerById(int id)
+        public IActionResult GetAnswerById(int id)
         {
             return Ok(_answerRepository.FindById(id));
         }
 
         [Route("CreateAnswer")]
         [HttpPost]
-        public async Task<ActionResult<Answer>> CreateAnswer(Answer answer)
+        public async Task<IActionResult> CreateAnswer(Answer answer)
         {
             await _answerRepository.Create(answer);
             return Ok();
@@ -42,7 +40,7 @@ namespace ComputerExam.Controllers
 
         [Route("UpdateAnswer")]
         [HttpPut]
-        public async Task<ActionResult<Answer>> UpdateAnswer(Answer answer)
+        public async Task<IActionResult> UpdateAnswer(Answer answer)
         {
             await _answerRepository.Update(answer);
             return Ok();
@@ -50,7 +48,7 @@ namespace ComputerExam.Controllers
 
         [Route("DeleteAnswer")]
         [HttpDelete]
-        public async Task<ActionResult<Answer>> DeleteAnswer(Answer answer)
+        public async Task<IActionResult> DeleteAnswer(Answer answer)
         {
             await _answerRepository.Remove(answer);
             return Ok();

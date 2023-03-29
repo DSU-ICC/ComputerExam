@@ -19,21 +19,21 @@ namespace ComputerExam.Controllers
 
         [Route("GetQuestions")]
         [HttpGet]
-        public async Task<ActionResult<Question>> GetQuestions()
+        public async Task<IActionResult> GetQuestions()
         {
             return Ok(await _questionRepository.Get().ToListAsync());
         }
 
         [Route("GetQuestionById")]
         [HttpGet]
-        public ActionResult<Question> GetQuestionById(int id)
+        public IActionResult GetQuestionById(int id)
         {
             return Ok(_questionRepository.FindById(id));
         }
 
         [Route("CreateQuestion")]
         [HttpPost]
-        public async Task<ActionResult<Question>> CreateQuestion(Question question)
+        public async Task<IActionResult> CreateQuestion(Question question)
         {
             await _questionRepository.Create(question);
             return Ok();
@@ -41,7 +41,7 @@ namespace ComputerExam.Controllers
 
         [Route("UpdateQuestion")]
         [HttpPut]
-        public async Task<ActionResult<Question>> UpdateQuestion(Question question)
+        public async Task<IActionResult> UpdateQuestion(Question question)
         {
             await _questionRepository.Update(question);
             return Ok();
@@ -49,7 +49,7 @@ namespace ComputerExam.Controllers
 
         [Route("DeleteQuestion")]
         [HttpDelete]
-        public async Task<ActionResult<Question>> DeleteQuestion(Question question)
+        public async Task<IActionResult> DeleteQuestion(Question question)
         {
             await _questionRepository.Remove(question);
             return Ok();
