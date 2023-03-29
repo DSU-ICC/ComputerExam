@@ -1,4 +1,4 @@
-﻿using DSUContextDBService.DbServices;
+﻿using DSUContextDBService.DBService;
 using DSUContextDBService.Interface;
 
 namespace DSUContextDBService.Services

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sentry;
 using Infrastructure.Logger;
-using DSUContextDBService.DbServices;
+using DSUContextDBService.DBService;
 
 var builder = WebApplication.CreateBuilder(args);
 

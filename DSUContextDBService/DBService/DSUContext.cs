@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace DSUContextDBService.DbServices
+namespace DSUContextDBService.DBService
 {
     public partial class DSUContext : DbContext
     {
