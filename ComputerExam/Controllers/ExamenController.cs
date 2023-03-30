@@ -1,5 +1,6 @@
-﻿
+﻿using DomainService.DtoModels;
 using DomainService.Entity;
+using DSUContextDBService.Interface;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +12,12 @@ namespace ComputerExam.Controllers
     public class ExamenController : Controller
     {
         private readonly IExamenRepository _examenRepository;
+        private readonly IDsuDbService _dsuDbService;
 
-        public ExamenController(IExamenRepository examenRepository)
+        public ExamenController(IExamenRepository examenRepository, IDsuDbService dsuDbService)
         {
             _examenRepository = examenRepository;
+            _dsuDbService = dsuDbService;
         }
 
         [Route("GetExamens")]
@@ -22,6 +25,38 @@ namespace ComputerExam.Controllers
         public async Task<IActionResult> GetExamensAsync()
         {
             return Ok(await _examenRepository.Get().ToListAsync());
+        }
+
+        [Route("GetExamensByTeacherId")]
+        [HttpGet]
+        public async Task<IActionResult> GetExamensByTeacherId(int teacherId)
+        {
+            var examenDto = await _examenRepository.Get()
+               .Where(x => x.IdTeacher == teacherId)
+               .Select(i => new ExamenDto()
+               {
+                   ExamenId = i.Id,
+                   Discipline = i.Discipline,
+                   Group = i.NGroup,
+                   Course = (int)i.Course,
+                   Department = _dsuDbService.GetCaseSDepartmentById(i.DepartmentId),
+               }).ToListAsync();
+            return Ok(examenDto);
+        }
+
+        [Route("GetExamensByStudentId")]
+        [HttpGet]
+        public async Task<IActionResult> GetExamensByStudentId(int studentId)
+        {
+            var student = _dsuDbService.GetCaseSStudentById(studentId);
+            var examens = _examenRepository.Get().Where(x => x.DepartmentId == student.DepartmentId && x.Course == student.Course);
+
+            List<ExamenStudentDto> examenStudentDtos = await examens.Select(x => new ExamenStudentDto
+            {
+                ExamenStudentId = x.Id,
+                Discipline = x.Discipline
+            }).ToListAsync();
+            return Ok(examenStudentDtos);
         }
 
         [Route("GetExamenById")]

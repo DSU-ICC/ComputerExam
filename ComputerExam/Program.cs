@@ -17,17 +17,17 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("MyAllowCredentialsPolicy",
-        policy =>
-        {
-            policy.WithOrigins(builder.Configuration["LinkToFrontEnd"])
-                   .AllowAnyHeader()
-                   .AllowAnyMethod()
-                   .AllowCredentials();
-        });
-});
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("MyAllowCredentialsPolicy",
+//        policy =>
+//        {
+//            policy.WithOrigins(builder.Configuration["LinkToFrontEnd"])
+//                   .AllowAnyHeader()
+//                   .AllowAnyMethod()
+//                   .AllowCredentials();
+//        });
+//});
 
 builder.Services.AddDbContext<DSUContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BaseDekanat"), providerOptions => providerOptions.EnableRetryOnFailure()));
@@ -71,7 +71,7 @@ builder.WebHost.ConfigureServices(configure => SentrySdk.Init(o =>
 builder.Services.AddServiceCollection();
 builder.Services.AddAuthorization();
 
-builder.Logging.AddFile(Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration["FileLoggerFolder"]));
+//builder.Logging.AddFile(Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration["FileLoggerFolder"]));
 
 var app = builder.Build();
 
