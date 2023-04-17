@@ -52,6 +52,16 @@ namespace ComputerExam.Controllers
             return Ok(students);
         }
 
+        [Route("SignInStudent")]
+        [HttpGet]
+        public IActionResult SignInStudent(int studentId, string nzachkn)
+        {
+            var student = _dsuDbService.GetCaseSStudents().FirstOrDefault(x => x.Id == studentId && x.Nzachkn == nzachkn);
+            if (student != null)
+                return Ok();
+            return BadRequest();
+        }
+
         [Route("GetTeachers")]
         [HttpGet]
         public async Task<IActionResult> GetTeachers()
