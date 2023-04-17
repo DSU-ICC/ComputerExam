@@ -37,11 +37,18 @@ namespace ComputerExam.Controllers
             return Ok(await _dsuDbService.GetCoursesByDepartmentId(departmentId).ToListAsync());
         }
 
+        [Route("GetCourseByDepartmentId")]
+        [HttpGet]
+        public async Task<IActionResult> GetGroupsByDepartmentId(int departmentId, int course)
+        {
+            return Ok(await _dsuDbService.GetGroupsByDepartmentId(departmentId, course).ToListAsync());
+        }
+
         [Route("GetStudentsByDepartmentAndCourse")]
         [HttpGet]
-        public async Task<IActionResult> GetStudentsByDepartmentAndCourse(int departmentId, int course)
+        public async Task<IActionResult> GetStudentsByDepartmentAndCourse(int departmentId, int course, string ngroup)
         {
-            var students = await _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == departmentId && x.Course == course).ToListAsync();
+            var students = await _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == departmentId && x.Course == course && x.Ngroup == ngroup).ToListAsync();
             return Ok(students);
         }
 

@@ -80,8 +80,14 @@ namespace DSUContextDBService.Services
 
         public IQueryable<int?> GetCoursesByDepartmentId(int departmentId)
         {
-            var courses = _dSUContext.CaseSStudents.Where(x => x.DepartmentId == departmentId).Select(c => c.Course);            
+            var courses = _dSUContext.CaseSStudents.Where(x => x.DepartmentId == departmentId).Select(c => c.Course);
             return courses.Distinct();
+        }
+
+        public IQueryable<string?> GetGroupsByDepartmentId(int departmentId, int course)
+        {
+            var ngroup = _dSUContext.CaseSStudents.Where(x => x.DepartmentId == departmentId && x.DepartmentId == course).Select(c => c.Ngroup);
+            return ngroup.Distinct();
         }
     }
 }

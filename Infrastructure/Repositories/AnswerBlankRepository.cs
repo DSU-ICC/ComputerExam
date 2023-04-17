@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class ExamStudentRepository : GenericRepository<ExamStudent>, IExamStudentRepository
+    public class AnswerBlankRepository : GenericRepository<AnswerBlank>, IAnswerBlankRepository
     {
-        public ExamStudentRepository(ApplicationContext dbContext) : base(dbContext)
+        public AnswerBlankRepository(ApplicationContext dbContext) : base(dbContext)
         {
 
         }

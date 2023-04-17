@@ -3,7 +3,7 @@ using Infrastructure.Common.Interfaces;
 
 namespace Infrastructure.Repositories.Interfaces
 {
-    public interface IExamStudentRepository : IGenericRepository<ExamStudent>
+    public interface IExamTicketRepository : IGenericRepository<ExamTicket>
     {
     }
 }

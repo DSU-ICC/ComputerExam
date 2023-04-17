@@ -1,9 +1,7 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using DomainService.Entity;
 using DomainService.DtoModels;
-using Sentry;
 
 namespace ComputerExam.Controllers
 {
@@ -64,13 +62,9 @@ namespace ComputerExam.Controllers
                 var result =
                     await _signInManager.PasswordSignInAsync(loginDto.Login, loginDto.Password, false, false);
                 if (result.Succeeded)
-                {
                     return Ok();
-                }
                 else
-                {
                     ModelState.AddModelError("", "Неправильный логин и (или) пароль");
-                }
             }
             return BadRequest();
         }

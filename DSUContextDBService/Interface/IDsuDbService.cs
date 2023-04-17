@@ -13,6 +13,7 @@ namespace DSUContextDBService.Interface
         public IQueryable<CaseSSpecialization> GetCaseSSpecializations();
         public CaseSSpecialization GetCaseSSpecializationById(int? id);
         public IQueryable<int?> GetCoursesByDepartmentId(int departmentId);
+        public IQueryable<string?> GetGroupsByDepartmentId(int departmentId, int course);
         public IQueryable<CaseSStudent> GetCaseSStudents();
         public CaseSStudent GetCaseSStudentById(int? id);
         public IQueryable<CaseSTeacher> GetCaseSTeachers();

@@ -1,10 +1,22 @@
 ﻿namespace DomainService.Entity
 {
+    /// <summary>
+    /// Вопрос
+    /// </summary>
     public class Question
     {
         public int Id { get; set; }
-        public int IdExamen { get; set; }
+        /// <summary>
+        /// Id билета
+        /// </summary>
+        public int ExamTicketId { get; set; }
+        /// <summary>
+        /// Номер вопроса
+        /// </summary>
         public int? Number { get; set; }
+        /// <summary>
+        /// Текст вопроса
+        /// </summary>
         public string? Text { get; set; }
     }
 }

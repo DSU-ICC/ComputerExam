@@ -11,11 +11,11 @@ namespace ComputerExam.Common
         {
             services.AddScoped<IDsuDbService, DsuDbService>();
 
-            #region Repositories
-            services.AddScoped<IAnswerRepository, AnswerRepository>();
+            #region Repositories            
             services.AddScoped<IExamenRepository, ExamenRepository>();
-            services.AddScoped<IExamStudentRepository, ExamStudentRepository>();
+            services.AddScoped<IAnswerBlankRepository, AnswerBlankRepository>();
             services.AddScoped<IQuestionRepository, QuestionRepository>();
+            services.AddScoped<IAnswerRepository, AnswerRepository>();
             #endregion
         }
     }
