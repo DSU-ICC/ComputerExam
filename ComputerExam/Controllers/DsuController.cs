@@ -37,7 +37,7 @@ namespace ComputerExam.Controllers
             return Ok(await _dsuDbService.GetCoursesByDepartmentId(departmentId).ToListAsync());
         }
 
-        [Route("GetCourseByDepartmentId")]
+        [Route("GetGroupsByDepartmentId")]
         [HttpGet]
         public async Task<IActionResult> GetGroupsByDepartmentId(int departmentId, int course)
         {

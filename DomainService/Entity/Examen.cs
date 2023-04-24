@@ -33,7 +33,7 @@
         /// <summary>
         /// Дата экзамена
         /// </summary>
-        public DateOnly? ExamDate { get; set; }
+        public DateTime? ExamDate { get; set; }
         /// <summary>
         /// Продолжительность экзамена в минутах 
         /// </summary>

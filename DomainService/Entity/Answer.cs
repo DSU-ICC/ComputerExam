@@ -23,10 +23,6 @@
         /// </summary>
         public string? TextAnswer { get; set; }
         /// <summary>
-        /// Баллы за ответ
-        /// </summary>
-        public int? Scores { get; set; } 
-        /// <summary>
         /// Время создания ответа
         /// </summary>
         public DateTime CreateAnswer { get; set; } = DateTime.Now;

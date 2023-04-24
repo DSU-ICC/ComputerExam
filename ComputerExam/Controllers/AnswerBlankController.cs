@@ -28,10 +28,10 @@ namespace ComputerExam.Controllers
         }
 
         [HttpGet]
-        [Route("GetAnswerBlanks")]
-        public async Task<IActionResult> GetAnswerBlanksByExamenId(int examTicketId)
+        [Route("GetAnswerBlanksByExamenIdStudentId")]
+        public async Task<IActionResult> GetAnswerBlanksByExamenIdStudentId(int examTicketId,int studentId)
         {
-            return Ok(await _answerBlankRepository.Get().Where(x => x.ExamTicketId == examTicketId).ToListAsync());
+            return Ok(await _answerBlankRepository.Get().Include(x=>x.Answers).FirstOrDefaultAsync(x => x.ExamTicketId == examTicketId && x.StudentId==studentId));
         }
 
         [HttpGet]
@@ -54,7 +54,6 @@ namespace ComputerExam.Controllers
             if (examen == null)
                 return BadRequest("Экзамен не найден");
             var ticket = examen.Tickets.FirstOrDefault(x => x.Id == answerBlank.ExamTicketId);
-
             await _answerBlankRepository.Create(answerBlank);
             return Ok();
         }

@@ -13,11 +13,15 @@ namespace ComputerExam.Controllers
     {
         private readonly IExamenRepository _examenRepository;
         private readonly IDsuDbService _dsuDbService;
+        private readonly IExamTicketRepository _examTicketRepository;
+        private readonly IAnswerBlankRepository _answerBlankRepository;
 
-        public ExamenController(IExamenRepository examenRepository, IDsuDbService dsuDbService)
+        public ExamenController(IExamenRepository examenRepository, IDsuDbService dsuDbService, IExamTicketRepository examTicketRepository, IAnswerBlankRepository answerBlankRepository)
         {
             _examenRepository = examenRepository;
             _dsuDbService = dsuDbService;
+            _examTicketRepository = examTicketRepository;
+            _answerBlankRepository = answerBlankRepository;
         }
 
         [Route("GetExamens")]
@@ -59,31 +63,43 @@ namespace ComputerExam.Controllers
             return Ok(examenStudentDtos);
         }
 
-        [Route("GetExamenById")]
+        //[Route("GetExamenById")]
+        //[HttpGet]
+        //public IActionResult GetExamenById(int id)
+        //{
+        //    return Ok(_examenRepository.FindById(id));
+        //}
+
+        [Route("StartExamen")]
         [HttpGet]
-        public IActionResult GetExamenById(int id)
+        public async Task<IActionResult> StartExamen(int studentId,int examId)
         {
-            return Ok(_examenRepository.FindById(id));
+            await _answerBlankRepository.Create(new AnswerBlank()
+            {
+                StudentId= studentId,
+                ExamTicketId= examId
+            });
+            return Ok(_examTicketRepository.Get().OrderBy(x=>new Guid()).First());
         }
 
-        [Route("GetExamenByStudentId")]
-        [HttpGet]
-        public IActionResult GetExamenByStudentId(int studentId)
-        {
-            var student = _dsuDbService.GetCaseSStudentById(studentId);
-            var examens = _examenRepository.Get().Where(x => x.DepartmentId == student.DepartmentId && x.Course == student.Course && x.NGroup == student.Ngroup);
-            return Ok(examens);
-        }
+        //[Route("GetExamenByStudentId")]
+        //[HttpGet]
+        //public IActionResult GetExamenByStudentId(int studentId)
+        //{
+        //    var student = _dsuDbService.GetCaseSStudentById(studentId);
+        //    var examens = _examenRepository.Get().Where(x => x.DepartmentId == student.DepartmentId && x.Course == student.Course && x.NGroup == student.Ngroup);
+        //    return Ok(examens);
+        //}
 
-        [Route("GetExamensByStudentId")]
-        [HttpGet]
-        public async Task<IActionResult> GetExamensByStudentId(int studentId)
-        {
-            var examens = _examenRepository.GetExamensByStudentId(studentId);
-            if (examens == null)
-                return BadRequest("Не найден данный студент");
-            return Ok(examens);
-        }
+        //[Route("GetExamensByStudentId")]
+        //[HttpGet]
+        //public async Task<IActionResult> GetExamensByStudentId(int studentId)
+        //{
+        //    var examens = _examenRepository.GetExamensByStudentId(studentId);
+        //    if (examens == null)
+        //        return BadRequest("Не найден данный студент");
+        //    return Ok(examens);
+        //}
 
         [Route("CreateExamen")]
         [HttpPost]
