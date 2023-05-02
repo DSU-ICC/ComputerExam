@@ -75,10 +75,10 @@ namespace DSUContextDBService.DBService
 
                 entity.Property(e => e.FacId).HasColumnName("FAC_ID");
 
-                entity.Property(e => e.Godequalif)
-                    .HasMaxLength(2)
-                    .IsUnicode(false)
-                    .HasColumnName("GODEQUALIF");
+                //entity.Property(e => e.Godequalif)
+                //    .HasMaxLength(2)
+                //    .IsUnicode(false)
+                //    .HasColumnName("GODEQUALIF");
 
                 entity.Property(e => e.Qualification)
                     .HasMaxLength(250)
