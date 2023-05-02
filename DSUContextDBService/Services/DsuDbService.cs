@@ -86,7 +86,7 @@ namespace DSUContextDBService.Services
 
         public IQueryable<string?> GetGroupsByDepartmentId(int departmentId, int course)
         {
-            var ngroup = _dSUContext.CaseSStudents.Where(x => x.DepartmentId == departmentId && x.DepartmentId == course).Select(c => c.Ngroup);
+            var ngroup = _dSUContext.CaseSStudents.Where(x => x.DepartmentId == departmentId && x.Course == course).Select(c => c.Ngroup);
             return ngroup.Distinct();
         }
     }
