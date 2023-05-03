@@ -72,14 +72,18 @@ namespace ComputerExam.Controllers
 
         [Route("StartExamen")]
         [HttpGet]
-        public async Task<IActionResult> StartExamen(int studentId,int examId)
+        public async Task<IActionResult> StartExamen(int studentId, int examId)
         {
+            var examDate = _examenRepository.FindById(examId).ExamDate;
+            if (examDate != DateTime.Now.Date)
+                return BadRequest($"Экзамен проводится {examDate}");
+           
             await _answerBlankRepository.Create(new AnswerBlank()
             {
-                StudentId= studentId,
-                ExamTicketId= examId
+                StudentId = studentId,
+                ExamTicketId = examId
             });
-            return Ok(_examTicketRepository.Get().OrderBy(x=>new Guid()).First());
+            return Ok(_examTicketRepository.Get().OrderBy(x => new Guid()).First());
         }
 
         //[Route("GetExamenByStudentId")]

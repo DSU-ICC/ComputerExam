@@ -18,42 +18,48 @@ namespace ComputerExam.Controllers
 
         [Route("GetFaculties")]
         [HttpGet]
-        public async Task<IActionResult> GetFaculties()
+        public IActionResult GetFaculties()
         {
-            return Ok(await _dsuDbService.GetFaculties().ToListAsync());
+            return Ok(_dsuDbService.GetFaculties());
         }
 
         [Route("GetCaseSDepartmentByFacultyId")]
         [HttpGet]
-        public async Task<IActionResult> GetCaseSDepartmentByFacultyId(int facultyId)
+        public IActionResult GetCaseSDepartmentByFacultyId(int facultyId)
         {
-            return Ok(await _dsuDbService.GetCaseSDepartmentByFacultyId(facultyId).ToListAsync());
+            return Ok(_dsuDbService.GetCaseSDepartmentByFacultyId(facultyId));
         }
 
         [Route("GetCourseByDepartmentId")]
         [HttpGet]
-        public async Task<IActionResult> GetCourseByDepartmentId(int departmentId)
+        public IActionResult GetCourseByDepartmentId(int departmentId)
         {
-            return Ok(await _dsuDbService.GetCoursesByDepartmentId(departmentId).ToListAsync());
+            return Ok(_dsuDbService.GetCoursesByDepartmentId(departmentId));
         }
 
-        [Route("GetGroupsByDepartmentId")]
+        [Route("GetGroupsByDepartmentIdAndCourse")]
         [HttpGet]
-        public async Task<IActionResult> GetGroupsByDepartmentId(int departmentId, int course)
+        public IActionResult GetGroupsByDepartmentIdAndCourse(int departmentId, int course)
         {
-            return Ok(await _dsuDbService.GetGroupsByDepartmentId(departmentId, course).ToListAsync());
+            return Ok(_dsuDbService.GetGroupsByDepartmentId(departmentId, course));
         }
 
-        [Route("GetStudentsByDepartmentAndCourse")]
+        [Route("GetStudentsByCourse")]
         [HttpGet]
-        public async Task<IActionResult> GetStudentsByDepartmentAndCourse(int departmentId, int course, string ngroup)
+        public IActionResult GetStudentsByCourse(int departmentId, int course)
         {
-            var students = await _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == departmentId && x.Course == course && x.Ngroup == ngroup).ToListAsync();
-            return Ok(students);
+            return Ok(_dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == departmentId && x.Course == course));
+        }
+
+        [Route("GetStudentsByCourseAndGroup")]
+        [HttpGet]
+        public IActionResult GetStudentsByCourseAndGroup(int departmentId, int course, string ngroup)
+        {
+            return Ok(_dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == departmentId && x.Course == course && x.Ngroup == ngroup));
         }
 
         [Route("SignInStudent")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult SignInStudent(int studentId, string nzachkn)
         {
             var student = _dsuDbService.GetCaseSStudents().FirstOrDefault(x => x.Id == studentId && x.Nzachkn == nzachkn);
@@ -64,9 +70,9 @@ namespace ComputerExam.Controllers
 
         [Route("GetTeachers")]
         [HttpGet]
-        public async Task<IActionResult> GetTeachers()
+        public IActionResult GetTeachers()
         {
-            return Ok(await _dsuDbService.GetCaseSTeachers().ToListAsync());
+            return Ok(_dsuDbService.GetCaseSTeachers());
         }
     }
 }
