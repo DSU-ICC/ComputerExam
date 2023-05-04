@@ -9,9 +9,10 @@ namespace DomainService.DBService
     public class ApplicationContext : IdentityDbContext<Employee>
     {
         public DbSet<Examen> Examens { get; set; } = null!;
+        public DbSet<ExamTicket> ExamTickets { get; set; } = null!;
         public DbSet<Question> Questions { get; set; } = null!;
         public DbSet<Answer> Answers { get; set; } = null!;
-        public DbSet<AnswerBlank> ExamStudents { get; set; } = null!;
+        public DbSet<AnswerBlank> AnswerBlanks { get; set; } = null!;
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)

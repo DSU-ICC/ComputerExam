@@ -9,7 +9,7 @@ namespace DomainService.DtoModels
 {
     public class ExamenStudentDto
     {
-        public int ExamenStudentId { get; set; }
+        public int ExamenId { get; set; }
         public string Discipline { get; set; }
     }
 }

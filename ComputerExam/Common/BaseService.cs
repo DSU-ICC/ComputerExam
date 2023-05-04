@@ -13,6 +13,7 @@ namespace ComputerExam.Common
 
             #region Repositories            
             services.AddScoped<IExamenRepository, ExamenRepository>();
+            services.AddScoped<IExamTicketRepository, ExamTicketRepository>();
             services.AddScoped<IAnswerBlankRepository, AnswerBlankRepository>();
             services.AddScoped<IQuestionRepository, QuestionRepository>();
             services.AddScoped<IAnswerRepository, AnswerRepository>();

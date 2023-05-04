@@ -57,7 +57,7 @@ namespace ComputerExam.Controllers
 
             List<ExamenStudentDto> examenStudentDtos = await examens.Select(x => new ExamenStudentDto
             {
-                ExamenStudentId = x.Id,
+                ExamenId = x.Id,
                 Discipline = x.Discipline
             }).ToListAsync();
             return Ok(examenStudentDtos);
