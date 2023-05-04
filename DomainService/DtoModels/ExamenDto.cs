@@ -14,5 +14,6 @@ namespace DomainService.DtoModels
         public CaseSDepartment Department { get; set; }
         public int Course { get; set; }
         public string Group { get; set; }
+        public DateTime ExamDate { get; set; }
     }
 }

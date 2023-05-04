@@ -64,7 +64,7 @@ namespace ComputerExam.Controllers
                 if (result.Succeeded)
                     return Ok();
                 else
-                    ModelState.AddModelError("", "Неправильный логин и (или) пароль");
+                    return BadRequest("Неправильный логин и (или) пароль");
             }
             return BadRequest();
         }

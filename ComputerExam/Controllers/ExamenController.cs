@@ -44,6 +44,7 @@ namespace ComputerExam.Controllers
                    Group = i.NGroup,
                    Course = (int)i.Course,
                    Department = _dsuDbService.GetCaseSDepartmentById(i.DepartmentId),
+                   ExamDate = (DateTime)i.ExamDate,
                }).ToListAsync();
             return Ok(examenDto);
         }
@@ -58,9 +59,35 @@ namespace ComputerExam.Controllers
             List<ExamenStudentDto> examenStudentDtos = await examens.Select(x => new ExamenStudentDto
             {
                 ExamenId = x.Id,
-                Discipline = x.Discipline
+                Discipline = x.Discipline,
+                ExamDate = (DateTime)x.ExamDate
             }).ToListAsync();
             return Ok(examenStudentDtos);
+        }
+
+        [Route("GetStudentsByExamenId")]
+        [HttpGet]
+        public async Task<IActionResult> GetStudentsByExamenId(int examenId)
+        {
+            var examen = _examenRepository.Get().Include(x => x.Tickets).FirstOrDefault(x => x.Id == examenId);
+            var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
+            var answerBlankPre = _answerBlankRepository.Get().ToList();
+            var answerBlanks = answerBlankPre.Where(x => examen.Tickets.Any(c => c.Id == x.ExamTicketId)).ToList();
+
+            List<StudentsDto> studentsDtos = new();
+
+            foreach (var student in students)
+            {
+                studentsDtos.Add(new StudentsDto
+                {
+                    StudentId = student.Id,
+                    FirstName = student.Firstname,
+                    LastName = student.Lastname,
+                    Patr = student.Patr,
+                    TotalScore = answerBlanks.FirstOrDefault(c => c.StudentId == student.Id)?.TotalScore
+                });
+            }
+            return Ok(studentsDtos);
         }
 
         //[Route("GetExamenById")]
@@ -77,7 +104,7 @@ namespace ComputerExam.Controllers
             var examDate = _examenRepository.FindById(examId).ExamDate;
             if (examDate != DateTime.Now.Date)
                 return BadRequest($"Экзамен проводится {examDate}");
-           
+
             await _answerBlankRepository.Create(new AnswerBlank()
             {
                 StudentId = studentId,

@@ -11,5 +11,6 @@ namespace DomainService.DtoModels
     {
         public int ExamenId { get; set; }
         public string Discipline { get; set; }
+        public DateTime ExamDate { get; set; }
     }
 }
