@@ -1,4 +1,5 @@
-﻿using DomainService.Entity;
+﻿using DomainService.DtoModels;
+using DomainService.Entity;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore;
@@ -12,12 +13,12 @@ namespace ComputerExam.Controllers
     public class AnswerBlankController : Controller
     {
         private readonly IAnswerBlankRepository _answerBlankRepository;
-        private readonly IExamenRepository _examenRepository;
+        private readonly IExamTicketRepository _examTicketRepository;
 
-        public AnswerBlankController(IAnswerBlankRepository answerBlankRepository, IExamenRepository examenRepository)
+        public AnswerBlankController(IAnswerBlankRepository answerBlankRepository, IExamTicketRepository examTicketRepository)
         {
             _answerBlankRepository = answerBlankRepository;
-            _examenRepository = examenRepository;
+            _examTicketRepository = examTicketRepository;
         }
 
         [HttpGet]
@@ -29,9 +30,9 @@ namespace ComputerExam.Controllers
 
         [HttpGet]
         [Route("GetAnswerBlanksByExamenIdStudentId")]
-        public async Task<IActionResult> GetAnswerBlanksByExamenIdStudentId(int examTicketId,int studentId)
+        public IActionResult GetAnswerBlanksByExamenIdStudentId(int examTicketId, int studentId)
         {
-            return Ok(await _answerBlankRepository.Get().Include(x=>x.Answers).FirstOrDefaultAsync(x => x.ExamTicketId == examTicketId && x.StudentId==studentId));
+            return Ok(_answerBlankRepository.Get().Include(x => x.Answers).FirstOrDefault(x => x.ExamTicketId == examTicketId && x.StudentId == studentId));
         }
 
         [HttpGet]
@@ -41,21 +42,20 @@ namespace ComputerExam.Controllers
             return Ok(_answerBlankRepository.FindById(id));
         }
 
-        /// <summary>
-        /// Старт экзамена
-        /// </summary>
-        /// <param name="answerBlank"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("CreateAnswerBlank")]
-        public async Task<IActionResult> CreateAnswerBlank(AnswerBlank answerBlank)
+        [HttpGet]
+        [Route("GetAnswerBlankAndTicketByStudentId")]
+        public IActionResult GetAnswerBlankAndTicketByStudentId(int studentId)
         {
-            var examen = _examenRepository.Get().Include(x => x.Tickets).FirstOrDefault(c => c.Id == answerBlank.ExamTicketId);
-            if (examen == null)
-                return BadRequest("Экзамен не найден");
-            var ticket = examen.Tickets.FirstOrDefault(x => x.Id == answerBlank.ExamTicketId);
-            await _answerBlankRepository.Create(answerBlank);
-            return Ok();
+            var answerBlank = _answerBlankRepository.Get().Include(x => x.Answers).Where(x => x.StudentId == studentId);
+            var tickets = _examTicketRepository.Get().Include(x => x.Questions);
+
+            var answerBlankAndTicketDto = answerBlank.Select(x => new AnswerBlankAndTicketDto()
+            {
+                AnswerBlank = x,
+                Ticket = tickets.FirstOrDefault(c => c.Id == x.ExamTicketId)
+            });
+
+            return Ok(answerBlankAndTicketDto);
         }
 
         /// <summary>
@@ -67,6 +67,20 @@ namespace ComputerExam.Controllers
         [Route("UpdateAnswerBlank")]
         public async Task<IActionResult> UpdateAnswerBlank(AnswerBlank answerBlank)
         {
+            await _answerBlankRepository.Update(answerBlank);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Конец экзамена
+        /// </summary>
+        /// <param name="answerBlank"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("EndExamen")]
+        public async Task<IActionResult> EndExamen(AnswerBlank answerBlank)
+        {
+            answerBlank.EndExamenDateTime = DateTime.Now;
             await _answerBlankRepository.Update(answerBlank);
             return Ok();
         }

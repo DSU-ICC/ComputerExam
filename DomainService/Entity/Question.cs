@@ -18,5 +18,6 @@
         /// Текст вопроса
         /// </summary>
         public string? Text { get; set; }
+        public bool? IsDeleted { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using DomainService.Entity;
 using Infrastructure.Common;
 using Infrastructure.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,11 @@ namespace Infrastructure.Repositories
         public ExamTicketRepository(ApplicationContext dbContext) : base(dbContext)
         {
 
+        }
+
+        public ExamTicket GetRandomTicket(int examId)
+        {
+            return Get().Include(x => x.Questions).Where(x => x.ExamenId == examId).OrderBy(x => new Guid()).First();
         }
     }
 }

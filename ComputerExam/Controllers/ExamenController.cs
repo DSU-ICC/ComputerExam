@@ -11,32 +11,30 @@ namespace ComputerExam.Controllers
     [Route("[controller]")]
     public class ExamenController : Controller
     {
-        private readonly IExamenRepository _examenRepository;
         private readonly IDsuDbService _dsuDbService;
-        private readonly IExamTicketRepository _examTicketRepository;
+        private readonly IExamenRepository _examenRepository;
         private readonly IAnswerBlankRepository _answerBlankRepository;
 
-        public ExamenController(IExamenRepository examenRepository, IDsuDbService dsuDbService, IExamTicketRepository examTicketRepository, IAnswerBlankRepository answerBlankRepository)
+        public ExamenController(IDsuDbService dsuDbService, IExamenRepository examenRepository, IAnswerBlankRepository answerBlankRepository)
         {
-            _examenRepository = examenRepository;
             _dsuDbService = dsuDbService;
-            _examTicketRepository = examTicketRepository;
+            _examenRepository = examenRepository;
             _answerBlankRepository = answerBlankRepository;
         }
 
         [Route("GetExamens")]
         [HttpGet]
-        public async Task<IActionResult> GetExamensAsync()
+        public IActionResult GetExamens()
         {
-            return Ok(await _examenRepository.Get().ToListAsync());
+            return Ok(_examenRepository.Get());
         }
 
         [Route("GetExamensByTeacherId")]
         [HttpGet]
-        public async Task<IActionResult> GetExamensByTeacherId(int teacherId)
+        public IActionResult GetExamensByTeacherId(Guid employeeId)
         {
-            var examenDto = await _examenRepository.Get()
-               .Where(x => x.IdTeacher == teacherId)
+            var examenDto = _examenRepository.Get()
+               .Where(x => x.EmployeeId == employeeId)
                .Select(i => new ExamenDto()
                {
                    ExamenId = i.Id,
@@ -45,7 +43,7 @@ namespace ComputerExam.Controllers
                    Course = (int)i.Course,
                    Department = _dsuDbService.GetCaseSDepartmentById(i.DepartmentId),
                    ExamDate = (DateTime)i.ExamDate,
-               }).ToListAsync();
+               });
             return Ok(examenDto);
         }
 
@@ -71,8 +69,8 @@ namespace ComputerExam.Controllers
         {
             var examen = _examenRepository.Get().Include(x => x.Tickets).FirstOrDefault(x => x.Id == examenId);
             var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
-            var answerBlankPre = _answerBlankRepository.Get().ToList();
-            var answerBlanks = answerBlankPre.Where(x => examen.Tickets.Any(c => c.Id == x.ExamTicketId)).ToList();
+            var answerBlankPre = await _answerBlankRepository.Get().ToListAsync();
+            var answerBlanks = answerBlankPre.Where(x => examen.Tickets.Any(c => c.Id == x.ExamTicketId));
 
             List<StudentsDto> studentsDtos = new();
 
@@ -90,47 +88,34 @@ namespace ComputerExam.Controllers
             return Ok(studentsDtos);
         }
 
-        //[Route("GetExamenById")]
-        //[HttpGet]
-        //public IActionResult GetExamenById(int id)
-        //{
-        //    return Ok(_examenRepository.FindById(id));
-        //}
-
         [Route("StartExamen")]
         [HttpGet]
         public async Task<IActionResult> StartExamen(int studentId, int examId)
         {
-            var examDate = _examenRepository.FindById(examId).ExamDate;
-            if (examDate != DateTime.Now.Date)
-                return BadRequest($"Экзамен проводится {examDate}");
+            var examen = _examenRepository.Get().Include(x => x.Tickets).ThenInclude(x => x.Questions).FirstOrDefault(x => x.Id == examId);
+            if (examen == null)
+                return BadRequest("Экзамен не найден");
 
-            await _answerBlankRepository.Create(new AnswerBlank()
+            if (examen.ExamDate.Value.Date != DateTime.Now.Date)
+                return BadRequest($"Экзамен проводится {examen.ExamDate.Value.Date}");
+
+            var ticket = examen.Tickets.OrderBy(x => new Guid()).First();
+
+            var answerBlank = new AnswerBlank()
             {
                 StudentId = studentId,
-                ExamTicketId = examId
-            });
-            return Ok(_examTicketRepository.Get().OrderBy(x => new Guid()).First());
+                ExamTicketId = ticket.Id
+            };
+            await _answerBlankRepository.Create(answerBlank);
+
+            StartExamenDto startExamenDto = new()
+            {
+                AnswerBlank = answerBlank,
+                ExamTicket = ticket,
+                ExamenDuration = examen.ExamDurationInMitutes
+            };
+            return Ok(startExamenDto);
         }
-
-        //[Route("GetExamenByStudentId")]
-        //[HttpGet]
-        //public IActionResult GetExamenByStudentId(int studentId)
-        //{
-        //    var student = _dsuDbService.GetCaseSStudentById(studentId);
-        //    var examens = _examenRepository.Get().Where(x => x.DepartmentId == student.DepartmentId && x.Course == student.Course && x.NGroup == student.Ngroup);
-        //    return Ok(examens);
-        //}
-
-        //[Route("GetExamensByStudentId")]
-        //[HttpGet]
-        //public async Task<IActionResult> GetExamensByStudentId(int studentId)
-        //{
-        //    var examens = _examenRepository.GetExamensByStudentId(studentId);
-        //    if (examens == null)
-        //        return BadRequest("Не найден данный студент");
-        //    return Ok(examens);
-        //}
 
         [Route("CreateExamen")]
         [HttpPost]

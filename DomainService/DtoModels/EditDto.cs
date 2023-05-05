@@ -8,7 +8,7 @@ namespace DomainService.DtoModels
 {
     public class EditDto
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Login { get; set; }
         public string? Password { get; set; }
     }

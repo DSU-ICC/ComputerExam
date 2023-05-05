@@ -7,9 +7,9 @@
     {
         public int Id { get; set; }
         /// <summary>
-        /// Id преподавателя создавшего экзамен
+        /// Id создавшего экзамен
         /// </summary>
-        public int? IdTeacher { get; set; }
+        public Guid? EmployeeId { get; set; }
         /// <summary>
         /// Id направления
         /// </summary>
@@ -38,5 +38,6 @@
         /// Продолжительность экзамена в минутах 
         /// </summary>
         public int? ExamDurationInMitutes { get; set; }
+        public bool? IsDeleted { get; set; }
     }
 }

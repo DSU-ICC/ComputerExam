@@ -35,7 +35,7 @@ namespace ComputerExam.Controllers
         public async Task<IActionResult> CreateAnswer(Answer answer)
         {
             await _answerRepository.Create(answer);
-            return Ok();
+            return Ok(answer);
         }
 
         [Route("UpdateAnswer")]

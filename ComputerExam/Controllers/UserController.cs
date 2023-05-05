@@ -1,10 +1,6 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using DomainService.Entity;
-using Sentry;
-using Microsoft.EntityFrameworkCore;
 using DomainService.DtoModels;
 
 namespace ComputerExam.Controllers
@@ -28,17 +24,32 @@ namespace ComputerExam.Controllers
             return Ok(_userManager.Users);
         }
 
-        [Route("EditEmployee")]
-        [HttpPut]
-        public async Task<IActionResult> EditEmployee(EditDto _editDto)
+        [Route("Register")]
+        [HttpPost]
+        public async Task<IActionResult> CreateEmployee(RegistrationDto model)
         {
             if (ModelState.IsValid)
             {
-                Employee employee = await _userManager.FindByIdAsync(_editDto.Id.ToString());
+                Employee user = new() { UserName = model.Login };
+                var result = await _userManager.CreateAsync(user, model.Password);
+                
+                if (result.Succeeded)
+                    return Ok();
+            }
+            return BadRequest();
+        }
+
+        [Route("EditEmployee")]
+        [HttpPut]
+        public async Task<IActionResult> EditEmployee(EditDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                Employee employee = await _userManager.FindByIdAsync(model.Id.ToString());
                 if (employee != null)
                 {
-                    employee.UserName = _editDto.Login;
-                    employee.PasswordHash = _editDto.Password;
+                    employee.UserName = model.Login;
+                    employee.PasswordHash = model.Password;
                 }
             }
             return Ok();

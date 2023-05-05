@@ -18,5 +18,6 @@
         /// Список вопросов
         /// </summary>
         public List<Question>? Questions { get; set; }
+        public bool? IsDeleted { get; set; }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using DomainService.Entity;
-using DSUContextDBService.Interface;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Sockets;
 
 namespace ComputerExam.Controllers
 {
@@ -10,15 +8,11 @@ namespace ComputerExam.Controllers
     [Route("[controller]")]
     public class TicketController : Controller
     {
-        private readonly IExamenRepository _examenRepository;
         private readonly IExamTicketRepository _examTicketRepository;
-        private readonly IDsuDbService _dsuDbService;
 
-        public TicketController(IExamenRepository examenRepository, IExamTicketRepository examTicketRepository, IDsuDbService dsuDbService)
+        public TicketController(IExamTicketRepository examTicketRepository)
         {
-            _examenRepository = examenRepository;
             _examTicketRepository = examTicketRepository;
-            _dsuDbService = dsuDbService;
         }
 
         [Route("CreateTicket")]

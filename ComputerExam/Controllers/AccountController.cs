@@ -9,12 +9,10 @@ namespace ComputerExam.Controllers
     [Route("[controller]")]
     public class AccountController : Controller
     {
-        private readonly UserManager<Employee> _userManager;
         private readonly SignInManager<Employee> _signInManager;
 
-        public AccountController(UserManager<Employee> userManager, SignInManager<Employee> signInManager)
+        public AccountController(SignInManager<Employee> signInManager)
         {
-            _userManager = userManager;
             _signInManager = signInManager;
         }
 
@@ -24,32 +22,6 @@ namespace ComputerExam.Controllers
         {
             // удаляем аутентификационные куки
             await _signInManager.SignOutAsync();
-            return Ok();
-        }
-
-        [Route("Register")]
-        [HttpPost]
-        public async Task<IActionResult> Register(RegistrationDto registrationDto)
-        {
-            if (ModelState.IsValid)
-            {
-                Employee employee = new() { UserName = registrationDto.Login, TeacherId = registrationDto.TeacherId };
-                // добавляем пользователя
-                var result = await _userManager.CreateAsync(employee, registrationDto.Password);
-                if (result.Succeeded)
-                {
-                    // установка куки
-                    await _signInManager.SignInAsync(employee, false);
-                    return Ok();
-                }
-                else
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                }
-            }
             return Ok();
         }
 

@@ -9,15 +9,15 @@
         /// <summary>
         /// Id студента
         /// </summary>
-        public int? IdStudent { get; set; }
+        public int? StudentId { get; set; }
         /// <summary>
         /// Id вопроса
         /// </summary>
-        public int? IdQuestion { get; set; }
+        public int? QuestionId { get; set; }
         /// <summary>
         /// Id бланка с ответами студента
         /// </summary>
-        public int? IdAnswerBlank { get; set; }
+        public int? AnswerBlankId { get; set; }
         /// <summary>
         /// Текст ответа
         /// </summary>
@@ -25,10 +25,11 @@
         /// <summary>
         /// Время создания ответа
         /// </summary>
-        public DateTime CreateAnswer { get; set; } = DateTime.Now;
+        public DateTime? CreateAnswerDate { get; set; } = DateTime.Now;
         /// <summary>
         /// Время последнего обновления ответа
         /// </summary>
-        public DateTime UpdateAnswer { get; set; }
+        public DateTime? UpdateAnswerDate { get; set; }
+        public bool? IsDeleted { get; set; }
     }
 }

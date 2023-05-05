@@ -25,10 +25,11 @@
         /// <summary>
         /// Дата создания бланка ответов
         /// </summary>
-        public DateTime CreateDateTime { get; set; } = DateTime.Now;
+        public DateTime? CreateDateTime { get; set; } = DateTime.Now;
         /// <summary>
         /// Дата окончания экзамена
         /// </summary>
         public DateTime? EndExamenDateTime { get; set; }
+        public bool? IsDeleted { get; set; }
     }
 }

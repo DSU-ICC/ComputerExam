@@ -17,9 +17,5 @@ namespace DomainService.DtoModels
         [DataType(DataType.Password)]
         [Display(Name = "Пароль")]
         public string Password { get; set; }
-
-        
-        [Display(Name = "TeacherId")]
-        public int TeacherId { get; set; }
     }
 }
