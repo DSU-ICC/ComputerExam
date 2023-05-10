@@ -35,23 +35,9 @@ namespace ComputerExam.Controllers
 
         [Route("DeleteTicket")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteTicket(int id)
+        public IActionResult DeleteTicket(int id)
         {
-            try
-            {
-                await _examTicketRepository.Remove(id);
-            }
-            catch (Exception)
-            {
-                var ticket = _examTicketRepository.Get().Include(x => x.Questions).FirstOrDefault(x => x.Id == id);
-                if (ticket == null)
-                    return BadRequest("Билет не найден");
-
-                ticket.IsDeleted = true;
-                ticket.Questions?.ForEach(c => c.IsDeleted = true);
-                await _examTicketRepository.Update(ticket);
-                throw;
-            }
+            _examTicketRepository.DeleteTicket(id);
             return Ok();
         }
     }

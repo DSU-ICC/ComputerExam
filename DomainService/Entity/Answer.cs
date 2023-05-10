@@ -14,6 +14,7 @@
         /// Id вопроса
         /// </summary>
         public int? QuestionId { get; set; }
+        public Question? Question { get; set; }
         /// <summary>
         /// Id бланка с ответами студента
         /// </summary>

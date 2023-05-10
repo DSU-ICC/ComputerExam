@@ -17,5 +17,19 @@ namespace Infrastructure.Repositories
         {
             return Get().Where(x => x.IsDeleted == false);
         }
+
+        public async Task DeleteQuestion(int id)
+        {
+            try
+            {
+                await Remove(id);
+            }
+            catch (Exception)
+            {
+                var question = FindById(id);
+                question.IsDeleted = true;
+                await Update(question);
+            }
+        }
     }
 }

@@ -7,5 +7,6 @@ namespace Infrastructure.Repositories.Interfaces
     {
         public ExamTicket GetRandomTicket(int examId);
         public IQueryable<ExamTicket> GetTickets();
+        public Task DeleteTicket(int id);
     }
 }

@@ -27,5 +27,23 @@ namespace Infrastructure.Repositories
         {
             return Get().Where(x => x.IsDeleted == false);
         }
+
+        public async Task DeleteTicket(int id)
+        {
+            try
+            {
+                await Remove(id);
+            }
+            catch (Exception)
+            {
+                var ticket = GetWithTracking().Include(x => x.Questions).FirstOrDefault(x => x.Id == id);
+                if (ticket != null)
+                {
+                    ticket.IsDeleted = true;
+                    ticket.Questions?.ForEach(c => c.IsDeleted = true);
+                    await Update(ticket);
+                }
+            }
+        }
     }
 }

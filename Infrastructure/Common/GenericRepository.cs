@@ -19,6 +19,11 @@ namespace Infrastructure.Common
             return _dbSet.AsNoTracking();
         }
 
+        public IQueryable<TEntity> GetWithTracking()
+        {
+            return _dbSet.AsTracking();
+        }
+
         public IEnumerable<TEntity> Get(Func<TEntity, bool> predicate)
         {
             return _dbSet.AsNoTracking().Where(predicate);

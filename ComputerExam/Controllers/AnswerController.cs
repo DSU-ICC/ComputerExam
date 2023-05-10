@@ -18,9 +18,9 @@ namespace ComputerExam.Controllers
 
         [Route("GetAnswers")]
         [HttpGet]
-        public async Task<IActionResult> GetAnswers()
+        public IActionResult GetAnswers()
         {
-            return Ok(await _answerRepository.Get().ToListAsync());
+            return Ok(_answerRepository.Get());
         }
 
         [Route("GetAnswerById")]

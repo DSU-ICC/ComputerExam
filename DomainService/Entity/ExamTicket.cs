@@ -14,6 +14,7 @@
         /// Id экзамена
         /// </summary>
         public int? ExamenId { get; set; }
+        public Examen? Examen { get; set; }
         /// <summary>
         /// Список вопросов
         /// </summary>

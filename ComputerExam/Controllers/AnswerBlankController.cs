@@ -27,31 +27,24 @@ namespace ComputerExam.Controllers
         }
 
         [HttpGet]
-        [Route("GetAnswerBlanksByExamenIdAndStudentId")]
-        public IActionResult GetAnswerBlanksByExamenIdAndStudentId(int examId, int studentId)
+        [Route("GetAnswerBlankByExamenIdAndStudentId")]
+        public IActionResult GetAnswerBlankByExamenIdAndStudentId(int studentId, int examId)
         {
-            return Ok(_answerBlankRepository.Get().Include(x => x.Answers).FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examId));
+            return Ok(_answerBlankRepository.GetAnswerBlankByStudentIdAndExamenId(studentId, examId));
         }
 
         [HttpGet]
         [Route("GetAnswerBlankById")]
         public IActionResult GetAnswerBlankById(int id)
         {
-            return Ok(_answerBlankRepository.FindById(id));
+            return Ok(_answerBlankRepository.Get().Include(x => x.Answers).FirstOrDefault(x => x.Id == id));
         }
 
         [HttpGet]
-        [Route("GetAnswerBlankAndTicketByStudentId")]
-        public IActionResult GetAnswerBlankAndTicketByStudentId(int studentId)
+        [Route("GetAnswerBlanksAndTicketByStudentId")]
+        public IActionResult GetAnswerBlanksAndTicketByStudentId(int studentId)
         {
-            var answerBlank = _answerBlankRepository.Get().Include(x => x.Answers).Where(x => x.StudentId == studentId);
-            var answerBlankAndTicketDto = answerBlank.Select(x => new AnswerBlankAndTicketDto()
-            {
-                AnswerBlank = x,
-                Ticket = x.ExamTicket
-            });
-
-            return Ok(answerBlankAndTicketDto);
+            return Ok(_answerBlankRepository.GetAnswerBlanksAndTicketByStudentId(studentId));
         }
 
         /// <summary>

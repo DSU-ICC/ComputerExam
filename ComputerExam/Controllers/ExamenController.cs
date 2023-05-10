@@ -11,19 +11,17 @@ namespace ComputerExam.Controllers
     [Route("[controller]")]
     public class ExamenController : Controller
     {
-        private readonly IDsuDbService _dsuDbService;
         private readonly IExamenRepository _examenRepository;
-        private readonly IAnswerBlankRepository _answerBlankRepository;
-        private readonly IExamTicketRepository _examTicketRepository;
 
-        public ExamenController(IDsuDbService dsuDbService, IExamenRepository examenRepository, IAnswerBlankRepository answerBlankRepository, IExamTicketRepository examTicketRepository)
+        public ExamenController(IExamenRepository examenRepository)
         {
-            _dsuDbService = dsuDbService;
             _examenRepository = examenRepository;
-            _answerBlankRepository = answerBlankRepository;
-            _examTicketRepository = examTicketRepository;
         }
 
+        /// <summary>
+        /// Получение всех активных экзаменов
+        /// </summary>
+        /// <returns></returns>
         [Route("GetExamens")]
         [HttpGet]
         public IActionResult GetExamens()
@@ -31,124 +29,76 @@ namespace ComputerExam.Controllers
             return Ok(_examenRepository.GetExamens());
         }
 
+        /// <summary>
+        /// Получение экзаменов по Id сотрудника
+        /// </summary>
+        /// <param name="employeeId"></param>
+        /// <returns></returns>
         [Route("GetExamensByEmployeeId")]
         [HttpGet]
         public IActionResult GetExamensByEmployeeId(Guid employeeId)
         {
-            var examenDto = _examenRepository.GetExamens()
-               .Where(x => x.EmployeeId == employeeId)
-               .Select(i => new ExamenDto()
-               {
-                   ExamenId = i.Id,
-                   Discipline = i.Discipline,
-                   Group = i.NGroup,
-                   Course = (int)i.Course,
-                   Department = _dsuDbService.GetCaseSDepartmentById(i.DepartmentId),
-                   ExamDate = (DateTime)i.ExamDate,
-                   ExamDurationInMitutes = i.ExamDurationInMitutes,
-                   ExamTickets = _examTicketRepository.Get().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),
-               });
-            return Ok(examenDto);
+            return Ok(_examenRepository.GetExamensByEmployeeId(employeeId));
         }
 
+        /// <summary>
+        /// Получение экзаменов по Id студента
+        /// </summary>
+        /// <param name="studentId"></param>
+        /// <returns></returns>
         [Route("GetExamensByStudentId")]
         [HttpGet]
         public IActionResult GetExamensByStudentId(int studentId)
         {
-            var student = _dsuDbService.GetCaseSStudentById(studentId);
-            var examens = _examenRepository.GetExamens().Include(x => x.Tickets.Where(x => x.IsDeleted == false))
-                                                        .Where(x => x.DepartmentId == student.DepartmentId && x.Course == student.Course);
-
-            var examenStudentDtos = examens.Select(examen => new ExamenStudentDto()
-            {
-                ExamenId = examen.Id,
-                Discipline = examen.Discipline,
-                AnswerBlank = _answerBlankRepository.Get().FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examen.Id),
-                ExamDate = (DateTime)examen.ExamDate
-            });
-            return Ok(examenStudentDtos);
+            return Ok(_examenRepository.GetExamensByStudentId(studentId));
         }
 
+        /// <summary>
+        /// Получение студентов по Id экзамена
+        /// </summary>
+        /// <param name="examenId"></param>
+        /// <returns></returns>
         [Route("GetStudentsByExamenId")]
         [HttpGet]
-        public async Task<IActionResult> GetStudentsByExamenId(int examenId)
+        public IActionResult GetStudentsByExamenId(int examenId)
         {
-            var examen = _examenRepository.GetExamens().Include(x => x.Tickets).FirstOrDefault(x => x.Id == examenId);
-            var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
-            var answerBlanks = await _answerBlankRepository.Get().Include(x => x.ExamTicket).Where(x => x.ExamTicket.ExamenId == examenId).ToListAsync();
-
-            List<StudentsDto> studentsDtos = new();
-
-            foreach (var student in students)
-            {
-                studentsDtos.Add(new StudentsDto
-                {
-                    StudentId = student.Id,
-                    FirstName = student.Firstname,
-                    LastName = student.Lastname,
-                    Patr = student.Patr,
-                    TotalScore = answerBlanks.FirstOrDefault(c => c.StudentId == student.Id)?.TotalScore
-                });
-            }
-            return Ok(studentsDtos);
+            return Ok(_examenRepository.GetStudentsByExamenId(examenId));
         }
 
+        /// <summary>
+        /// Получение студентов по Id экзамена для проверки их ответов преподавателем
+        /// </summary>
+        /// <param name="examenId"></param>
+        /// <returns></returns>
         [Route("GetStudentsByExamenIdForChecking")]
         [HttpGet]
-        public async Task<IActionResult> GetStudentsByExamenIdForChecking(int examenId)
+        public IActionResult GetStudentsByExamenIdForChecking(int examenId)
         {
-            var examen = _examenRepository.GetExamens().Include(x => x.Tickets).FirstOrDefault(x => x.Id == examenId);
-            var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
-            var answerBlanks = await _answerBlankRepository.Get().Include(x => x.ExamTicket)
-                                                                 .ThenInclude(x => x.Questions)
-                                                                 .Where(x => x.ExamTicket.ExamenId == examenId).ToListAsync();
-
-            List<ForCheckingDto> studentsDtos = new();
-            foreach (var student in students)
-            {
-                var answerBlank = answerBlanks.FirstOrDefault(c => c.StudentId == student.Id);
-                studentsDtos.Add(new ForCheckingDto
-                {
-                    StudentId = student.Id,
-                    TotalScore = answerBlank?.TotalScore,
-                    AnswerBlank = answerBlank,
-                    Examen = examen
-                });
-            }
-            return Ok(studentsDtos);
+            return Ok(_examenRepository.GetStudentsByExamenIdForChecking(examenId));
         }
 
+        /// <summary>
+        /// Функция начала экзамена
+        /// </summary>
+        /// <param name="studentId"></param>
+        /// <param name="examId"></param>
+        /// <returns></returns>
         [Route("StartExamen")]
         [HttpGet]
         public async Task<IActionResult> StartExamen(int studentId, int examId)
         {
-            var examen = _examenRepository.GetExamens().Include(x => x.Tickets.Where(c=>c.IsDeleted == false))
-                                                       .ThenInclude(x => x.Questions.Where(c => c.IsDeleted == false))
-                                                       .FirstOrDefault(x => x.Id == examId);
+            var examen = await _examenRepository.StartExamen(studentId, examId);
             if (examen == null)
                 return BadRequest("Экзамен не найден");
 
-            if (examen.ExamDate.Value.Date != DateTime.Now.Date)
-                return BadRequest($"Экзамен проводится {examen.ExamDate.Value.Date}");
-
-            var ticket = examen.Tickets?.OrderBy(x => new Guid()).First();
-
-            var answerBlank = new AnswerBlank()
-            {
-                StudentId = studentId,
-                ExamTicketId = ticket.Id
-            };
-            await _answerBlankRepository.Create(answerBlank);
-
-            StartExamenDto startExamenDto = new()
-            {
-                AnswerBlank = answerBlank,
-                ExamTicket = ticket,
-                ExamenDuration = examen.ExamDurationInMitutes
-            };
-            return Ok(startExamenDto);
+            return Ok(examen);
         }
 
+        /// <summary>
+        /// Создание экзамена
+        /// </summary>
+        /// <param name="examen"></param>
+        /// <returns></returns>
         [Route("CreateExamen")]
         [HttpPost]
         public async Task<IActionResult> CreateExamen(Examen examen)
@@ -157,6 +107,11 @@ namespace ComputerExam.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Обновление экзамена
+        /// </summary>
+        /// <param name="examen"></param>
+        /// <returns></returns>
         [Route("UpdateExamen")]
         [HttpPut]
         public async Task<IActionResult> UpdateExamen(Examen examen)
@@ -165,29 +120,16 @@ namespace ComputerExam.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Удаление экзамена
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Route("DeleteExamen")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteExamen(int id)
+        public IActionResult DeleteExamen(int id)
         {
-            try
-            {
-                await _examenRepository.Remove(id);
-            }
-            catch (Exception)
-            {
-                var examen = _examenRepository.Get().Include(x => x.Tickets).ThenInclude(c => c.Questions).FirstOrDefault(x => x.Id == id);
-                if (examen == null)
-                    return BadRequest("Экзамен не найден");
-
-                examen.IsDeleted = true;
-                examen.Tickets?.ForEach(x =>
-                {
-                    x.IsDeleted = true;
-                    x.Questions?.ForEach(c => c.IsDeleted = true);
-                });
-                await _examenRepository.Update(examen);
-                throw;
-            }
+            _examenRepository.DeleteExamen(id);
             return Ok();
         }
     }

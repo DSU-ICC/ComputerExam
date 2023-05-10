@@ -58,19 +58,9 @@ namespace ComputerExam.Controllers
 
         [Route("DeleteQuestion")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteQuestion(int id)
+        public IActionResult DeleteQuestion(int id)
         {
-            try
-            {
-                await _questionRepository.Remove(id);
-            }
-            catch (Exception)
-            {
-                var question = _questionRepository.FindById(id);
-                question.IsDeleted = true;
-                await _questionRepository.Update(question);
-                throw;
-            }
+            _questionRepository.DeleteQuestion(id);
             return Ok();
         }
     }
