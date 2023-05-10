@@ -1,6 +1,8 @@
 ﻿using DomainService.Entity;
+using Infrastructure.Repositories;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ComputerExam.Controllers
 {
@@ -35,7 +37,21 @@ namespace ComputerExam.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteTicket(int id)
         {
-            await _examTicketRepository.Remove(id);
+            try
+            {
+                await _examTicketRepository.Remove(id);
+            }
+            catch (Exception)
+            {
+                var ticket = _examTicketRepository.Get().Include(x => x.Questions).FirstOrDefault(x => x.Id == id);
+                if (ticket == null)
+                    return BadRequest("Билет не найден");
+
+                ticket.IsDeleted = true;
+                ticket.Questions?.ForEach(c => c.IsDeleted = true);
+                await _examTicketRepository.Update(ticket);
+                throw;
+            }
             return Ok();
         }
     }

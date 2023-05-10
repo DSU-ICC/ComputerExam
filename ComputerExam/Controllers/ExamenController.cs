@@ -28,14 +28,14 @@ namespace ComputerExam.Controllers
         [HttpGet]
         public IActionResult GetExamens()
         {
-            return Ok(_examenRepository.Get());
+            return Ok(_examenRepository.GetExamens());
         }
 
         [Route("GetExamensByEmployeeId")]
         [HttpGet]
         public IActionResult GetExamensByEmployeeId(Guid employeeId)
         {
-            var examenDto = _examenRepository.Get()
+            var examenDto = _examenRepository.GetExamens()
                .Where(x => x.EmployeeId == employeeId)
                .Select(i => new ExamenDto()
                {
@@ -56,25 +56,16 @@ namespace ComputerExam.Controllers
         public IActionResult GetExamensByStudentId(int studentId)
         {
             var student = _dsuDbService.GetCaseSStudentById(studentId);
-            var examens = _examenRepository.Get().Include(x => x.Tickets).Where(x => x.DepartmentId == student.DepartmentId && x.Course == student.Course);
-            List<ExamenStudentDto> examenStudentDtos = new();
+            var examens = _examenRepository.GetExamens().Include(x => x.Tickets.Where(x => x.IsDeleted == false))
+                                                        .Where(x => x.DepartmentId == student.DepartmentId && x.Course == student.Course);
 
-            foreach (var item in _answerBlankRepository.Get())
+            var examenStudentDtos = examens.Select(examen => new ExamenStudentDto()
             {
-                foreach (var examen in examens)
-                {
-                    if (examen.Tickets.Any(x => x.Id == item.Id))
-                    {
-                        examenStudentDtos.Add(new ExamenStudentDto
-                        {
-                            ExamenId = examen.Id,
-                            Discipline = examen.Discipline,
-                            AnswerBlank = item,
-                            ExamDate = (DateTime)examen.ExamDate
-                        });
-                    }
-                }
-            }
+                ExamenId = examen.Id,
+                Discipline = examen.Discipline,
+                AnswerBlank = _answerBlankRepository.Get().FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examen.Id),
+                ExamDate = (DateTime)examen.ExamDate
+            });
             return Ok(examenStudentDtos);
         }
 
@@ -82,7 +73,7 @@ namespace ComputerExam.Controllers
         [HttpGet]
         public async Task<IActionResult> GetStudentsByExamenId(int examenId)
         {
-            var examen = _examenRepository.Get().Include(x => x.Tickets).FirstOrDefault(x => x.Id == examenId);
+            var examen = _examenRepository.GetExamens().Include(x => x.Tickets).FirstOrDefault(x => x.Id == examenId);
             var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
             var answerBlanks = await _answerBlankRepository.Get().Include(x => x.ExamTicket).Where(x => x.ExamTicket.ExamenId == examenId).ToListAsync();
 
@@ -106,7 +97,7 @@ namespace ComputerExam.Controllers
         [HttpGet]
         public async Task<IActionResult> GetStudentsByExamenIdForChecking(int examenId)
         {
-            var examen = _examenRepository.Get().Include(x => x.Tickets).FirstOrDefault(x => x.Id == examenId);
+            var examen = _examenRepository.GetExamens().Include(x => x.Tickets).FirstOrDefault(x => x.Id == examenId);
             var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
             var answerBlanks = await _answerBlankRepository.Get().Include(x => x.ExamTicket)
                                                                  .ThenInclude(x => x.Questions)
@@ -131,14 +122,16 @@ namespace ComputerExam.Controllers
         [HttpGet]
         public async Task<IActionResult> StartExamen(int studentId, int examId)
         {
-            var examen = _examenRepository.Get().Include(x => x.Tickets).ThenInclude(x => x.Questions).FirstOrDefault(x => x.Id == examId);
+            var examen = _examenRepository.GetExamens().Include(x => x.Tickets.Where(c=>c.IsDeleted == false))
+                                                       .ThenInclude(x => x.Questions.Where(c => c.IsDeleted == false))
+                                                       .FirstOrDefault(x => x.Id == examId);
             if (examen == null)
                 return BadRequest("Экзамен не найден");
 
             if (examen.ExamDate.Value.Date != DateTime.Now.Date)
                 return BadRequest($"Экзамен проводится {examen.ExamDate.Value.Date}");
 
-            var ticket = examen.Tickets.OrderBy(x => new Guid()).First();
+            var ticket = examen.Tickets?.OrderBy(x => new Guid()).First();
 
             var answerBlank = new AnswerBlank()
             {
@@ -176,7 +169,25 @@ namespace ComputerExam.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteExamen(int id)
         {
-            await _examenRepository.Remove(id);
+            try
+            {
+                await _examenRepository.Remove(id);
+            }
+            catch (Exception)
+            {
+                var examen = _examenRepository.Get().Include(x => x.Tickets).ThenInclude(c => c.Questions).FirstOrDefault(x => x.Id == id);
+                if (examen == null)
+                    return BadRequest("Экзамен не найден");
+
+                examen.IsDeleted = true;
+                examen.Tickets?.ForEach(x =>
+                {
+                    x.IsDeleted = true;
+                    x.Questions?.ForEach(c => c.IsDeleted = true);
+                });
+                await _examenRepository.Update(examen);
+                throw;
+            }
             return Ok();
         }
     }

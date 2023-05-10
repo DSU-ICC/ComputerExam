@@ -1,4 +1,5 @@
 ﻿using DomainService.Entity;
+using Infrastructure.Repositories;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
@@ -22,14 +23,14 @@ namespace ComputerExam.Controllers
         [HttpGet]
         public async Task<IActionResult> GetQuestions()
         {
-            return Ok(await _questionRepository.Get().ToListAsync());
+            return Ok(await _questionRepository.GetQuestions().ToListAsync());
         }
 
         [Route("GetQuestionsByExamenId")]
         [HttpGet]
         public async Task<IActionResult> GetQuestionsByExamenId(int examenId)
         {
-            return Ok(await _questionRepository.Get().Where(x => x.ExamTicketId == examenId).ToListAsync());
+            return Ok(await _questionRepository.GetQuestions().Where(x => x.ExamTicketId == examenId).ToListAsync());
         }
 
         [Route("GetQuestionById")]
@@ -57,9 +58,19 @@ namespace ComputerExam.Controllers
 
         [Route("DeleteQuestion")]
         [HttpDelete]
-        public async Task<IActionResult> DeleteQuestion(Question question)
+        public async Task<IActionResult> DeleteQuestion(int id)
         {
-            await _questionRepository.Remove(question);
+            try
+            {
+                await _questionRepository.Remove(id);
+            }
+            catch (Exception)
+            {
+                var question = _questionRepository.FindById(id);
+                question.IsDeleted = true;
+                await _questionRepository.Update(question);
+                throw;
+            }
             return Ok();
         }
     }

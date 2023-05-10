@@ -73,8 +73,8 @@ namespace ComputerExam.Controllers
         /// <param name="answerBlank"></param>
         /// <returns></returns>
         [HttpPut]
-        [Route("EndExamen")]
-        public async Task<IActionResult> EndExamen(AnswerBlank answerBlank)
+        [Route("EndExamenForStudent")]
+        public async Task<IActionResult> EndExamenForStudent(AnswerBlank answerBlank)
         {
             answerBlank.EndExamenDateTime = DateTime.Now;
             await _answerBlankRepository.Update(answerBlank);

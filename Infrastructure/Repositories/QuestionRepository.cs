@@ -12,5 +12,10 @@ namespace Infrastructure.Repositories
         {
 
         }
+
+        public IQueryable<Question> GetQuestions()
+        {
+            return Get().Where(x => x.IsDeleted == false);
+        }
     }
 }

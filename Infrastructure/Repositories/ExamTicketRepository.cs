@@ -22,5 +22,10 @@ namespace Infrastructure.Repositories
         {
             return Get().Include(x => x.Questions).Where(x => x.ExamenId == examId).OrderBy(x => new Guid()).First();
         }
+
+        public IQueryable<ExamTicket> GetTickets()
+        {
+            return Get().Where(x => x.IsDeleted == false);
+        }
     }
 }

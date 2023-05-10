@@ -25,5 +25,10 @@ namespace Infrastructure.Repositories
             }
             return null;
         }
+
+        public IQueryable<Examen> GetExamens()
+        {
+            return Get().Where(x => x.IsDeleted == false);
+        }
     }
 }
