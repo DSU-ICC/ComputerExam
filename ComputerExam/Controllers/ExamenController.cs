@@ -14,12 +14,14 @@ namespace ComputerExam.Controllers
         private readonly IDsuDbService _dsuDbService;
         private readonly IExamenRepository _examenRepository;
         private readonly IAnswerBlankRepository _answerBlankRepository;
+        private readonly IExamTicketRepository _examTicketRepository;
 
-        public ExamenController(IDsuDbService dsuDbService, IExamenRepository examenRepository, IAnswerBlankRepository answerBlankRepository)
+        public ExamenController(IDsuDbService dsuDbService, IExamenRepository examenRepository, IAnswerBlankRepository answerBlankRepository, IExamTicketRepository examTicketRepository)
         {
             _dsuDbService = dsuDbService;
             _examenRepository = examenRepository;
             _answerBlankRepository = answerBlankRepository;
+            _examTicketRepository = examTicketRepository;
         }
 
         [Route("GetExamens")]
@@ -29,9 +31,9 @@ namespace ComputerExam.Controllers
             return Ok(_examenRepository.Get());
         }
 
-        [Route("GetExamensByTeacherId")]
+        [Route("GetExamensByEmployeeId")]
         [HttpGet]
-        public IActionResult GetExamensByTeacherId(Guid employeeId)
+        public IActionResult GetExamensByEmployeeId(Guid employeeId)
         {
             var examenDto = _examenRepository.Get()
                .Where(x => x.EmployeeId == employeeId)
@@ -43,23 +45,36 @@ namespace ComputerExam.Controllers
                    Course = (int)i.Course,
                    Department = _dsuDbService.GetCaseSDepartmentById(i.DepartmentId),
                    ExamDate = (DateTime)i.ExamDate,
+                   ExamDurationInMitutes = i.ExamDurationInMitutes,
+                   ExamTickets = _examTicketRepository.Get().Where(x => x.ExamenId == i.Id).ToList(),
                });
             return Ok(examenDto);
         }
 
         [Route("GetExamensByStudentId")]
         [HttpGet]
-        public async Task<IActionResult> GetExamensByStudentId(int studentId)
+        public IActionResult GetExamensByStudentId(int studentId)
         {
             var student = _dsuDbService.GetCaseSStudentById(studentId);
-            var examens = _examenRepository.Get().Where(x => x.DepartmentId == student.DepartmentId && x.Course == student.Course);
+            var examens = _examenRepository.Get().Include(x => x.Tickets).Where(x => x.DepartmentId == student.DepartmentId && x.Course == student.Course);
+            List<ExamenStudentDto> examenStudentDtos = new();
 
-            List<ExamenStudentDto> examenStudentDtos = await examens.Select(x => new ExamenStudentDto
+            foreach (var item in _answerBlankRepository.Get())
             {
-                ExamenId = x.Id,
-                Discipline = x.Discipline,
-                ExamDate = (DateTime)x.ExamDate
-            }).ToListAsync();
+                foreach (var examen in examens)
+                {
+                    if (examen.Tickets.Any(x => x.Id == item.Id))
+                    {
+                        examenStudentDtos.Add(new ExamenStudentDto
+                        {
+                            ExamenId = examen.Id,
+                            Discipline = examen.Discipline,
+                            AnswerBlank = item,
+                            ExamDate = (DateTime)examen.ExamDate
+                        });
+                    }
+                }
+            }
             return Ok(examenStudentDtos);
         }
 
@@ -69,8 +84,7 @@ namespace ComputerExam.Controllers
         {
             var examen = _examenRepository.Get().Include(x => x.Tickets).FirstOrDefault(x => x.Id == examenId);
             var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
-            var answerBlankPre = await _answerBlankRepository.Get().ToListAsync();
-            var answerBlanks = answerBlankPre.Where(x => examen.Tickets.Any(c => c.Id == x.ExamTicketId));
+            var answerBlanks = await _answerBlankRepository.Get().Include(x => x.ExamTicket).Where(x => x.ExamTicket.ExamenId == examenId).ToListAsync();
 
             List<StudentsDto> studentsDtos = new();
 
@@ -83,6 +97,30 @@ namespace ComputerExam.Controllers
                     LastName = student.Lastname,
                     Patr = student.Patr,
                     TotalScore = answerBlanks.FirstOrDefault(c => c.StudentId == student.Id)?.TotalScore
+                });
+            }
+            return Ok(studentsDtos);
+        }
+
+        [Route("GetStudentsByExamenIdForChecking")]
+        [HttpGet]
+        public async Task<IActionResult> GetStudentsByExamenIdForChecking(int examenId)
+        {
+            var examen = _examenRepository.Get().Include(x => x.Tickets).FirstOrDefault(x => x.Id == examenId);
+            var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
+            var answerBlanks = await _answerBlankRepository.Get().Include(x => x.ExamTicket).Where(x => x.ExamTicket.ExamenId == examenId).ToListAsync();
+
+            List<ForCheckingDto> studentsDtos = new();
+
+            foreach (var student in students)
+            {
+                var answerBlank = answerBlanks.FirstOrDefault(c => c.StudentId == student.Id);
+                studentsDtos.Add(new ForCheckingDto
+                {
+                    StudentId = student.Id,
+                    TotalScore = answerBlank?.TotalScore,
+                    AnswerBlank = answerBlank,
+                    Examen = examen
                 });
             }
             return Ok(studentsDtos);

@@ -13,7 +13,8 @@
         /// <summary>
         /// Id экзаменационного билета
         /// </summary>
-        public int ExamTicketId { get; set; }        
+        public int ExamTicketId { get; set; }
+        public ExamTicket? ExamTicket { get; set; }
         /// <summary>
         /// Суммарный балл за экзамен
         /// </summary>

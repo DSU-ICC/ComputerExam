@@ -13,12 +13,10 @@ namespace ComputerExam.Controllers
     public class AnswerBlankController : Controller
     {
         private readonly IAnswerBlankRepository _answerBlankRepository;
-        private readonly IExamTicketRepository _examTicketRepository;
 
-        public AnswerBlankController(IAnswerBlankRepository answerBlankRepository, IExamTicketRepository examTicketRepository)
+        public AnswerBlankController(IAnswerBlankRepository answerBlankRepository)
         {
             _answerBlankRepository = answerBlankRepository;
-            _examTicketRepository = examTicketRepository;
         }
 
         [HttpGet]
@@ -29,10 +27,10 @@ namespace ComputerExam.Controllers
         }
 
         [HttpGet]
-        [Route("GetAnswerBlanksByExamenIdStudentId")]
-        public IActionResult GetAnswerBlanksByExamenIdStudentId(int examTicketId, int studentId)
+        [Route("GetAnswerBlanksByExamenIdAndStudentId")]
+        public IActionResult GetAnswerBlanksByExamenIdAndStudentId(int examId, int studentId)
         {
-            return Ok(_answerBlankRepository.Get().Include(x => x.Answers).FirstOrDefault(x => x.ExamTicketId == examTicketId && x.StudentId == studentId));
+            return Ok(_answerBlankRepository.Get().Include(x => x.Answers).FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examId));
         }
 
         [HttpGet]
@@ -47,12 +45,10 @@ namespace ComputerExam.Controllers
         public IActionResult GetAnswerBlankAndTicketByStudentId(int studentId)
         {
             var answerBlank = _answerBlankRepository.Get().Include(x => x.Answers).Where(x => x.StudentId == studentId);
-            var tickets = _examTicketRepository.Get().Include(x => x.Questions);
-
             var answerBlankAndTicketDto = answerBlank.Select(x => new AnswerBlankAndTicketDto()
             {
                 AnswerBlank = x,
-                Ticket = tickets.FirstOrDefault(c => c.Id == x.ExamTicketId)
+                Ticket = x.ExamTicket
             });
 
             return Ok(answerBlankAndTicketDto);

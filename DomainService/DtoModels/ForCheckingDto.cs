@@ -1,5 +1,4 @@
 ﻿using DomainService.Entity;
-using DSUContextDBService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace DomainService.DtoModels
 {
-    public class ExamenStudentDto
+    public class ForCheckingDto
     {
-        public int? ExamenId { get; set; }
-        public string? Discipline { get; set; }
+        public int? StudentId { get; set; }
+        public int? TotalScore { get; set; }
         public AnswerBlank? AnswerBlank { get; set; }
-        public DateTime? ExamDate { get; set; }
+        public Examen? Examen { get; set; } 
     }
 }

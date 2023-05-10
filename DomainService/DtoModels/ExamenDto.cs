@@ -1,4 +1,5 @@
-﻿using DSUContextDBService.Models;
+﻿using DomainService.Entity;
+using DSUContextDBService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,13 @@ namespace DomainService.DtoModels
 {
     public class ExamenDto
     {
-        public int ExamenId { get; set; }
-        public string Discipline { get; set; }
-        public CaseSDepartment Department { get; set; }
-        public int Course { get; set; }
-        public string Group { get; set; }
-        public DateTime ExamDate { get; set; }
+        public int? ExamenId { get; set; }
+        public string? Discipline { get; set; }
+        public CaseSDepartment? Department { get; set; }
+        public int? Course { get; set; }
+        public string? Group { get; set; }
+        public DateTime? ExamDate { get; set; }
+        public int? ExamDurationInMitutes { get; set; }
+        public List<ExamTicket>? ExamTickets { get; set; }
     }
 }

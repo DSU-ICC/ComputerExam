@@ -10,10 +10,12 @@ namespace ComputerExam.Controllers
     public class AccountController : Controller
     {
         private readonly SignInManager<Employee> _signInManager;
+        private readonly UserManager<Employee> _userManager;
 
-        public AccountController(SignInManager<Employee> signInManager)
+        public AccountController(SignInManager<Employee> signInManager, UserManager<Employee> userManager)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         [Route("Logout")]
@@ -31,10 +33,12 @@ namespace ComputerExam.Controllers
         {
             if (ModelState.IsValid)
             {
+                var employee = _userManager.Users.FirstOrDefault(x => x.UserName == loginDto.Login);
+
                 var result =
                     await _signInManager.PasswordSignInAsync(loginDto.Login, loginDto.Password, false, false);
                 if (result.Succeeded)
-                    return Ok();
+                    return Ok(employee);
                 else
                     return BadRequest("Неправильный логин и (или) пароль");
             }

@@ -47,24 +47,6 @@ namespace ComputerExam.Controllers
             return Ok();
         }
 
-        [Route("CreateQuestionByListQuestion")]
-        [HttpPost]
-        public async Task<IActionResult> CreateQuestionByListQuestion(string questions, int examenId)
-        {
-            var paragraph = questions.Split("№");
-            foreach (var item in paragraph.Skip(1))
-            {
-                Question question = new()
-                {
-                    ExamTicketId = examenId,
-                    Number = int.Parse(item.Split("- ")[0]),
-                    Text = item.Split("- ")[1],
-                };
-                await _questionRepository.Create(question);
-            }
-            return Ok();
-        }
-
         [Route("UpdateQuestion")]
         [HttpPut]
         public async Task<IActionResult> UpdateQuestion(Question question)
