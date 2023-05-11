@@ -93,6 +93,9 @@ namespace Infrastructure.Repositories
 
         public async Task<StartExamenDto>? StartExamen(int studentId, int examId)
         {
+            if (_answerBlankRepository.Get().Any(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examId))
+                return null;
+
             var examen = GetExamens().Include(x => x.Tickets.Where(c => c.IsDeleted == false))
                                                        .ThenInclude(x => x.Questions.Where(c => c.IsDeleted == false))
                                                        .FirstOrDefault(x => x.Id == examId);
