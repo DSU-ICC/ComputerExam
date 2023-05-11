@@ -79,7 +79,7 @@ namespace Infrastructure.Repositories
             var examen = GetExamens().Include(x => x.Tickets).FirstOrDefault(x => x.Id == examenId);
             var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
             var answerBlanks = _answerBlankRepository.Get().Include(x => x.ExamTicket).ThenInclude(x => x.Questions)
-                                                           .Where(x => x.ExamTicket.ExamenId == examenId);
+                                                           .Include(x => x.Answers).Where(x => x.ExamTicket.ExamenId == examenId);
 
             var studentsDtos = students.Select(student => new ForCheckingDto()
             {

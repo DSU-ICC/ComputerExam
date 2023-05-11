@@ -89,7 +89,7 @@ namespace ComputerExam.Controllers
         {
             var examen = await _examenRepository.StartExamen(studentId, examId);
             if (examen == null)
-                return BadRequest("Экзамен не найден");
+                return BadRequest("Ошибка при попытке начать экзамен. Проверьте дату начала экзамена");
 
             return Ok(examen);
         }
