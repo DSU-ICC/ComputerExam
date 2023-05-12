@@ -20,7 +20,7 @@ namespace Infrastructure.Repositories
 
         public ExamTicket GetRandomTicket(int examId)
         {
-            return Get().Include(x => x.Questions).Where(x => x.ExamenId == examId).OrderBy(x => new Guid()).First();
+            return Get().Include(x => x.Questions).Where(x => x.ExamenId == examId).OrderBy(x => Guid.NewGuid()).First();
         }
 
         public IQueryable<ExamTicket> GetTickets()

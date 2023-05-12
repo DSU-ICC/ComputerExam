@@ -108,7 +108,7 @@ namespace Infrastructure.Repositories
             if (examen.ExamDate.Value.Date != DateTime.Now.Date)
                 return null;
 
-            var ticket = examen.Tickets?.OrderBy(x => new Guid()).First();
+            var ticket = examen.Tickets?.OrderBy(x => Guid.NewGuid()).First();
 
             var answerBlank = new AnswerBlank()
             {
