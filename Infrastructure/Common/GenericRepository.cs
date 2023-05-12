@@ -21,7 +21,7 @@ namespace Infrastructure.Common
 
         public IQueryable<TEntity> GetWithTracking()
         {
-            return _dbSet.AsTracking();
+            return _dbSet;
         }
 
         public IEnumerable<TEntity> Get(Func<TEntity, bool> predicate)

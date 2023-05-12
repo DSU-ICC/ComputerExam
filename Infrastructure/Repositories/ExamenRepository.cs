@@ -57,20 +57,24 @@ namespace Infrastructure.Repositories
             return examenStudentDtos;
         }
 
-        public IQueryable<StudentsDto> GetStudentsByExamenId(int examenId)
+        public List<StudentsDto> GetStudentsByExamenId(int examenId)
         {
             var examen = GetExamens().FirstOrDefault(x => x.Id == examenId);
             var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
             var answerBlanks = _answerBlankRepository.Get().Include(x => x.ExamTicket).Where(x => x.ExamTicket.ExamenId == examenId);
 
-            var studentsDtos = students.Select(student => new StudentsDto()
+            List<StudentsDto> studentsDtos = new();
+            foreach (var item in students)
             {
-                StudentId = student.Id,
-                FirstName = student.Firstname,
-                LastName = student.Lastname,
-                Patr = student.Patr,
-                TotalScore = answerBlanks.FirstOrDefault(c => c.StudentId == student.Id).TotalScore
-            });
+                studentsDtos.Add(new StudentsDto()
+                {
+                    StudentId = item.Id,
+                    FirstName = item.Firstname,
+                    LastName = item.Lastname,
+                    Patr = item.Patr,
+                    TotalScore = answerBlanks.FirstOrDefault(c => c.StudentId == item.Id)?.TotalScore
+                });
+            }
             return studentsDtos;
         }
 

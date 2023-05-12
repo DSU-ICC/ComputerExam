@@ -127,9 +127,9 @@ namespace ComputerExam.Controllers
         /// <returns></returns>
         [Route("DeleteExamen")]
         [HttpDelete]
-        public IActionResult DeleteExamen(int id)
+        public async Task<IActionResult> DeleteExamen(int id)
         {
-            _examenRepository.DeleteExamen(id);
+            await _examenRepository.DeleteExamen(id);
             return Ok();
         }
     }
