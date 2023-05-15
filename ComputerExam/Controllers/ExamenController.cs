@@ -1,9 +1,6 @@
-﻿using DomainService.DtoModels;
-using DomainService.Entity;
-using DSUContextDBService.Interface;
+﻿using DomainService.Entity;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ComputerExam.Controllers
 {
@@ -74,7 +71,10 @@ namespace ComputerExam.Controllers
         [HttpGet]
         public IActionResult GetStudentsByExamenIdForChecking(int examenId)
         {
-            return Ok(_examenRepository.GetStudentsByExamenIdForChecking(examenId));
+            var students = _examenRepository.GetStudentsByExamenIdForChecking(examenId);
+            if (students == null)
+                return BadRequest("Экзамен не найден");
+            return Ok(students);
         }
 
         /// <summary>

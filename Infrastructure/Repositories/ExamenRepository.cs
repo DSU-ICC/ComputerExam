@@ -78,20 +78,27 @@ namespace Infrastructure.Repositories
             return studentsDtos;
         }
 
-        public IQueryable<ForCheckingDto> GetStudentsByExamenIdForChecking(int examenId)
+        public List<ForCheckingDto> GetStudentsByExamenIdForChecking(int examenId)
         {
             var examen = GetExamens().Include(x => x.Tickets).FirstOrDefault(x => x.Id == examenId);
+            if (examen == null)
+                return null;
+            
             var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
             var answerBlanks = _answerBlankRepository.Get().Include(x => x.ExamTicket).ThenInclude(x => x.Questions)
                                                            .Include(x => x.Answers).Where(x => x.ExamTicket.ExamenId == examenId);
 
-            var studentsDtos = students.Select(student => new ForCheckingDto()
+            List<ForCheckingDto> studentsDtos = new();
+            foreach (var item in students)
             {
-                StudentId = student.Id,
-                TotalScore = answerBlanks.FirstOrDefault(c => c.StudentId == student.Id).TotalScore,
-                AnswerBlank = answerBlanks.FirstOrDefault(c => c.StudentId == student.Id),
-                Examen = examen
-            });
+                studentsDtos.Add(new ForCheckingDto()
+                {
+                    StudentId = item.Id,
+                    TotalScore = answerBlanks.FirstOrDefault(c => c.StudentId == item.Id) == null ? null : answerBlanks.FirstOrDefault(c => c.StudentId == item.Id).TotalScore,
+                    AnswerBlank = answerBlanks.FirstOrDefault(c => c.StudentId == item.Id),
+                    Examen = examen
+                });
+            }
             return studentsDtos;
         }
 
