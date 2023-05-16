@@ -11,6 +11,7 @@
         public Task Remove(int id);
         public Task Remove(TEntity item);
         public Task RemoveRange(IEnumerable<TEntity> items);
+        public Task UpdateEntity(TEntity item);
         public Task Update(TEntity item);
     }
 }

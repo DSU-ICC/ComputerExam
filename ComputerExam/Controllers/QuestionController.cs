@@ -1,10 +1,7 @@
 ﻿using DomainService.Entity;
-using Infrastructure.Repositories;
 using Infrastructure.Repositories.Interfaces;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace ComputerExam.Controllers
 {

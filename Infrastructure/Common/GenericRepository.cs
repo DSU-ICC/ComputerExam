@@ -46,9 +46,15 @@ namespace Infrastructure.Common
             await _context.SaveChangesAsync();
         }
 
-        public async Task Update(TEntity item)
+        public async Task UpdateEntity(TEntity item)
         {
             _context.Entry(item).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Update(TEntity item)
+        {
+            _context.Update(item);
             await _context.SaveChangesAsync();
         }
 
