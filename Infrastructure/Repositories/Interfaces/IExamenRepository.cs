@@ -12,6 +12,7 @@ namespace Infrastructure.Repositories.Interfaces
         public List<StudentsDto> GetStudentsByExamenId(int examenId);
         public List<ForCheckingDto> GetStudentsByExamenIdForChecking(int examenId);
         public Task<StartExamenDto>? StartExamen(int studentId, int examId);
+        public Task<Examen> CopyExamen(int examenId, DateTime newExamDate);
         public Task DeleteExamen(int id);
     }
 }

@@ -95,6 +95,19 @@ namespace ComputerExam.Controllers
         }
 
         /// <summary>
+        /// Копирование экзамена
+        /// </summary>
+        /// <param name="examenId"></param>
+        /// <param name="newExamDate"></param>
+        /// <returns></returns>
+        [Route("CopyExamen")]
+        [HttpPost]
+        public async Task<IActionResult> CopyExamen(int examenId, DateTime newExamDate)
+        {            
+            return Ok(await _examenRepository.CopyExamen(examenId, newExamDate));
+        }
+
+        /// <summary>
         /// Создание экзамена
         /// </summary>
         /// <param name="examen"></param>

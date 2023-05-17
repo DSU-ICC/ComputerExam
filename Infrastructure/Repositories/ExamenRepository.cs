@@ -134,6 +134,26 @@ namespace Infrastructure.Repositories
             return startExamenDto;
         }
 
+        public async Task<Examen> CopyExamen(int examenId, DateTime newExamDate)
+        {
+            var examen = GetExamens().Include(x => x.Tickets).ThenInclude(x => x.Questions).FirstOrDefault(x => x.Id == examenId);
+            if (examen != null)
+            {
+                examen.Id = 0;
+                examen.ExamDate = newExamDate;
+                foreach (var item in examen.Tickets)
+                {
+                    item.Id = 0;
+                    foreach (var question in item.Questions)
+                    {
+                        question.Id = 0;
+                    }
+                }
+                await Create(examen);
+            }
+            return examen;
+        }
+
         public async Task DeleteExamen(int id)
         {
             try
