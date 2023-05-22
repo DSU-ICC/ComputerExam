@@ -16,6 +16,7 @@ namespace DomainService.DtoModels
         public int? Course { get; set; }
         public string? Group { get; set; }
         public DateTime? ExamDate { get; set; }
+        public DateTime? EndExamDate { get; set; }
         public int? ExamDurationInMitutes { get; set; }
         public List<ExamTicket>? ExamTickets { get; set; }
     }

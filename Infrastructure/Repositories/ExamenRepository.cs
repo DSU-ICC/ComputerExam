@@ -39,6 +39,7 @@ namespace Infrastructure.Repositories
                    ExamDate = i.ExamDate,
                    ExamDurationInMitutes = i.ExamDurationInMitutes,
                    ExamTickets = _examTicketRepository.Get().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),
+                   EndExamDate = i.EndExamDate
                });
             return examenDto;
         }
