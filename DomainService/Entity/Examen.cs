@@ -35,6 +35,10 @@
         /// </summary>
         public DateTime? ExamDate { get; set; }
         /// <summary>
+        /// Дата завершения экзамена
+        /// </summary>
+        public DateTime? EndExamDate { get; set; }
+        /// <summary>
         /// Продолжительность экзамена в минутах 
         /// </summary>
         public int? ExamDurationInMitutes { get; set; }

@@ -9,7 +9,6 @@ namespace ComputerExam.Controllers
     public class ExamenController : Controller
     {
         private readonly IExamenRepository _examenRepository;
-
         public ExamenController(IExamenRepository examenRepository)
         {
             _examenRepository = examenRepository;
@@ -63,21 +62,6 @@ namespace ComputerExam.Controllers
         }
 
         /// <summary>
-        /// Получение студентов по Id экзамена для проверки их ответов преподавателем
-        /// </summary>
-        /// <param name="examenId"></param>
-        /// <returns></returns>
-        [Route("GetStudentsByExamenIdForChecking")]
-        [HttpGet]
-        public IActionResult GetStudentsByExamenIdForChecking(int examenId)
-        {
-            var students = _examenRepository.GetStudentsByExamenIdForChecking(examenId);
-            if (students == null)
-                return BadRequest("Экзамен не найден");
-            return Ok(students);
-        }
-
-        /// <summary>
         /// Функция начала экзамена
         /// </summary>
         /// <param name="studentId"></param>
@@ -94,6 +78,19 @@ namespace ComputerExam.Controllers
             return Ok(examen);
         }
 
+        [Route("EndExamenForEmployee")]
+        [HttpGet]
+        public async Task<IActionResult> EndExamenForEmployee(int examId)
+        {
+            var examen = _examenRepository.FindById(examId);
+            if (examen == null)
+                return BadRequest("Экзамен не найден");
+
+            examen.EndExamDate = DateTime.Now;
+            await _examenRepository.Update(examen);
+            return Ok(_examenRepository.GetStudentsByExamenIdForChecking(examId));
+        }
+
         /// <summary>
         /// Копирование экзамена
         /// </summary>
@@ -103,7 +100,7 @@ namespace ComputerExam.Controllers
         [Route("CopyExamen")]
         [HttpPost]
         public async Task<IActionResult> CopyExamen(int examenId, DateTime newExamDate)
-        {            
+        {
             return Ok(await _examenRepository.CopyExamen(examenId, newExamDate));
         }
 
@@ -116,6 +113,7 @@ namespace ComputerExam.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateExamen(Examen examen)
         {
+            examen.ExamDate = examen.ExamDate.Value.AddHours(3);
             await _examenRepository.Create(examen);
             return Ok();
         }
@@ -129,6 +127,7 @@ namespace ComputerExam.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateExamen(Examen examen)
         {
+            examen.ExamDate = examen.ExamDate.Value.AddHours(3);
             await _examenRepository.Update(examen);
             return Ok();
         }

@@ -95,7 +95,7 @@ namespace Infrastructure.Repositories
                 studentsDtos.Add(new ForCheckingDto()
                 {
                     StudentId = item.Id,
-                    TotalScore = answerBlanks.FirstOrDefault(c => c.StudentId == item.Id) == null ? null : answerBlanks.FirstOrDefault(c => c.StudentId == item.Id).TotalScore,
+                    TotalScore = answerBlanks.FirstOrDefault(c => c.StudentId == item.Id)?.TotalScore,
                     AnswerBlank = answerBlanks.FirstOrDefault(c => c.StudentId == item.Id),
                     Examen = examen
                 });
@@ -140,7 +140,7 @@ namespace Infrastructure.Repositories
             if (examen != null)
             {
                 examen.Id = 0;
-                examen.ExamDate = newExamDate;
+                examen.ExamDate = newExamDate.AddHours(3);
                 foreach (var item in examen.Tickets)
                 {
                     item.Id = 0;
