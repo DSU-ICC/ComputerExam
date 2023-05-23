@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Identity;
 using DomainService.Entity;
 using DomainService.DtoModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ComputerExam.Controllers
 {
+    [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class UserController : Controller
     {
         private readonly UserManager<Employee> _userManager;

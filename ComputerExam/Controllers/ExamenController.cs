@@ -1,11 +1,12 @@
 ﻿using DomainService.Entity;
 using Infrastructure.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ComputerExam.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ExamenController : Controller
     {
         private readonly IExamenRepository _examenRepository;
@@ -30,6 +31,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="employeeId"></param>
         /// <returns></returns>
+        [Authorize]
         [Route("GetExamensByEmployeeId")]
         [HttpGet]
         public IActionResult GetExamensByEmployeeId(Guid employeeId)
@@ -66,6 +68,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="examenId"></param>
         /// <returns></returns>
+        [Authorize]
         [Route("GetStudentsByExamenIdForChecking")]
         [HttpGet]
         public IActionResult GetStudentsByExamenIdForChecking(int examenId)
@@ -82,6 +85,7 @@ namespace ComputerExam.Controllers
         /// <param name="studentId"></param>
         /// <param name="examId"></param>
         /// <returns></returns>
+        [Authorize]
         [Route("StartExamen")]
         [HttpGet]
         public async Task<IActionResult> StartExamen(int studentId, int examId)
@@ -93,6 +97,7 @@ namespace ComputerExam.Controllers
             return Ok(examen);
         }
 
+        [Authorize]
         [Route("EndExamenForEmployee")]
         [HttpGet]
         public async Task<IActionResult> EndExamenForEmployee(int examId)
@@ -112,6 +117,7 @@ namespace ComputerExam.Controllers
         /// <param name="examenId"></param>
         /// <param name="newExamDate"></param>
         /// <returns></returns>
+        [Authorize]
         [Route("CopyExamen")]
         [HttpPost]
         public async Task<IActionResult> CopyExamen(int examenId, DateTime newExamDate)
@@ -124,6 +130,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="examen"></param>
         /// <returns></returns>
+        [Authorize]
         [Route("CreateExamen")]
         [HttpPost]
         public async Task<IActionResult> CreateExamen(Examen examen)
@@ -138,6 +145,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="examen"></param>
         /// <returns></returns>
+        [Authorize]
         [Route("UpdateExamen")]
         [HttpPut]
         public async Task<IActionResult> UpdateExamen(Examen examen)
@@ -152,6 +160,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize]
         [Route("DeleteExamen")]
         [HttpDelete]
         public async Task<IActionResult> DeleteExamen(int id)

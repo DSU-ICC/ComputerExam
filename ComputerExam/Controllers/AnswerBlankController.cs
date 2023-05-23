@@ -3,13 +3,14 @@ using DomainService.Entity;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ComputerExam.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class AnswerBlankController : Controller
     {
         private readonly IAnswerBlankRepository _answerBlankRepository;
@@ -52,6 +53,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="answerBlank"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut]
         [Route("UpdateAnswerBlank")]
         public async Task<IActionResult> UpdateAnswerBlank(AnswerBlank answerBlank)
@@ -65,6 +67,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="answerBlank"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut]
         [Route("EndExamenForStudent")]
         public async Task<IActionResult> EndExamenForStudent(AnswerBlank answerBlank)
@@ -79,6 +82,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpDelete]
         [Route("DeleteAnswerBlank")]
         public async Task<IActionResult> DeleteAnswerBlank(int id)
