@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using DomainService.Entity;
 using Sentry;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ComputerExam.Controllers
 {
+    [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class RoleController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;

@@ -1,12 +1,13 @@
 ﻿using DomainService.Entity;
 using Infrastructure.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ComputerExam.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class QuestionController : Controller
     {
         private readonly IQuestionRepository _questionRepository;
@@ -37,6 +38,7 @@ namespace ComputerExam.Controllers
             return Ok(_questionRepository.FindById(id));
         }
 
+        [Authorize]
         [Route("CreateQuestion")]
         [HttpPost]
         public async Task<IActionResult> CreateQuestion(Question question)
@@ -45,6 +47,7 @@ namespace ComputerExam.Controllers
             return Ok();
         }
 
+        [Authorize]
         [Route("UpdateQuestion")]
         [HttpPut]
         public async Task<IActionResult> UpdateQuestion(Question question)
@@ -53,6 +56,7 @@ namespace ComputerExam.Controllers
             return Ok();
         }
 
+        [Authorize]
         [Route("DeleteQuestion")]
         [HttpDelete]
         public async Task<IActionResult> DeleteQuestion(int id)

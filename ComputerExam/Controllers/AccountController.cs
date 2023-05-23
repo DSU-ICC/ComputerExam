@@ -6,7 +6,7 @@ using DomainService.DtoModels;
 namespace ComputerExam.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class AccountController : Controller
     {
         private readonly SignInManager<Employee> _signInManager;
