@@ -17,6 +17,14 @@ namespace ComputerExam.Controllers
             _examTicketRepository = examTicketRepository;
         }
 
+        [Route("GetTicketsByExamenId")]
+        [HttpGet]
+        public async Task<IActionResult> GetTicketsByExamenId(int examenId)
+            {
+            var tickets = _examTicketRepository.GetTickets().Include(x=>x.Questions).Where(x => x.ExamenId == examenId);
+            return Ok(tickets);
+        }
+
         [Route("CreateTicket")]
         [HttpPost]
         public async Task<IActionResult> CreateTicket(ExamTicket examen)
@@ -35,9 +43,9 @@ namespace ComputerExam.Controllers
 
         [Route("DeleteTicket")]
         [HttpDelete]
-        public IActionResult DeleteTicket(int id)
+        public async Task<IActionResult> DeleteTicket(int id)
         {
-            _examTicketRepository.DeleteTicket(id);
+            await _examTicketRepository.DeleteTicket(id);
             return Ok();
         }
     }
