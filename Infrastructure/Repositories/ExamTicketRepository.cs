@@ -36,7 +36,8 @@ namespace Infrastructure.Repositories
             }
             catch (Exception)
             {
-                var ticket = GetWithTracking().Include(x => x.Questions).FirstOrDefault(x => x.Id == id);
+                var ds = await GetWithTracking().Include(x => x.Questions).ToListAsync();
+                var ticket = ds.FirstOrDefault(x => x.Id == id);
                 if (ticket != null)
                 {
                     ticket.IsDeleted = true;

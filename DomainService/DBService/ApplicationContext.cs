@@ -20,5 +20,20 @@ namespace DomainService.DBService
             //Database.EnsureDeleted();   // удаляем базу данных при первом обращении
             Database.EnsureCreated();   // создаем базу данных при первом обращении
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ExamTicket>()
+                .HasOne(p => p.Examen)
+                .WithMany(t => t.Tickets)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Question>()
+                .HasOne(p => p.Ticket)
+                .WithMany(t => t.Questions)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

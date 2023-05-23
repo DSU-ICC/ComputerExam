@@ -11,6 +11,10 @@
         /// </summary>
         public int ExamTicketId { get; set; }
         /// <summary>
+        /// Билет
+        /// </summary>
+        public ExamTicket? Ticket { get; set; }
+        /// <summary>
         /// Номер вопроса
         /// </summary>
         public int? Number { get; set; }

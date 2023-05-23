@@ -62,6 +62,21 @@ namespace ComputerExam.Controllers
         }
 
         /// <summary>
+        /// Получение студентов по Id экзамена для проверки их ответов преподавателем
+        /// </summary>
+        /// <param name="examenId"></param>
+        /// <returns></returns>
+        [Route("GetStudentsByExamenIdForChecking")]
+        [HttpGet]
+        public IActionResult GetStudentsByExamenIdForChecking(int examenId)
+        {
+            var students = _examenRepository.GetStudentsByExamenIdForChecking(examenId);
+            if (students == null)
+                return BadRequest("Экзамен не найден");
+            return Ok(students);
+        }
+
+        /// <summary>
         /// Функция начала экзамена
         /// </summary>
         /// <param name="studentId"></param>
