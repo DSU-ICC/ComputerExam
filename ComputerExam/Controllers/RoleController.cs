@@ -12,7 +12,7 @@ namespace ComputerExam.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class RoleController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ComputerExam.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class QuestionController : Controller
     {
         private readonly IQuestionRepository _questionRepository;

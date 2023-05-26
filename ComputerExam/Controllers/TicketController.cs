@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ComputerExam.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class TicketController : Controller
     {
         private readonly IExamTicketRepository _examTicketRepository;

@@ -51,7 +51,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.None;
 
-    options.LoginPath = "/api/Account/Login";
+    options.LoginPath = "/Account/Login";
     options.SlidingExpiration = true;
 });
 

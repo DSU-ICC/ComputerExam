@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ComputerExam.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class DsuController : Controller
     {
         private readonly IDsuDbService _dsuDbService;
