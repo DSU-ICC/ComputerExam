@@ -35,7 +35,7 @@ namespace Infrastructure.Repositories
                    Discipline = i.Discipline,
                    Group = i.NGroup,
                    Course = i.Course,
-                   Department = _dsuDbService.GetCaseSDepartmentById(i.DepartmentId),
+                   Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId!),
                    ExamDate = i.ExamDate,
                    ExamDurationInMitutes = i.ExamDurationInMitutes,
                    ExamTickets = _examTicketRepository.Get().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),
@@ -46,7 +46,8 @@ namespace Infrastructure.Repositories
 
         public IQueryable<ExamenStudentDto> GetExamensByStudentId(int studentId)
         {
-            var student = _dsuDbService.GetCaseSStudentById(studentId);
+            var student = _dsuDbService.GetCaseSStudentById(studentId) 
+                ?? throw new Exception("Student not found.");
             var examens = GetExamens().Where(x => x.DepartmentId == student.DepartmentId && x.Course == student.Course);
 
             var examenStudentDtos = examens.Select(examen => new ExamenStudentDto()
@@ -61,7 +62,8 @@ namespace Infrastructure.Repositories
 
         public List<StudentsDto> GetStudentsByExamenId(int examenId)
         {
-            var examen = GetExamens().FirstOrDefault(x => x.Id == examenId);
+            var examen = GetExamens().FirstOrDefault(x => x.Id == examenId)
+                ?? throw new Exception("Exam not found.");
             var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
             var answerBlanks = _answerBlankRepository.Get().Include(x => x.ExamTicket).Where(x => x.ExamTicket.ExamenId == examenId);
 
@@ -80,7 +82,7 @@ namespace Infrastructure.Repositories
             return studentsDtos;
         }
 
-        public List<ForCheckingDto> GetStudentsByExamenIdForChecking(int examenId)
+        public List<ForCheckingDto>? GetStudentsByExamenIdForChecking(int examenId)
         {
             var examen = GetExamens().Include(x => x.Tickets).FirstOrDefault(x => x.Id == examenId);
             if (examen == null)
@@ -104,7 +106,7 @@ namespace Infrastructure.Repositories
             return studentsDtos;
         }
 
-        public async Task<StartExamenDto>? StartExamen(int studentId, int examId)
+        public async Task<StartExamenDto?> StartExamen(int studentId, int examId)
         {
             if (_answerBlankRepository.Get().Any(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examId))
                 return null;
@@ -114,7 +116,7 @@ namespace Infrastructure.Repositories
                                                        .FirstOrDefault(x => x.Id == examId);
             if (examen == null)
                 return null;
-            if (examen.ExamDate.Value.Date != DateTime.Now.Date)
+            if (examen.ExamDate?.Date != DateTime.Now.Date)
                 return null;
 
             var ticket = examen.Tickets?.OrderBy(x => Guid.NewGuid()).First();
@@ -135,7 +137,7 @@ namespace Infrastructure.Repositories
             return startExamenDto;
         }
 
-        public async Task<Examen> CopyExamen(int examenId, DateTime newExamDate)
+        public async Task<Examen?> CopyExamen(int examenId, DateTime newExamDate)
         {
             var examen = GetExamens().Include(x => x.Tickets).ThenInclude(x => x.Questions).FirstOrDefault(x => x.Id == examenId);
             if (examen != null)
