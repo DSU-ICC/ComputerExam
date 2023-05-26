@@ -135,7 +135,7 @@ namespace ComputerExam.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateExamen(Examen examen)
         {
-            examen.ExamDate = examen.ExamDate.Value.AddHours(3);
+            //examen.ExamDate = examen.ExamDate.Value.AddHours(3);
             await _examenRepository.Create(examen);
             return Ok();
         }

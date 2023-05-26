@@ -1,5 +1,7 @@
 ﻿using Infrastructure.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Sentry;
+using System.Reflection;
 
 namespace Infrastructure.Common
 {
@@ -36,8 +38,16 @@ namespace Infrastructure.Common
 
         public async Task Create(TEntity item)
         {
-            await _dbSet.AddAsync(item);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _dbSet.AddAsync(item);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                SendExceptionInSentry(item);
+                throw;
+            }
         }
 
         public async Task CreateRange(IEnumerable<TEntity> items)
@@ -48,29 +58,61 @@ namespace Infrastructure.Common
 
         public async Task UpdateEntity(TEntity item)
         {
-            _context.Entry(item).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Entry(item).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                SendExceptionInSentry(item);
+                throw;
+            }
         }
 
         public async Task Update(TEntity item)
         {
-            _context.Update(item);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Update(item);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                SendExceptionInSentry(item);
+                throw;
+            }
         }
 
         public async Task Remove(TEntity item)
         {
-            _dbSet.Remove(item);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _dbSet.Remove(item);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                SendExceptionInSentry(item);
+                throw;
+            }
         }
 
         public async Task Remove(int id)
         {
             var item = await _dbSet.FindAsync(id);
-            if (item != null)
+            try
             {
-                _dbSet.Remove(item);
-                await _context.SaveChangesAsync();
+                if (item != null)
+                {
+                    _dbSet.Remove(item);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+                SendExceptionInSentry(item);
+                throw;
             }
         }
 
@@ -78,6 +120,20 @@ namespace Infrastructure.Common
         {
             _dbSet.RemoveRange(items);
             await _context.SaveChangesAsync();
+        }
+
+        private static void SendExceptionInSentry(TEntity item)
+        {
+            Type myType = item.GetType();
+
+            var properties = myType.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+            string entity = "";
+            foreach (var property in properties)
+            {
+                var value = property?.GetValue(item);
+                entity += property.Name + ":" + value + "\n";
+            }
+            SentrySdk.CaptureMessage("Ошибка при создании объкта " + myType.Name + "\n" + entity);
         }
     }
 }
