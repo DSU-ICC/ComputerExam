@@ -54,7 +54,7 @@ namespace ComputerExam.Controllers
         /// <param name="answerBlank"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpPut]
+        [HttpPost]
         [Route("UpdateAnswerBlank")]
         public async Task<IActionResult> UpdateAnswerBlank(AnswerBlank answerBlank)
         {
@@ -68,7 +68,7 @@ namespace ComputerExam.Controllers
         /// <param name="answerBlank"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpPut]
+        [HttpPost]
         [Route("EndExamenForStudent")]
         public async Task<IActionResult> EndExamenForStudent(AnswerBlank answerBlank)
         {
@@ -83,7 +83,7 @@ namespace ComputerExam.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpDelete]
+        [HttpPost]
         [Route("DeleteAnswerBlank")]
         public async Task<IActionResult> DeleteAnswerBlank(int id)
         {

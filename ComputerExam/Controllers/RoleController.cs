@@ -43,7 +43,7 @@ namespace ComputerExam.Controllers
         }
 
         [Route("EditRole")]
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> EditRole(string employeeId, List<string> roles)
         {
             Employee employee = await _userManager.FindByIdAsync(employeeId);
@@ -63,7 +63,7 @@ namespace ComputerExam.Controllers
         }
 
         [Route("DeleteRole")]
-        [HttpDelete]
+        [HttpPost]
         public async Task<IActionResult> DeleteRole(string id)
         {
             IdentityRole role = await _roleManager.FindByIdAsync(id);

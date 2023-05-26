@@ -37,7 +37,7 @@ namespace ComputerExam.Controllers
 
         [Authorize]
         [Route("UpdateTicket")]
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> UpdateExamen(ExamTicket examen)
         {
             await _examTicketRepository.Update(examen);
@@ -46,7 +46,7 @@ namespace ComputerExam.Controllers
 
         [Authorize]
         [Route("DeleteTicket")]
-        [HttpDelete]
+        [HttpPost]
         public async Task<IActionResult> DeleteTicket(int id)
         {
             await _examTicketRepository.DeleteTicket(id);

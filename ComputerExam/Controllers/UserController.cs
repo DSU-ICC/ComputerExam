@@ -42,7 +42,7 @@ namespace ComputerExam.Controllers
         }
 
         [Route("EditEmployee")]
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> EditEmployee(EditDto model)
         {
             if (ModelState.IsValid)

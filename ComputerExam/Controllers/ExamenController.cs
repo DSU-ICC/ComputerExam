@@ -147,7 +147,7 @@ namespace ComputerExam.Controllers
         /// <returns></returns>
         [Authorize]
         [Route("UpdateExamen")]
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> UpdateExamen(Examen examen)
         {
             examen.ExamDate = examen.ExamDate.Value.AddHours(3);
@@ -162,7 +162,7 @@ namespace ComputerExam.Controllers
         /// <returns></returns>
         [Authorize]
         [Route("DeleteExamen")]
-        [HttpDelete]
+        [HttpPost]
         public async Task<IActionResult> DeleteExamen(int id)
         {
             await _examenRepository.DeleteExamen(id);

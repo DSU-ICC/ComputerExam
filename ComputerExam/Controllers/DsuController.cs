@@ -58,6 +58,13 @@ namespace ComputerExam.Controllers
             return Ok(_dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == departmentId && x.Course == course && x.Ngroup == ngroup));
         }
 
+        [Route("GetTeachers")]
+        [HttpGet]
+        public IActionResult GetTeachers()
+        {
+            return Ok(_dsuDbService.GetCaseSTeachers());
+        }
+
         [Route("SignInStudent")]
         [HttpPost]
         public IActionResult SignInStudent(int studentId, string nzachkn)
@@ -66,13 +73,6 @@ namespace ComputerExam.Controllers
             if (student != null)
                 return Ok();
             return BadRequest();
-        }
-
-        [Route("GetTeachers")]
-        [HttpGet]
-        public IActionResult GetTeachers()
-        {
-            return Ok(_dsuDbService.GetCaseSTeachers());
-        }
+        }        
     }
 }

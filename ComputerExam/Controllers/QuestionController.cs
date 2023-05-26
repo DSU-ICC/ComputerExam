@@ -49,7 +49,7 @@ namespace ComputerExam.Controllers
 
         [Authorize]
         [Route("UpdateQuestion")]
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> UpdateQuestion(Question question)
         {
             await _questionRepository.Update(question);
@@ -58,7 +58,7 @@ namespace ComputerExam.Controllers
 
         [Authorize]
         [Route("DeleteQuestion")]
-        [HttpDelete]
+        [HttpPost]
         public async Task<IActionResult> DeleteQuestion(int id)
         {
             await _questionRepository.DeleteQuestion(id);
