@@ -31,7 +31,6 @@ namespace ComputerExam.Controllers
             return Ok(_answerRepository.FindById(id));
         }
 
-        [Authorize]
         [Route("CreateAnswer")]
         [HttpPost]
         public async Task<IActionResult> CreateAnswer(Answer answer)
@@ -40,7 +39,6 @@ namespace ComputerExam.Controllers
             return Ok(answer);
         }
 
-        [Authorize]
         [Route("UpdateAnswer")]
         [HttpPost]
         public async Task<IActionResult> UpdateAnswer(Answer answer)

@@ -85,7 +85,6 @@ namespace ComputerExam.Controllers
         /// <param name="studentId"></param>
         /// <param name="examId"></param>
         /// <returns></returns>
-        [Authorize]
         [Route("StartExamen")]
         [HttpGet]
         public async Task<IActionResult> StartExamen(int studentId, int examId)

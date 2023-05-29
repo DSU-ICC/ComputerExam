@@ -67,7 +67,6 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="answerBlank"></param>
         /// <returns></returns>
-        [Authorize]
         [HttpPost]
         [Route("EndExamenForStudent")]
         public async Task<IActionResult> EndExamenForStudent(AnswerBlank answerBlank)

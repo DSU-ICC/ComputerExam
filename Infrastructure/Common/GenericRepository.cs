@@ -45,7 +45,8 @@ namespace Infrastructure.Common
             }
             catch (Exception)
             {
-                SendExceptionInSentry(item);
+                string create = "создании";
+                SendExceptionInSentry(item, create);
                 throw;
             }
         }
@@ -65,7 +66,8 @@ namespace Infrastructure.Common
             }
             catch (Exception)
             {
-                SendExceptionInSentry(item);
+                string update = "обновлении";
+                SendExceptionInSentry(item, update);
                 throw;
             }
         }
@@ -79,7 +81,8 @@ namespace Infrastructure.Common
             }
             catch (Exception)
             {
-                SendExceptionInSentry(item);
+                string update = "обновлении";
+                SendExceptionInSentry(item, update);
                 throw;
             }
         }
@@ -93,7 +96,8 @@ namespace Infrastructure.Common
             }
             catch (Exception)
             {
-                SendExceptionInSentry(item);
+                string delete = "удалении";
+                SendExceptionInSentry(item, delete);
                 throw;
             }
         }
@@ -111,7 +115,8 @@ namespace Infrastructure.Common
             }
             catch (Exception)
             {
-                SendExceptionInSentry(item);
+                string delete = "удалении";
+                SendExceptionInSentry(item, delete);
                 throw;
             }
         }
@@ -122,7 +127,7 @@ namespace Infrastructure.Common
             await _context.SaveChangesAsync();
         }
 
-        private static void SendExceptionInSentry(TEntity item)
+        private static void SendExceptionInSentry(TEntity item, string methodName)
         {
             Type myType = item.GetType();
 
@@ -133,7 +138,7 @@ namespace Infrastructure.Common
                 var value = property?.GetValue(item);
                 entity += property.Name + ":" + value + "\n";
             }
-            SentrySdk.CaptureMessage("Ошибка при создании объкта " + myType.Name + "\n" + entity);
+            SentrySdk.CaptureMessage("Ошибка при " + methodName + " объкта " + myType.Name + "\n" + entity);
         }
     }
 }
