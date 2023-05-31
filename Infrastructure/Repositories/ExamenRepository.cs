@@ -46,7 +46,7 @@ namespace Infrastructure.Repositories
 
         public IQueryable<ExamenStudentDto> GetExamensByStudentId(int studentId)
         {
-            var student = _dsuDbService.GetCaseSStudentById(studentId) 
+            var student = _dsuDbService.GetCaseSStudentById(studentId)
                 ?? throw new Exception("Student not found.");
             var examens = GetExamens().Where(x => x.DepartmentId == student.DepartmentId && x.Course == student.Course && x.NGroup == student.Ngroup);
 
@@ -87,7 +87,7 @@ namespace Infrastructure.Repositories
             var examen = GetExamens().Include(x => x.Tickets).FirstOrDefault(x => x.Id == examenId);
             if (examen == null)
                 return null;
-            
+
             var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
             var answerBlanks = _answerBlankRepository.Get().Include(x => x.ExamTicket).ThenInclude(x => x.Questions)
                                                            .Include(x => x.Answers).Where(x => x.ExamTicket.ExamenId == examenId);
@@ -159,14 +159,10 @@ namespace Infrastructure.Repositories
 
         public async Task DeleteExamen(int id)
         {
-            try
+            var examen = GetWithTracking().Include(x => x.Tickets).ThenInclude(c => c.Questions).FirstOrDefault(x => x.Id == id);
+            if (examen != null)
             {
-                await Remove(id);
-            }
-            catch (Exception)
-            {
-                var examen = GetWithTracking().Include(x => x.Tickets).ThenInclude(c => c.Questions).FirstOrDefault(x => x.Id == id);
-                if (examen != null)
+                if (examen.Tickets.Any())
                 {
                     examen.IsDeleted = true;
 
@@ -177,7 +173,13 @@ namespace Infrastructure.Repositories
                     });
                     await Update(examen);
                 }
+                else
+                {
+                    await Remove(id);
+                }
             }
+            else
+                throw new Exception();
         }
     }
 }

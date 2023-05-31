@@ -2,15 +2,15 @@
 using DomainService.Entity;
 using Infrastructure.Common;
 using Infrastructure.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
     public class QuestionRepository : GenericRepository<Question>, IQuestionRepository
     {
-        public QuestionRepository(ApplicationContext dbContext) : base(dbContext)
+        private readonly IAnswerRepository _answerRepository;
+        public QuestionRepository(ApplicationContext dbContext, IAnswerRepository answerRepository) : base(dbContext)
         {
-
+            _answerRepository = answerRepository;
         }
 
         public IQueryable<Question> GetQuestions()
@@ -20,16 +20,19 @@ namespace Infrastructure.Repositories
 
         public async Task DeleteQuestion(int id)
         {
-            try
+            var question = FindById(id);
+            if (question != null)
             {
-                await Remove(id);
+                if (_answerRepository.Get().Any(x => x.QuestionId == id))
+                {
+                    question.IsDeleted = true;
+                    await Update(question);
+                }
+                else
+                    await Remove(id);
             }
-            catch (Exception)
-            {
-                var question = FindById(id);
-                question.IsDeleted = true;
-                await Update(question);
-            }
+            else
+                throw new Exception();
         }
     }
 }

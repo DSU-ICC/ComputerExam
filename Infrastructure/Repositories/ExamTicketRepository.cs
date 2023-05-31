@@ -30,21 +30,20 @@ namespace Infrastructure.Repositories
 
         public async Task DeleteTicket(int id)
         {
-            try
+            var ticket = GetWithTracking().Include(x => x.Questions).FirstOrDefault(x => x.Id == id);
+            if (ticket != null)
             {
-                await Remove(id);
-            }
-            catch (Exception)
-            {
-                var ds = await GetWithTracking().Include(x => x.Questions).ToListAsync();
-                var ticket = ds.FirstOrDefault(x => x.Id == id);
-                if (ticket != null)
+                if (ticket.Questions.Any())
                 {
                     ticket.IsDeleted = true;
                     ticket.Questions?.ForEach(c => c.IsDeleted = true);
                     await Update(ticket);
                 }
+                else
+                    await Remove(id);
             }
+            else
+                throw new Exception();
         }
     }
 }
