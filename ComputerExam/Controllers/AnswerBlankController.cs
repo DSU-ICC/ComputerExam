@@ -27,6 +27,12 @@ namespace ComputerExam.Controllers
             return Ok(await _answerBlankRepository.Get().ToListAsync());
         }
 
+        /// <summary>
+        /// Получение бланка ответов студента по examId
+        /// </summary>
+        /// <param name="studentId"></param>
+        /// <param name="examId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("GetAnswerBlankByExamenIdAndStudentId")]
         public IActionResult GetAnswerBlankByExamenIdAndStudentId(int studentId, int examId)
@@ -34,6 +40,11 @@ namespace ComputerExam.Controllers
             return Ok(_answerBlankRepository.GetAnswerBlankByStudentIdAndExamenId(studentId, examId));
         }
 
+        /// <summary>
+        /// Получение бланка ответов по Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("GetAnswerBlankById")]
         public IActionResult GetAnswerBlankById(int id)
@@ -41,6 +52,11 @@ namespace ComputerExam.Controllers
             return Ok(_answerBlankRepository.Get().Include(x => x.Answers).FirstOrDefault(x => x.Id == id));
         }
 
+        /// <summary>
+        /// Получение всех бланков ответов и билетов по studentId
+        /// </summary>
+        /// <param name="studentId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("GetAnswerBlanksAndTicketByStudentId")]
         public IActionResult GetAnswerBlanksAndTicketByStudentId(int studentId)
@@ -63,7 +79,7 @@ namespace ComputerExam.Controllers
         }
 
         /// <summary>
-        /// Конец экзамена
+        /// Конец экзамена для студента
         /// </summary>
         /// <param name="answerBlank"></param>
         /// <returns></returns>

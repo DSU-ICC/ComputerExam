@@ -1,5 +1,4 @@
 ﻿using DomainService.Entity;
-using Infrastructure.Repositories;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ComputerExam.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class TicketController : Controller
@@ -21,12 +21,11 @@ namespace ComputerExam.Controllers
         [Route("GetTicketsByExamenId")]
         [HttpGet]
         public async Task<IActionResult> GetTicketsByExamenId(int examenId)
-            {
-            var tickets = await _examTicketRepository.GetTickets().Include(x=>x.Questions).Where(x => x.ExamenId == examenId).ToListAsync();
+        {
+            var tickets = await _examTicketRepository.GetTickets().Include(x => x.Questions).Where(x => x.ExamenId == examenId).ToListAsync();
             return Ok(tickets);
         }
 
-        [Authorize]
         [Route("CreateTicket")]
         [HttpPost]
         public async Task<IActionResult> CreateTicket(ExamTicket examen)
@@ -35,7 +34,6 @@ namespace ComputerExam.Controllers
             return Ok();
         }
 
-        [Authorize]
         [Route("UpdateTicket")]
         [HttpPost]
         public async Task<IActionResult> UpdateExamen(ExamTicket examen)
@@ -44,7 +42,6 @@ namespace ComputerExam.Controllers
             return Ok();
         }
 
-        [Authorize]
         [Route("DeleteTicket")]
         [HttpPost]
         public async Task<IActionResult> DeleteTicket(int id)

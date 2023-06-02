@@ -96,6 +96,11 @@ namespace ComputerExam.Controllers
             return Ok(examen);
         }
 
+        /// <summary>
+        /// Конец экзамена для сотрудника
+        /// </summary>
+        /// <param name="examId"></param>
+        /// <returns></returns>
         [Authorize]
         [Route("EndExamenForEmployee")]
         [HttpGet]

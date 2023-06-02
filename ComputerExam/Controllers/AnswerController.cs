@@ -35,6 +35,7 @@ namespace ComputerExam.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAnswer(Answer answer)
         {
+            answer.CreateAnswerDate = DateTime.Now;
             await _answerRepository.Create(answer);
             return Ok(answer);
         }
