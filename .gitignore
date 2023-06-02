@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /Infrastructure/Logger/LogFile/logFile.txt
 /ComputerExam/appsettings.json
+/ComputerExam/Logger/LogFile/logFile.txt
