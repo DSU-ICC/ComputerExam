@@ -41,7 +41,7 @@
         /// <summary>
         /// Продолжительность экзамена в минутах 
         /// </summary>
-        public int? ExamDurationInMitutes { get; set; }
+        public int? ExamDurationInMinutes { get; set; }
         public bool? IsDeleted { get; set; }
     }
 }

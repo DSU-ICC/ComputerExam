@@ -49,7 +49,8 @@ namespace ComputerExam.Controllers
         [Route("GetAnswerBlankById")]
         public IActionResult GetAnswerBlankById(int id)
         {
-            return Ok(_answerBlankRepository.Get().Include(x => x.Answers).FirstOrDefault(x => x.Id == id));
+            var answerBlank = _answerBlankRepository.GetAnswerBlankById(id);
+            return Ok(answerBlank);
         }
 
         /// <summary>

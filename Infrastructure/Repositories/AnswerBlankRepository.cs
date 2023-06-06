@@ -30,5 +30,17 @@ namespace Infrastructure.Repositories
 
             return answerBlankAndTicketDto;
         }
+
+        public AnswerBlank GetAnswerBlankById(int id)
+        {
+            var answerBlank = Get().Include(x => x.Answers)
+                                   .Include(x => x.ExamTicket).ThenInclude(x => x.Examen)
+                                   .FirstOrDefault(x => x.Id == id);
+
+            answerBlank.TimeToEndInMinutes =
+                (answerBlank.CreateDateTime.Value.AddMinutes((double)answerBlank.ExamTicket.Examen.ExamDurationInMinutes) - DateTime.Now).TotalMinutes;
+
+            return answerBlank;
+        }
     }
 }

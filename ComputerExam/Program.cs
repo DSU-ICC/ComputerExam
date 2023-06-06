@@ -71,7 +71,7 @@ builder.WebHost.ConfigureServices(configure => SentrySdk.Init(o =>
 builder.Services.AddServiceCollection();
 builder.Services.AddAuthorization();
 
-builder.Logging.AddFile(Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration["FileLoggerFolder"]));
+builder.Logging.AddFile(builder.Environment.ContentRootPath + builder.Configuration["FileLoggerFolder"]);
 
 var app = builder.Build();
 

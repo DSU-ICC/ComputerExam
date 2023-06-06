@@ -37,7 +37,7 @@ namespace Infrastructure.Repositories
                    Course = i.Course,
                    Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId!),
                    ExamDate = i.ExamDate,
-                   ExamDurationInMitutes = i.ExamDurationInMitutes,
+                   ExamDurationInMitutes = i.ExamDurationInMinutes,
                    ExamTickets = _examTicketRepository.Get().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),
                    EndExamDate = i.EndExamDate
                });
@@ -124,15 +124,15 @@ namespace Infrastructure.Repositories
             var answerBlank = new AnswerBlank()
             {
                 StudentId = studentId,
-                ExamTicketId = ticket.Id
+                ExamTicketId = ticket.Id,
+                TimeToEndInMinutes = examen.ExamDurationInMinutes,
             };
             await _answerBlankRepository.Create(answerBlank);
 
             StartExamenDto startExamenDto = new()
             {
                 AnswerBlank = answerBlank,
-                ExamTicket = ticket,
-                ExamenDuration = examen.ExamDurationInMitutes
+                ExamTicket = ticket
             };
             return startExamenDto;
         }

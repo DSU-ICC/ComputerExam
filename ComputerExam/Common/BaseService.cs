@@ -2,6 +2,7 @@
 using DSUContextDBService.Services;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.Interfaces;
+using Microsoft.Extensions.Hosting.Internal;
 
 namespace ComputerExam.Common
 {

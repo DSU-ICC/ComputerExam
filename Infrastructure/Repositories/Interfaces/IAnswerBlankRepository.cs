@@ -8,5 +8,6 @@ namespace Infrastructure.Repositories.Interfaces
     {
         public AnswerBlank? GetAnswerBlankByStudentIdAndExamenId(int studentId, int examId);
         public IQueryable<AnswerBlankAndTicketDto> GetAnswerBlanksAndTicketByStudentId(int studentId);
+        public AnswerBlank GetAnswerBlankById(int id);
     }
 }
