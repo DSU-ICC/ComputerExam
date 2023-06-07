@@ -37,7 +37,7 @@ namespace Infrastructure.Repositories
                    Course = i.Course,
                    Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId!),
                    ExamDate = i.ExamDate,
-                   ExamDurationInMitutes = i.ExamDurationInMinutes,
+                   ExamDurationInMitutes = i.ExamDurationInMitutes,
                    ExamTickets = _examTicketRepository.Get().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),
                    EndExamDate = i.EndExamDate
                });
@@ -65,7 +65,10 @@ namespace Infrastructure.Repositories
             var examen = GetExamens().FirstOrDefault(x => x.Id == examenId)
                 ?? throw new Exception("Exam not found.");
             var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
-            var answerBlanks = _answerBlankRepository.Get().Include(x => x.ExamTicket).Where(x => x.ExamTicket.ExamenId == examenId);
+            var answerBlanks = _answerBlankRepository.Get().Include(x=>x.Answers)
+                                                           .Include(x => x.ExamTicket).ThenInclude(x=>x.Questions)
+                                                           .Include(x => x.ExamTicket).ThenInclude(x=>x.Examen)
+                                                           .Where(x => x.ExamTicket.ExamenId == examenId);
 
             List<StudentsDto> studentsDtos = new();
             foreach (var item in students)
@@ -76,7 +79,7 @@ namespace Infrastructure.Repositories
                     FirstName = item.Firstname,
                     LastName = item.Lastname,
                     Patr = item.Patr,
-                    TotalScore = answerBlanks.FirstOrDefault(c => c.StudentId == item.Id)?.TotalScore
+                    AnswerBlank = answerBlanks.FirstOrDefault(c => c.StudentId == item.Id)
                 });
             }
             return studentsDtos;
@@ -125,7 +128,7 @@ namespace Infrastructure.Repositories
             {
                 StudentId = studentId,
                 ExamTicketId = ticket.Id,
-                TimeToEndInMinutes = examen.ExamDurationInMinutes,
+                TimeToEndInMinutes = examen.ExamDurationInMitutes,
             };
             await _answerBlankRepository.Create(answerBlank);
 

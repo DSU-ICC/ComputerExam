@@ -44,6 +44,7 @@ namespace ComputerExam.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateAnswer(Answer answer)
         {
+            answer.UpdateAnswerDate = DateTime.Now;
             await _answerRepository.Update(answer);
             return Ok();
         }

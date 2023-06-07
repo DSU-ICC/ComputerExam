@@ -38,7 +38,7 @@ namespace Infrastructure.Repositories
                                    .FirstOrDefault(x => x.Id == id);
 
             answerBlank.TimeToEndInMinutes =
-                (answerBlank.CreateDateTime.Value.AddMinutes((double)answerBlank.ExamTicket.Examen.ExamDurationInMinutes) - DateTime.Now).TotalMinutes;
+                (answerBlank.CreateDateTime.Value.AddMinutes((double)answerBlank.ExamTicket.Examen.ExamDurationInMitutes) - DateTime.Now).TotalMinutes;
 
             return answerBlank;
         }
