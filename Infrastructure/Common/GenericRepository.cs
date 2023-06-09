@@ -47,7 +47,7 @@ namespace Infrastructure.Common
             {
                 string create = "создании";
                 SendExceptionInSentry(item, create);
-                throw;
+                throw new Exception();
             }
         }
 
@@ -68,7 +68,7 @@ namespace Infrastructure.Common
             {
                 string update = "обновлении";
                 SendExceptionInSentry(item, update);
-                throw;
+                throw new Exception();
             }
         }
 
@@ -83,7 +83,7 @@ namespace Infrastructure.Common
             {
                 string update = "обновлении";
                 SendExceptionInSentry(item, update);
-                throw;
+                throw new Exception();
             }
         }
 
@@ -98,7 +98,7 @@ namespace Infrastructure.Common
             {
                 string delete = "удалении";
                 SendExceptionInSentry(item, delete);
-                throw;
+                throw new Exception();
             }
         }
 
@@ -117,7 +117,7 @@ namespace Infrastructure.Common
             {
                 string delete = "удалении";
                 SendExceptionInSentry(item, delete);
-                throw;
+                throw new Exception();
             }
         }
 

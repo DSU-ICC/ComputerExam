@@ -44,19 +44,25 @@ namespace Infrastructure.Repositories
             return examenDto;
         }
 
-        public IQueryable<ExamenStudentDto> GetExamensByStudentId(int studentId)
+        public List<ExamenStudentDto> GetExamensByStudentId(int studentId)
         {
             var student = _dsuDbService.GetCaseSStudentById(studentId)
                 ?? throw new Exception("Student not found.");
             var examens = GetExamens().Where(x => x.DepartmentId == student.DepartmentId && x.Course == student.Course && x.NGroup == student.Ngroup);
 
-            var examenStudentDtos = examens.Select(examen => new ExamenStudentDto()
+            List<ExamenStudentDto> examenStudentDtos = new();
+
+            foreach (var examen in examens)
             {
-                ExamenId = examen.Id,
-                Discipline = examen.Discipline,
-                AnswerBlank = _answerBlankRepository.Get().FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examen.Id),
-                ExamDate = examen.ExamDate
-            });
+                examenStudentDtos.Add(new ExamenStudentDto()
+                {
+                    ExamenId = examen.Id,
+                    Discipline = examen.Discipline,
+                    AnswerBlank = _answerBlankRepository.Get().FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examen.Id),
+                    ExamDate = examen.ExamDate,
+                    IsActiveNow = examen.EndExamDate == null && (DateTime.Now - examen.ExamDate) > TimeSpan.FromMinutes(0)
+                });
+            }
             return examenStudentDtos;
         }
 
@@ -65,9 +71,9 @@ namespace Infrastructure.Repositories
             var examen = GetExamens().FirstOrDefault(x => x.Id == examenId)
                 ?? throw new Exception("Exam not found.");
             var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
-            var answerBlanks = _answerBlankRepository.Get().Include(x=>x.Answers)
-                                                           .Include(x => x.ExamTicket).ThenInclude(x=>x.Questions)
-                                                           .Include(x => x.ExamTicket).ThenInclude(x=>x.Examen)
+            var answerBlanks = _answerBlankRepository.Get().Include(x => x.Answers)
+                                                           .Include(x => x.ExamTicket).ThenInclude(x => x.Questions)
+                                                           .Include(x => x.ExamTicket).ThenInclude(x => x.Examen)
                                                            .Where(x => x.ExamTicket.ExamenId == examenId);
 
             List<StudentsDto> studentsDtos = new();

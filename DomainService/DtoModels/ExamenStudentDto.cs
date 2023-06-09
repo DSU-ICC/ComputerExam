@@ -1,10 +1,4 @@
 ﻿using DomainService.Entity;
-using DSUContextDBService.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DomainService.DtoModels
 {
@@ -14,5 +8,6 @@ namespace DomainService.DtoModels
         public string? Discipline { get; set; }
         public AnswerBlank? AnswerBlank { get; set; }
         public DateTime? ExamDate { get; set; }
+        public bool? IsActiveNow { get; set; }
     }
 }
