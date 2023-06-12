@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 
-namespace DomainService.DtoModels
+namespace DomainService.DtoModels.Account
 {
     public class RolesDto
     {

@@ -7,7 +7,7 @@ namespace Infrastructure.Repositories.Interfaces
     public interface IAnswerBlankRepository : IGenericRepository<AnswerBlank>
     {
         public AnswerBlank? GetAnswerBlankByStudentIdAndExamenId(int studentId, int examId);
-        public IQueryable<AnswerBlankAndTicketDto> GetAnswerBlanksAndTicketByStudentId(int studentId);
-        public AnswerBlank GetAnswerBlankById(int id);
+        public IQueryable<AnswerBlank> GetAnswerBlanksAndTicketByStudentId(int studentId);
+        public AnswerBlankDto GetAnswerBlankById(int id);
     }
 }

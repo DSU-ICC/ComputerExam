@@ -10,8 +10,6 @@ namespace DomainService.DtoModels
     public class ForCheckingDto
     {
         public int? StudentId { get; set; }
-        public int? TotalScore { get; set; }
         public AnswerBlank? AnswerBlank { get; set; }
-        public Examen? Examen { get; set; } 
     }
 }

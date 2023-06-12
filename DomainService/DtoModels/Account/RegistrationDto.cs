@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DomainService.DtoModels
+namespace DomainService.DtoModels.Account
 {
     public class RegistrationDto
     {

@@ -19,28 +19,29 @@ namespace Infrastructure.Repositories
             return Get().Include(x => x.Answers).ThenInclude(x=>x.Question).FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examId);
         }
 
-        public IQueryable<AnswerBlankAndTicketDto> GetAnswerBlanksAndTicketByStudentId(int studentId)
+        public IQueryable<AnswerBlank> GetAnswerBlanksAndTicketByStudentId(int studentId)
         {
-            var answerBlanks = Get().Include(x => x.Answers).ThenInclude(x => x.Question).Where(x => x.StudentId == studentId);
-            var answerBlankAndTicketDto = answerBlanks.Select(x => new AnswerBlankAndTicketDto()
-            {
-                AnswerBlank = x,
-                Ticket = x.ExamTicket
-            });
+            var answerBlanks = Get().Include(x=>x.ExamTicket)
+                                    .Include(x => x.Answers).ThenInclude(x => x.Question)
+                                    .Where(x => x.StudentId == studentId);
 
-            return answerBlankAndTicketDto;
+            return answerBlanks;
         }
 
-        public AnswerBlank GetAnswerBlankById(int id)
+        public AnswerBlankDto GetAnswerBlankById(int id)
         {
             var answerBlank = Get().Include(x => x.Answers)
                                    .Include(x => x.ExamTicket).ThenInclude(x => x.Examen)
                                    .FirstOrDefault(x => x.Id == id);
 
-            answerBlank.TimeToEndInMinutes =
-                (answerBlank.CreateDateTime.Value.AddMinutes((double)answerBlank.ExamTicket.Examen.ExamDurationInMitutes) - DateTime.Now).TotalMinutes;
+            var answerBlankDto = new AnswerBlankDto()
+            {
+                AnswerBlank = answerBlank,
+                TimeToEndInSeconds = (int?)
+                        (answerBlank.CreateDateTime.Value.AddMinutes((double)answerBlank.ExamTicket.Examen.ExamDurationInMitutes) - DateTime.Now).TotalSeconds
+            };
 
-            return answerBlank;
+            return answerBlankDto;
         }
     }
 }

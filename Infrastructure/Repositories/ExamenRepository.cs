@@ -99,6 +99,7 @@ namespace Infrastructure.Repositories
 
             var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
             var answerBlanks = _answerBlankRepository.Get().Include(x => x.ExamTicket).ThenInclude(x => x.Questions)
+                                                           .Include(x => x.ExamTicket).ThenInclude(x => x.Examen)
                                                            .Include(x => x.Answers).Where(x => x.ExamTicket.ExamenId == examenId);
 
             List<ForCheckingDto> studentsDtos = new();
@@ -107,15 +108,13 @@ namespace Infrastructure.Repositories
                 studentsDtos.Add(new ForCheckingDto()
                 {
                     StudentId = item.Id,
-                    TotalScore = answerBlanks.FirstOrDefault(c => c.StudentId == item.Id)?.TotalScore,
-                    AnswerBlank = answerBlanks.FirstOrDefault(c => c.StudentId == item.Id),
-                    Examen = examen
+                    AnswerBlank = answerBlanks.FirstOrDefault(c => c.StudentId == item.Id)
                 });
             }
             return studentsDtos;
         }
 
-        public async Task<StartExamenDto?> StartExamen(int studentId, int examId)
+        public async Task<AnswerBlank?> StartExamen(int studentId, int examId)
         {
             if (_answerBlankRepository.Get().Any(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examId))
                 return null;
@@ -133,17 +132,11 @@ namespace Infrastructure.Repositories
             var answerBlank = new AnswerBlank()
             {
                 StudentId = studentId,
-                ExamTicketId = ticket.Id,
-                TimeToEndInMinutes = examen.ExamDurationInMitutes,
+                ExamTicketId = ticket.Id
             };
             await _answerBlankRepository.Create(answerBlank);
-
-            StartExamenDto startExamenDto = new()
-            {
-                AnswerBlank = answerBlank,
-                ExamTicket = ticket
-            };
-            return startExamenDto;
+            answerBlank.ExamTicket = ticket;
+            return answerBlank;
         }
 
         public async Task<Examen?> CopyExamen(int examenId, DateTime newExamDate)

@@ -31,10 +31,6 @@
         /// Дата окончания экзамена
         /// </summary>
         public DateTime? EndExamenDateTime { get; set; }
-        /// <summary>
-        /// Время до конца экзамена в минутах
-        /// </summary>
-        public double? TimeToEndInMinutes { get; set; }
         public bool? IsDeleted { get; set; }
     }
 }

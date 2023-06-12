@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace DomainService.DtoModels
 {
-    public class AnswerBlankAndTicketDto
+    public class AnswerBlankDto
     {
         public AnswerBlank? AnswerBlank { get; set; }
-        public ExamTicket? Ticket { get; set; }
+        public int? TimeToEndInSeconds { get; set; }
     }
 }

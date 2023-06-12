@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using DomainService.Entity;
-using DomainService.DtoModels;
+using DomainService.DtoModels.Account;
 
 namespace ComputerExam.Controllers
 {

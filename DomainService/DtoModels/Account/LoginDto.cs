@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 
-namespace DomainService.DtoModels
+namespace DomainService.DtoModels.Account
 {
     public class LoginDto
     {
