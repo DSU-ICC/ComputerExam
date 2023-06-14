@@ -70,7 +70,6 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="answerBlank"></param>
         /// <returns></returns>
-        [Authorize]
         [HttpPost]
         [Route("UpdateAnswerBlank")]
         public async Task<IActionResult> UpdateAnswerBlank(AnswerBlank answerBlank)
