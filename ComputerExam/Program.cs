@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using Sentry;
 using Infrastructure.Logger;
 using DSUContextDBService.DBService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,27 +37,6 @@ builder.Services.AddDbContext<DSUContext>(options =>
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CompExam"), providerOptions => providerOptions.EnableRetryOnFailure()));
 
-builder.Services.AddIdentity<Employee, IdentityRole>(
-               opts =>
-               {
-                   opts.Password.RequiredLength = 2;
-                   opts.Password.RequireNonAlphanumeric = false;
-                   opts.Password.RequireLowercase = false;
-                   opts.Password.RequireUppercase = false;
-                   opts.Password.RequireDigit = false;
-               })
-               .AddEntityFrameworkStores<ApplicationContext>();
-
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    // Cookie settings
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SameSite = SameSiteMode.None;
-
-    options.LoginPath = "/Account/Login";
-    options.SlidingExpiration = true;
-});
-
 builder.WebHost.ConfigureServices(configure => SentrySdk.Init(o =>
 {
     // Tells which project in Sentry to send events to:
@@ -69,23 +51,33 @@ builder.WebHost.ConfigureServices(configure => SentrySdk.Init(o =>
 }));
 
 builder.Services.AddServiceCollection();
+
 builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            // указывает, будет ли валидироваться издатель при валидации токена
+            ValidateIssuer = true,
+            // строка, представляющая издателя
+            ValidIssuer = builder.Configuration["ISSUER"],
+            // будет ли валидироваться потребитель токена
+            ValidateAudience = true,
+            // установка потребителя токена
+            ValidAudience = builder.Configuration["AUDIENCE"],
+            // будет ли валидироваться время существования
+            ValidateLifetime = true,
+            // установка ключа безопасности
+            IssuerSigningKey = new AuthOptions(builder.Configuration).GetSymmetricSecurityKey(),
+            // валидация ключа безопасности
+            ValidateIssuerSigningKey = true,
+        };
+    });
 
 builder.Logging.AddFile(builder.Environment.ContentRootPath + builder.Configuration["FileLoggerFolder"]);
 
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Employee>>();
-    var rolesManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    if (userManager.Users.ToList().Count == 0)
-    {
-        string adminLogin = builder.Configuration["AdminLogin"];
-        string password = builder.Configuration["AdminPassword"];
-        await RoleInitializer.InitializeAsync(adminLogin, password, userManager, rolesManager);
-    }
-}
 
 app.ConfigureExceptionHandler();
 
