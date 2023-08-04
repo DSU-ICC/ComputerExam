@@ -146,6 +146,8 @@ namespace Infrastructure.Repositories
             {
                 examen.Id = 0;
                 examen.ExamDate = newExamDate.AddHours(3);
+                examen.Discipline += " (Пересдача)";
+                examen.EndExamDate = null;
                 foreach (var item in examen.Tickets)
                 {
                     item.Id = 0;
