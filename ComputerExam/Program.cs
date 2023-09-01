@@ -75,18 +75,6 @@ builder.Logging.AddFile(builder.Environment.ContentRootPath + builder.Configurat
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Employee>>();
-    var rolesManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    if (userManager.Users.ToList().Count == 0)
-    {
-        string adminLogin = builder.Configuration["AdminLogin"];
-        string password = builder.Configuration["AdminPassword"];
-        await RoleInitializer.InitializeAsync(adminLogin, password, userManager, rolesManager);
-    }
-}
-
 app.ConfigureExceptionHandler();
 
 // Configure the HTTP request pipeline.
