@@ -24,19 +24,17 @@ namespace ComputerExam.Controllers
             _authOptions = authOptions;
         }
 
-        [Route("Logout")]
-        [HttpGet]
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-            return Ok();
-        }
-
         [Route("Login")]
         [HttpPost]
         public IActionResult Login(LoginDto loginData)
         {
             Employee? employee = _employeeRepository.Get().Include(x => x.Role).FirstOrDefault(p => p.Name == loginData.Login && p.Password == loginData.Password);
+            LoginResponse loginResponse = new()
+            {
+                Id = employee.Id,
+                Name = employee.Name,
+                Role = employee.Role,
+            };
             if (employee != null)
             {
                 var claims = new List<Claim>
@@ -55,7 +53,7 @@ namespace ComputerExam.Controllers
                 var response = new
                 {
                     access_token = encodedJwt,
-                    employee = employee
+                    employee = loginResponse
                 };
                 return Ok(response);
             }

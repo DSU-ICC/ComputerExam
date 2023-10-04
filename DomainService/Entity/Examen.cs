@@ -9,7 +9,7 @@
         /// <summary>
         /// Id создавшего экзамен
         /// </summary>
-        public Guid? EmployeeId { get; set; }
+        public int? EmployeeId { get; set; }
         /// <summary>
         /// Id направления
         /// </summary>

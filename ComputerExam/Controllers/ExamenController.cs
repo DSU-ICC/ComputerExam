@@ -34,7 +34,7 @@ namespace ComputerExam.Controllers
         [Authorize]
         [Route("GetExamensByEmployeeId")]
         [HttpGet]
-        public IActionResult GetExamensByEmployeeId(Guid employeeId)
+        public IActionResult GetExamensByEmployeeId(int employeeId)
         {
             return Ok(_examenRepository.GetExamensByEmployeeId(employeeId));
         }

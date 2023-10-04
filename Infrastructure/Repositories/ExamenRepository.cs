@@ -26,7 +26,7 @@ namespace Infrastructure.Repositories
             return Get().Where(x => x.IsDeleted == false);
         }
 
-        public IQueryable<ExamenDto> GetExamensByEmployeeId(Guid employeeId)
+        public IQueryable<ExamenDto> GetExamensByEmployeeId(int employeeId)
         {
             var examenDto = GetExamens().Where(x => x.EmployeeId == employeeId)
                .Select(i => new ExamenDto()
