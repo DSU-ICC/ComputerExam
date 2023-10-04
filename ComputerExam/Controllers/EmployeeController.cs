@@ -37,7 +37,7 @@ namespace ComputerExam.Controllers
                     Name = model.Login,
                     Password = model.Password,
                     Role = model.Role,
-                    RoleId = model.RoleId == null ? null : Guid.Parse(model.RoleId)
+                    RoleId = model.RoleId
                 };
 
                 await _employeeRepository.Create(employee);                
@@ -58,7 +58,7 @@ namespace ComputerExam.Controllers
                     employee.Name = model.Login;
                     employee.Password = model.Password;
                     employee.Role = model.Role;
-                    employee.RoleId = model.RoleId == null ? null : Guid.Parse(model.RoleId);
+                    employee.RoleId = model.RoleId;
 
                     await _employeeRepository.Update(employee);
                 }
