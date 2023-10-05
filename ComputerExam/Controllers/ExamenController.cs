@@ -121,7 +121,7 @@ namespace ComputerExam.Controllers
         /// <param name="examenId"></param>
         /// <param name="newExamDate"></param>
         /// <returns></returns>
-        [Authorize]
+        [Authorize(Roles = "testingDepartment, admin")]
         [Route("CopyExamen")]
         [HttpPost]
         public async Task<IActionResult> CopyExamen(int examenId, DateTime newExamDate)
@@ -134,7 +134,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="examen"></param>
         /// <returns></returns>
-        [Authorize]
+        [Authorize(Roles = "testingDepartment, admin")]
         [Route("CreateExamen")]
         [HttpPost]
         public async Task<IActionResult> CreateExamen(Examen examen)
@@ -149,7 +149,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="examen"></param>
         /// <returns></returns>
-        [Authorize]
+        [Authorize(Roles = "testingDepartment, admin")]
         [Route("UpdateExamen")]
         [HttpPost]
         public async Task<IActionResult> UpdateExamen(Examen examen)
@@ -164,7 +164,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Authorize]
+        [Authorize(Roles = "testingDepartment, admin")]
         [Route("DeleteExamen")]
         [HttpPost]
         public async Task<IActionResult> DeleteExamen(int id)

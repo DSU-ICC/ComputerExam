@@ -20,6 +20,7 @@ namespace ComputerExam.Controllers
             _answerBlankRepository = answerBlankRepository;
         }
 
+        [Authorize]
         [HttpGet]
         [Route("GetAnswerBlanks")]
         public async Task<IActionResult> GetAnswerBlanks()
@@ -70,6 +71,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="answerBlank"></param>
         /// <returns></returns>
+        [Authorize(Roles = "auditorium, admin")]
         [HttpPost]
         [Route("UpdateAnswerBlank")]
         public async Task<IActionResult> UpdateAnswerBlank(AnswerBlank answerBlank)

@@ -29,14 +29,15 @@ namespace ComputerExam.Controllers
         public IActionResult Login(LoginDto loginData)
         {
             Employee? employee = _employeeRepository.Get().Include(x => x.Role).FirstOrDefault(p => p.Name == loginData.Login && p.Password == loginData.Password);
-            LoginResponse loginResponse = new()
-            {
-                Id = employee.Id,
-                Name = employee.Name,
-                Role = employee.Role,
-            };
+            
             if (employee != null)
             {
+                LoginResponse loginResponse = new()
+                {
+                    Id = employee.Id,
+                    Name = employee.Name,
+                    Role = employee.Role,
+                };
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimsIdentity.DefaultNameClaimType, employee.Name),
@@ -57,7 +58,7 @@ namespace ComputerExam.Controllers
                 };
                 return Ok(response);
             }
-            return BadRequest();
+            return BadRequest("Пользователь не найден");
         }
     }
 }

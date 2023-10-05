@@ -11,7 +11,7 @@ using Infrastructure.Repositories.Interfaces;
 
 namespace ComputerExam.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "admin")]
     [ApiController]
     [Route("[controller]")]
     public class RoleController : Controller
