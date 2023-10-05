@@ -27,16 +27,16 @@ namespace ComputerExam.Controllers
         }
 
         /// <summary>
-        /// Получение экзаменов по Id сотрудника
+        /// Получение экзаменов по Id кабинета
         /// </summary>
-        /// <param name="employeeId"></param>
+        /// <param name="auditoriumId"></param>
         /// <returns></returns>
         [Authorize]
         [Route("GetExamensByEmployeeId")]
         [HttpGet]
-        public IActionResult GetExamensByEmployeeId(int employeeId)
+        public IActionResult GetExamensByEmployeeId(int auditoriumId)
         {
-            return Ok(_examenRepository.GetExamensByEmployeeId(employeeId));
+            return Ok(_examenRepository.GetExamensByEmployeeId(auditoriumId));
         }
 
         /// <summary>

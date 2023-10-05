@@ -7,9 +7,13 @@
     {
         public int Id { get; set; }
         /// <summary>
-        /// Id создавшего экзамен
+        /// Id создателя экзамена
         /// </summary>
-        public int? EmployeeId { get; set; }
+        //public Guid? EmployeeId { get; set; }
+        /// <summary>
+        /// Id кабинета в котором проходит экзамен
+        /// </summary>
+        public int? AuditoriumId { get; set; }
         /// <summary>
         /// Id направления
         /// </summary>
@@ -42,6 +46,10 @@
         /// Продолжительность экзамена в минутах 
         /// </summary>
         public int? ExamDurationInMitutes { get; set; }
+        /// <summary>
+        /// Преподаватель проверяющий экзамен
+        /// </summary>
+        public int? TeacherId { get; set; }
         public bool? IsDeleted { get; set; }
     }
 }
