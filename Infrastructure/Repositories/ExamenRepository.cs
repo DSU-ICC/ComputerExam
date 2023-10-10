@@ -26,7 +26,7 @@ namespace Infrastructure.Repositories
             return Get().Where(x => x.IsDeleted == false);
         }
 
-        public IQueryable<ExamenDto> GetExamensByEmployeeId(int auditoriumId)
+        public IQueryable<ExamenDto> GetExamensByEmployeeId(Guid auditoriumId)
         {
             var examenDto = GetExamens().Where(x => x.AuditoriumId == auditoriumId)
                .Select(i => new ExamenDto()
@@ -47,7 +47,7 @@ namespace Infrastructure.Repositories
         public List<ExamenStudentDto> GetExamensByStudentId(int studentId)
         {
             var student = _dsuDbService.GetCaseSStudentById(studentId)
-                ?? throw new Exception("Student not found.");
+                ?? throw new Exception("Student not found. " + studentId.ToString());
             var examens = GetExamens().Where(x => x.DepartmentId == student.DepartmentId && x.Course == student.Course && x.NGroup == student.Ngroup);
 
             List<ExamenStudentDto> examenStudentDtos = new();

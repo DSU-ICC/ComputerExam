@@ -9,10 +9,10 @@ namespace DomainService.DtoModels.Account
 {
     public class EditDto
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Login { get; set; }
         public string? Password { get; set; }
         public Role? Role { get; set; }
-        public int? RoleId { get; set; }
+        public Guid? RoleId { get; set; }
     }
 }

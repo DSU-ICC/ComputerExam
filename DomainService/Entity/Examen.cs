@@ -13,7 +13,7 @@
         /// <summary>
         /// Id кабинета в котором проходит экзамен
         /// </summary>
-        public int? AuditoriumId { get; set; }
+        public Guid? AuditoriumId { get; set; }
         /// <summary>
         /// Id направления
         /// </summary>

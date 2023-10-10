@@ -43,9 +43,9 @@ namespace ComputerExam.Controllers
 
         [Route("EditRole")]
         [HttpPost]
-        public async Task<IActionResult> EditRole(int employeeId, int roleId)
+        public async Task<IActionResult> EditRole(Guid employeeId, Guid roleId)
         {
-            Employee? employee = _employeeRepository.FindById(employeeId);
+            Employee? employee = _employeeRepository.Get().FirstOrDefault(x=>x.Id == employeeId);
             if (employee != null)
             {
                 employee.RoleId = roleId;
