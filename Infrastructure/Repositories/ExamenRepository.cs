@@ -23,7 +23,7 @@ namespace Infrastructure.Repositories
 
         public IQueryable<Examen> GetExamens()
         {
-            return Get().Where(x => x.IsDeleted == false);
+            return Get().Where(x => x.IsDeleted != true && x.IsInArchive != true);
         }
 
         public IQueryable<ExamenDto> GetExamensByEmployeeId(Guid employeeId)

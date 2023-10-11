@@ -43,5 +43,6 @@
         /// </summary>
         public int? ExamDurationInMitutes { get; set; }
         public bool? IsDeleted { get; set; }
+        public bool? IsInArchive { get; set; }
     }
 }
