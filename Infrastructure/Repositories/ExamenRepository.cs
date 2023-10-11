@@ -35,7 +35,25 @@ namespace Infrastructure.Repositories
                    Discipline = i.Discipline,
                    Group = i.NGroup,
                    Course = i.Course,
-                   Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId!),
+                   Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId),
+                   ExamDate = i.ExamDate,
+                   ExamDurationInMitutes = i.ExamDurationInMitutes,
+                   ExamTickets = _examTicketRepository.Get().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),
+                   EndExamDate = i.EndExamDate
+               });
+            return examenDto;
+        }
+
+        public IQueryable<ExamenDto> GetExamensFromArchiveByEmployeeId(Guid employeeId)
+        {
+            var examenDto = Get().Where(x => x.EmployeeId == employeeId && x.IsInArchive == true)
+               .Select(i => new ExamenDto()
+               {
+                   ExamenId = i.Id,
+                   Discipline = i.Discipline,
+                   Group = i.NGroup,
+                   Course = i.Course,
+                   Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId),
                    ExamDate = i.ExamDate,
                    ExamDurationInMitutes = i.ExamDurationInMitutes,
                    ExamTickets = _examTicketRepository.Get().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),

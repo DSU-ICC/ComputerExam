@@ -39,6 +39,14 @@ namespace ComputerExam.Controllers
             return Ok(_examenRepository.GetExamensByEmployeeId(employeeId));
         }
 
+        [Authorize]
+        [Route("GetExamensFromArchiveByEmployeeId")]
+        [HttpGet]
+        public IActionResult GetExamensFromArchiveByEmployeeId(Guid employeeId)
+        {
+            return Ok(_examenRepository.GetExamensFromArchiveByEmployeeId(employeeId));
+        }
+
         /// <summary>
         /// Получение экзаменов по Id студента
         /// </summary>
