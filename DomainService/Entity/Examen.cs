@@ -9,7 +9,7 @@
         /// <summary>
         /// Id создателя экзамена
         /// </summary>
-        //public Guid? EmployeeId { get; set; }
+        public Guid? EmployeeId { get; set; }
         /// <summary>
         /// Id кабинета в котором проходит экзамен
         /// </summary>
