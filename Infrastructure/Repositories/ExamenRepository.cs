@@ -26,7 +26,25 @@ namespace Infrastructure.Repositories
             return Get().Where(x => x.IsDeleted == false);
         }
 
-        public IQueryable<ExamenDto> GetExamensByEmployeeId(Guid auditoriumId)
+        public IQueryable<ExamenDto> GetExamensByEmployeeId(Guid employeeId)
+        {
+            var examenDto = GetExamens().Where(x => x.EmployeeId == employeeId)
+               .Select(i => new ExamenDto()
+               {
+                   ExamenId = i.Id,
+                   Discipline = i.Discipline,
+                   Group = i.NGroup,
+                   Course = i.Course,
+                   Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId!),
+                   ExamDate = i.ExamDate,
+                   ExamDurationInMitutes = i.ExamDurationInMitutes,
+                   ExamTickets = _examTicketRepository.Get().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),
+                   EndExamDate = i.EndExamDate
+               });
+            return examenDto;
+        }
+
+        public IQueryable<ExamenDto> GetExamensByAuditoriumId(Guid auditoriumId)
         {
             var examenDto = GetExamens().Where(x => x.AuditoriumId == auditoriumId)
                .Select(i => new ExamenDto()
@@ -42,7 +60,7 @@ namespace Infrastructure.Repositories
                    EndExamDate = i.EndExamDate
                });
             return examenDto;
-        }
+        }        
 
         public List<ExamenStudentDto> GetExamensByStudentId(int studentId)
         {

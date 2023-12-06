@@ -28,8 +28,6 @@ namespace ComputerExam.Controllers
 
         /// <summary>
         /// Получение экзаменов по Id сотрудника
-        /// Если передать auditoriumId, то выдаст список экзаменов в данной аудитории.
-        /// Если передать employeeId, то выдаст списко экзаменов созданных этим сотрудником
         /// </summary>
         /// <param name="employeeId"></param>
         /// <returns></returns>
@@ -39,6 +37,19 @@ namespace ComputerExam.Controllers
         public IActionResult GetExamensByEmployeeId(Guid employeeId)
         {
             return Ok(_examenRepository.GetExamensByEmployeeId(employeeId));
+        }
+
+        /// <summary>
+        /// Получение экзаменов по Id аудитории
+        /// </summary>
+        /// <param name="auditoriumId"></param>
+        /// <returns></returns>
+        [Authorize]
+        [Route("GetExamensByAuditoriumId")]
+        [HttpGet]
+        public IActionResult GetExamensByAuditoriumId(Guid auditoriumId)
+        {
+            return Ok(_examenRepository.GetExamensByAuditoriumId(auditoriumId));
         }
 
         /// <summary>
