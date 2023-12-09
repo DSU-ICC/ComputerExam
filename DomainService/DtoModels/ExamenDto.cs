@@ -1,10 +1,5 @@
 ﻿using DomainService.Entity;
 using DSUContextDBService.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DomainService.DtoModels
 {
@@ -19,5 +14,7 @@ namespace DomainService.DtoModels
         public DateTime? EndExamDate { get; set; }
         public int? ExamDurationInMitutes { get; set; }
         public List<ExamTicket>? ExamTickets { get; set; }
+        public int? TeacherId { get; set; }
+        public Guid? AuditoriumId { get; set; }
     }
 }
