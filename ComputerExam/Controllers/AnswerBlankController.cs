@@ -83,12 +83,13 @@ namespace ComputerExam.Controllers
         /// <summary>
         /// Конец экзамена для студента
         /// </summary>
-        /// <param name="answerBlank"></param>
+        /// <param name="answerBlankId"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("EndExamenForStudent")]
-        public async Task<IActionResult> EndExamenForStudent(AnswerBlank answerBlank)
+        public async Task<IActionResult> EndExamenForStudent(int answerBlankId)
         {
+            var answerBlank = _answerBlankRepository.FindById(answerBlankId);
             answerBlank.EndExamenDateTime = DateTime.Now;
             await _answerBlankRepository.Update(answerBlank);
             return Ok();
