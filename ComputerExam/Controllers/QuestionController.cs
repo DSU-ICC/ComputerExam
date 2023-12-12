@@ -38,7 +38,7 @@ namespace ComputerExam.Controllers
             return Ok(_questionRepository.FindById(id));
         }
 
-        [Authorize(Roles = "testingDepartment, admin")]
+        [Authorize(Roles = "testingDepartment, admin, uko")]
         [Route("CreateQuestion")]
         [HttpPost]
         public async Task<IActionResult> CreateQuestion(Question question)
@@ -47,7 +47,7 @@ namespace ComputerExam.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = "testingDepartment, admin")]
+        [Authorize(Roles = "testingDepartment, admin, uko")]
         [Route("UpdateQuestion")]
         [HttpPost]
         public async Task<IActionResult> UpdateQuestion(Question question)
@@ -56,7 +56,7 @@ namespace ComputerExam.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = "testingDepartment, admin")]
+        [Authorize(Roles = "testingDepartment, admin, uko")]
         [Route("DeleteQuestion")]
         [HttpPost]
         public async Task<IActionResult> DeleteQuestion(int id)

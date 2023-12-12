@@ -147,7 +147,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="examen"></param>
         /// <returns></returns>
-        [Authorize(Roles = "testingDepartment, admin")]
+        [Authorize(Roles = "testingDepartment, admin, uko")]
         [Route("CreateExamen")]
         [HttpPost]
         public async Task<IActionResult> CreateExamen(Examen examen)
@@ -162,7 +162,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="examen"></param>
         /// <returns></returns>
-        [Authorize(Roles = "testingDepartment, admin")]
+        [Authorize(Roles = "testingDepartment, admin, uko")]
         [Route("UpdateExamen")]
         [HttpPost]
         public async Task<IActionResult> UpdateExamen(Examen examen)
@@ -177,7 +177,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Authorize(Roles = "testingDepartment, admin")]
+        [Authorize(Roles = "testingDepartment, admin, uko")]
         [Route("DeleteExamen")]
         [HttpPost]
         public async Task<IActionResult> DeleteExamen(int id)

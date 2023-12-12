@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ComputerExam.Controllers
 {
-    [Authorize(Roles = "testingDepartment, admin")]
+    [Authorize(Roles = "testingDepartment, admin, uko")]
     [ApiController]
     [Route("[controller]")]
     public class TicketController : Controller

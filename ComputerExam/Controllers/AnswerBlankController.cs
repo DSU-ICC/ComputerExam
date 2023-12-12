@@ -1,8 +1,5 @@
-﻿using DomainService.DtoModels;
-using DomainService.Entity;
-using Infrastructure.Repositories;
+﻿using DomainService.Entity;
 using Infrastructure.Repositories.Interfaces;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -71,7 +68,6 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="answerBlank"></param>
         /// <returns></returns>
-        [Authorize(Roles = "auditorium, admin")]
         [HttpPost]
         [Route("UpdateAnswerBlank")]
         public async Task<IActionResult> UpdateAnswerBlank(AnswerBlank answerBlank)
