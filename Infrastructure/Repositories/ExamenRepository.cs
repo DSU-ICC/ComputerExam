@@ -107,6 +107,7 @@ namespace Infrastructure.Repositories
                     FirstName = item.Firstname,
                     LastName = item.Lastname,
                     Patr = item.Patr,
+                    FioTeacher = _dsuDbService.GetFioCaseSTeacherById(examen.TeacherId),
                     AnswerBlank = answerBlanks.FirstOrDefault(c => c.StudentId == item.Id)
                 });
             }
