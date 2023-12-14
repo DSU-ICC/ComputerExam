@@ -36,9 +36,9 @@ namespace ComputerExam.Controllers
 
         [Route("UpdateTicket")]
         [HttpPost]
-        public async Task<IActionResult> UpdateExamen(ExamTicket examen)
+        public async Task<IActionResult> UpdateTicket(ExamTicket examTicket)
         {
-            await _examTicketRepository.Update(examen);
+            await _examTicketRepository.Update(examTicket);
             return Ok();
         }
 

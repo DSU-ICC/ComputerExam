@@ -134,7 +134,7 @@ namespace ComputerExam.Controllers
         /// <param name="examenId"></param>
         /// <param name="newExamDate"></param>
         /// <returns></returns>
-        [Authorize(Roles = "testingDepartment, admin")]
+        [Authorize(Roles = "testingDepartment, admin, uko")]
         [Route("CopyExamen")]
         [HttpPost]
         public async Task<IActionResult> CopyExamen(int examenId, DateTime newExamDate)
