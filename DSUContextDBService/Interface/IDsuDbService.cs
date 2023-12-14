@@ -1,5 +1,4 @@
-﻿using DSUContextDBService.DBService;
-using DSUContextDBService.Models;
+﻿using DSUContextDBService.Models;
 
 namespace DSUContextDBService.Interface
 {
@@ -17,6 +16,7 @@ namespace DSUContextDBService.Interface
         public IQueryable<CaseSStudent> GetCaseSStudents(int filId = 0);
         public CaseSStudent? GetCaseSStudentById(int id);
         public IQueryable<CaseSTeacher> GetCaseSTeachers();
-        public CaseSTeacher GetCaseSTeacherById(int id);
+        public CaseSTeacher? GetCaseSTeacherById(int id);
+        public string? GetFioCaseSTeacherById(int? teacherId);
     }
 }

@@ -130,7 +130,8 @@ namespace Infrastructure.Repositories
                 studentsDtos.Add(new ForCheckingDto()
                 {
                     StudentId = item.Id,
-                    AnswerBlank = answerBlanks.FirstOrDefault(c => c.StudentId == item.Id)
+                    AnswerBlank = answerBlanks.FirstOrDefault(c => c.StudentId == item.Id),
+                    FioTeacher = _dsuDbService.GetFioCaseSTeacherById(examen.TeacherId)
                 });
             }
             return studentsDtos;
