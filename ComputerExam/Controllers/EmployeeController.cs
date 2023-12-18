@@ -6,7 +6,7 @@ using Infrastructure.Repositories.Interfaces;
 
 namespace ComputerExam.Controllers
 {
-    [Authorize(Roles = "testingDepartment, admin, uko")]
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class EmployeeController : Controller
@@ -18,7 +18,6 @@ namespace ComputerExam.Controllers
             _employeeRepository = employeeRepository;
         }
 
-
         [Route("GetEmployees")]
         [HttpGet]
         public IActionResult GetEmployees()
@@ -26,6 +25,7 @@ namespace ComputerExam.Controllers
             return Ok(_employeeRepository.Get());
         }
 
+        [Authorize("admin")]
         [Route("CreateUser")]
         [HttpPost]
         public async Task<IActionResult> CreateEmployee(RegistrationDto model)
@@ -46,6 +46,7 @@ namespace ComputerExam.Controllers
             return BadRequest();
         }
 
+        [Authorize("admin")]
         [Route("EditUser")]
         [HttpPost]
         public async Task<IActionResult> EditEmployee(EditDto model)
@@ -66,6 +67,7 @@ namespace ComputerExam.Controllers
             return BadRequest();
         }
 
+        [Authorize("admin")]
         [Route("DeleteUser")]
         [HttpPost]
         public async Task<ActionResult> DeleteEmployee(string id)
