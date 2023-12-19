@@ -69,6 +69,7 @@ namespace ComputerExam.Controllers
         /// <param name="answerBlankId"></param>
         /// <param name="isRemoveAnswerBlank"></param>
         /// <returns></returns>
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [Route("ResetAnswerBlank")]
         public async Task<IActionResult> ResetAnswerBlank(int answerBlankId, bool? isRemoveAnswerBlank)
