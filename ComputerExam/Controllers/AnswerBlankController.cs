@@ -22,7 +22,7 @@ namespace ComputerExam.Controllers
         [Route("GetAnswerBlanks")]
         public async Task<IActionResult> GetAnswerBlanks()
         {
-            return Ok(await _answerBlankRepository.Get().ToListAsync());
+            return Ok(await _answerBlankRepository.GetAnswerBlanks().ToListAsync());
         }
 
         /// <summary>
@@ -61,6 +61,30 @@ namespace ComputerExam.Controllers
         public IActionResult GetAnswerBlanksAndTicketByStudentId(int studentId)
         {
             return Ok(_answerBlankRepository.GetAnswerBlanksAndTicketByStudentId(studentId));
+        }
+
+        /// <summary>
+        /// Сброс бланка ответа студента
+        /// </summary>
+        /// <param name="answerBlankId"></param>
+        /// <param name="isRemoveAnswerBlank"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("ResetAnswerBlank")]
+        public async Task<IActionResult> ResetAnswerBlank(int answerBlankId, bool? isRemoveAnswerBlank)
+        {
+            var answerBlank = _answerBlankRepository.GetAnswerBlanks().FirstOrDefault(x=>x.Id == answerBlankId);
+            if (answerBlank == null)
+                return BadRequest();
+            if (isRemoveAnswerBlank == true)
+            {
+                answerBlank.IsDeleted = true;
+                answerBlank.Answers?.ForEach(x => x.IsDeleted = true);
+            }
+            else
+                answerBlank.EndExamenDateTime = null;
+            await _answerBlankRepository.Update(answerBlank);
+            return Ok();
         }
 
         /// <summary>

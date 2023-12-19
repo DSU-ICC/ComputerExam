@@ -143,6 +143,22 @@ namespace ComputerExam.Controllers
         }
 
         /// <summary>
+        /// Сброс экзамена
+        /// </summary>
+        /// <param name="examenId"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "admin")]
+        [Route("ResetExamen")]
+        [HttpPost]
+        public async Task<IActionResult> ResetExamen(int examenId)
+        {
+            var examen = _examenRepository.FindById(examenId);
+            examen.EndExamDate = null;
+            await _examenRepository.UpdateEntity(examen);
+            return Ok();
+        }
+
+        /// <summary>
         /// Создание экзамена
         /// </summary>
         /// <param name="examen"></param>

@@ -5,5 +5,6 @@ namespace Infrastructure.Repositories.Interfaces
 {
     public interface IAnswerRepository : IGenericRepository<Answer>
     {
+        public IQueryable<Answer> GetAnswers();
     }
 }

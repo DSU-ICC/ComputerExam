@@ -23,7 +23,7 @@ namespace Infrastructure.Repositories
 
         public IQueryable<Examen> GetExamens()
         {
-            return Get().Where(x => x.IsDeleted == false);
+            return Get().Where(x => x.IsDeleted != true);
         }
 
         public IQueryable<ExamenDto> GetExamensByEmployeeId(Guid employeeId)
@@ -64,7 +64,7 @@ namespace Infrastructure.Repositories
                    TeacherId = i.TeacherId
                });
             return examenDto;
-        }        
+        }
 
         public List<ExamenStudentDto> GetExamensByStudentId(int studentId)
         {
@@ -140,8 +140,13 @@ namespace Infrastructure.Repositories
 
         public async Task<AnswerBlank?> StartExamen(int studentId, int examId)
         {
-            if (_answerBlankRepository.Get().Any(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examId))
+            var answerBlank = _answerBlankRepository.GetAnswerBlanks().Include(x => x.ExamTicket).FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examId);
+            if (answerBlank != null)
+            {
+                if (answerBlank.EndExamenDateTime == null)
+                    return answerBlank;
                 return null;
+            }
 
             var examen = GetExamens().Include(x => x.Tickets.Where(c => c.IsDeleted == false))
                                                        .ThenInclude(x => x.Questions.Where(c => c.IsDeleted == false))
@@ -153,7 +158,7 @@ namespace Infrastructure.Repositories
 
             var ticket = examen.Tickets?.OrderBy(x => Guid.NewGuid()).First();
 
-            var answerBlank = new AnswerBlank()
+            answerBlank = new AnswerBlank()
             {
                 StudentId = studentId,
                 ExamTicketId = ticket.Id
