@@ -102,7 +102,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Logging.AddFile(builder.Environment.ContentRootPath + builder.Configuration["FileLoggerFolder"]);
+//builder.Logging.AddFile(builder.Environment.ContentRootPath + builder.Configuration["FileLoggerFolder"]);
 
 var app = builder.Build();
 

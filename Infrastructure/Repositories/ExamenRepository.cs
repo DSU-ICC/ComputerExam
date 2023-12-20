@@ -38,7 +38,7 @@ namespace Infrastructure.Repositories
                    Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId!),
                    ExamDate = i.ExamDate,
                    ExamDurationInMitutes = i.ExamDurationInMitutes,
-                   ExamTickets = _examTicketRepository.Get().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),
+                   ExamTickets = _examTicketRepository.GetTickets().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),
                    EndExamDate = i.EndExamDate,
                    AuditoriumId = i.AuditoriumId,
                    TeacherId = i.TeacherId
@@ -58,7 +58,7 @@ namespace Infrastructure.Repositories
                    Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId!),
                    ExamDate = i.ExamDate,
                    ExamDurationInMitutes = i.ExamDurationInMitutes,
-                   ExamTickets = _examTicketRepository.Get().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),
+                   ExamTickets = _examTicketRepository.GetTickets().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),
                    EndExamDate = i.EndExamDate,
                    AuditoriumId = i.AuditoriumId,
                    TeacherId = i.TeacherId
@@ -80,7 +80,7 @@ namespace Infrastructure.Repositories
                 {
                     ExamenId = examen.Id,
                     Discipline = examen.Discipline,
-                    AnswerBlank = _answerBlankRepository.Get().FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examen.Id),
+                    AnswerBlank = _answerBlankRepository.GetAnswerBlanks().FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examen.Id),
                     ExamDate = examen.ExamDate,
                     IsActiveNow = examen.EndExamDate == null && (DateTime.Now - examen.ExamDate) > TimeSpan.FromMinutes(0)
                 });
@@ -93,8 +93,7 @@ namespace Infrastructure.Repositories
             var examen = GetExamens().FirstOrDefault(x => x.Id == examenId)
                 ?? throw new Exception("Exam not found.");
             var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
-            var answerBlanks = _answerBlankRepository.Get().Include(x => x.Answers)
-                                                           .Include(x => x.ExamTicket).ThenInclude(x => x.Questions)
+            var answerBlanks = _answerBlankRepository.GetAnswerBlanks().Include(x => x.ExamTicket).ThenInclude(x => x.Questions)
                                                            .Include(x => x.ExamTicket).ThenInclude(x => x.Examen)
                                                            .Where(x => x.ExamTicket.ExamenId == examenId);
 
@@ -121,9 +120,9 @@ namespace Infrastructure.Repositories
                 return null;
 
             var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId && x.Course == examen.Course && x.Ngroup == examen.NGroup);
-            var answerBlanks = _answerBlankRepository.Get().Include(x => x.ExamTicket).ThenInclude(x => x.Questions)
+            var answerBlanks = _answerBlankRepository.GetAnswerBlanks().Include(x => x.ExamTicket).ThenInclude(x => x.Questions)
                                                            .Include(x => x.ExamTicket).ThenInclude(x => x.Examen)
-                                                           .Include(x => x.Answers).Where(x => x.ExamTicket.ExamenId == examenId);
+                                                           .Where(x => x.ExamTicket.ExamenId == examenId);
 
             List<ForCheckingDto> studentsDtos = new();
             foreach (var item in students)
@@ -140,7 +139,7 @@ namespace Infrastructure.Repositories
 
         public async Task<AnswerBlank?> StartExamen(int studentId, int examId)
         {
-            var answerBlank = _answerBlankRepository.GetAnswerBlanks().Include(x => x.ExamTicket).FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examId);
+            var answerBlank = _answerBlankRepository.GetAnswerBlanks().Include(x => x.ExamTicket).ThenInclude(x=>x.Questions).FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examId);
             if (answerBlank != null)
             {
                 if (answerBlank.EndExamenDateTime == null)
