@@ -3,6 +3,7 @@ using DomainService.Entity;
 using Microsoft.AspNetCore.Authorization;
 using DomainService.DtoModels.Account;
 using Infrastructure.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ComputerExam.Controllers
 {
@@ -23,6 +24,13 @@ namespace ComputerExam.Controllers
         public IActionResult GetEmployees()
         {
             return Ok(_employeeRepository.Get());
+        }
+
+        [Route("GetEmployees")]
+        [HttpGet]
+        public IActionResult GetAuditories()
+        {
+            return Ok(_employeeRepository.Get().Include(x => x.Role).Where(x => x.Role.Name == "auditorium"));
         }
 
         [Authorize("admin")]
