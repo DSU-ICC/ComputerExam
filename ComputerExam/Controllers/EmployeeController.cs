@@ -26,7 +26,7 @@ namespace ComputerExam.Controllers
             return Ok(_employeeRepository.Get());
         }
 
-        [Route("GetEmployees")]
+        [Route("GetAuditories")]
         [HttpGet]
         public IActionResult GetAuditories()
         {
