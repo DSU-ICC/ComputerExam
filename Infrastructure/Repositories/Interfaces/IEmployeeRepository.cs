@@ -3,8 +3,7 @@ using Infrastructure.Common.Interfaces;
 
 namespace Infrastructure.Repositories.Interfaces
 {
-    public interface IAnswerRepository : IGenericRepository<Answer>
+    public interface IEmployeeRepository : IGenericRepository<Employee>
     {
-        public IQueryable<Answer> GetAnswers();
     }
 }

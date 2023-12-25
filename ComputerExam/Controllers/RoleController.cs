@@ -7,28 +7,29 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using DomainService.Entity;
 using Sentry;
 using Microsoft.AspNetCore.Authorization;
+using Infrastructure.Repositories.Interfaces;
 
 namespace ComputerExam.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "admin")]
     [ApiController]
     [Route("[controller]")]
     public class RoleController : Controller
     {
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UserManager<Employee> _userManager;
+        private readonly IRoleRepository _roleRepository;
+        private readonly IEmployeeRepository _employeeRepository;
 
-        public RoleController(RoleManager<IdentityRole> roleManager, UserManager<Employee> userManager)
+        public RoleController(IRoleRepository roleRepository, IEmployeeRepository employeeRepository)
         {
-            _roleManager = roleManager;
-            _userManager = userManager;
+            _roleRepository = roleRepository;
+            _employeeRepository = employeeRepository;
         }
 
         [Route("GetRoles")]
         [HttpGet]
         public IActionResult GetRoles()
         {
-            return Ok(_roleManager.Roles.ToList());
+            return Ok(_roleRepository.Get().ToList());
         }
 
         [Route("CreateRole")]
@@ -36,41 +37,32 @@ namespace ComputerExam.Controllers
         public async Task<IActionResult> CreateRole(string name)
         {
             if (!string.IsNullOrEmpty(name))
-            {
-                await _roleManager.CreateAsync(new IdentityRole(name));
-            }
+                await _roleRepository.Create(new Role(name));
             return Ok();
         }
 
         [Route("EditRole")]
         [HttpPost]
-        public async Task<IActionResult> EditRole(string employeeId, List<string> roles)
+        public async Task<IActionResult> EditRole(Guid employeeId, Guid roleId)
         {
-            Employee employee = await _userManager.FindByIdAsync(employeeId);
+            Employee? employee = _employeeRepository.Get().FirstOrDefault(x=>x.Id == employeeId);
             if (employee != null)
             {
-                var userRoles = await _userManager.GetRolesAsync(employee);
-                var addedRoles = roles.Except(userRoles);
-                var removedRoles = userRoles.Except(roles);
-
-                await _userManager.AddToRolesAsync(employee, addedRoles);
-
-                await _userManager.RemoveFromRolesAsync(employee, removedRoles);
+                employee.RoleId = roleId;
+                await _employeeRepository.Update(employee);
 
                 return Ok();
             }
-            return Ok();
+            return BadRequest("Такой пользователь не найден");
         }
 
         [Route("DeleteRole")]
         [HttpPost]
-        public async Task<IActionResult> DeleteRole(string id)
+        public async Task<IActionResult> DeleteRole(int id)
         {
-            IdentityRole role = await _roleManager.FindByIdAsync(id);
+            Role? role = _roleRepository.FindById(id);
             if (role != null)
-            {
-                await _roleManager.DeleteAsync(role);
-            }
+                await _roleRepository.Remove(role);
             return Ok();
         }
     }

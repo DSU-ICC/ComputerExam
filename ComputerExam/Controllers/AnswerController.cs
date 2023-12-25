@@ -2,7 +2,6 @@
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ComputerExam.Controllers
 {
@@ -17,6 +16,7 @@ namespace ComputerExam.Controllers
             _answerRepository = answerRepository;
         }
 
+        [Authorize]
         [Route("GetAnswers")]
         [HttpGet]
         public IActionResult GetAnswers()

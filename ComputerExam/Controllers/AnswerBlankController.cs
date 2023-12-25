@@ -1,8 +1,5 @@
-﻿using DomainService.DtoModels;
-using DomainService.Entity;
-using Infrastructure.Repositories;
+﻿using DomainService.Entity;
 using Infrastructure.Repositories.Interfaces;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,11 +17,12 @@ namespace ComputerExam.Controllers
             _answerBlankRepository = answerBlankRepository;
         }
 
+        [Authorize]
         [HttpGet]
         [Route("GetAnswerBlanks")]
         public async Task<IActionResult> GetAnswerBlanks()
         {
-            return Ok(await _answerBlankRepository.Get().ToListAsync());
+            return Ok(await _answerBlankRepository.GetAnswerBlanks().ToListAsync());
         }
 
         /// <summary>
@@ -66,6 +64,31 @@ namespace ComputerExam.Controllers
         }
 
         /// <summary>
+        /// Сброс бланка ответа студента
+        /// </summary>
+        /// <param name="answerBlankId"></param>
+        /// <param name="isRemoveAnswerBlank"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "admin")]
+        [HttpPost]
+        [Route("ResetAnswerBlank")]
+        public async Task<IActionResult> ResetAnswerBlank(int answerBlankId, bool? isRemoveAnswerBlank)
+        {
+            var answerBlank = _answerBlankRepository.GetAnswerBlanks().FirstOrDefault(x=>x.Id == answerBlankId);
+            if (answerBlank == null)
+                return BadRequest();
+            if (isRemoveAnswerBlank == true)
+            {
+                answerBlank.IsDeleted = true;
+                answerBlank.Answers?.ForEach(x => x.IsDeleted = true);
+            }
+            else
+                answerBlank.EndExamenDateTime = null;
+            await _answerBlankRepository.Update(answerBlank);
+            return Ok();
+        }
+
+        /// <summary>
         /// Изменение в бланке ответов
         /// </summary>
         /// <param name="answerBlank"></param>
@@ -81,12 +104,13 @@ namespace ComputerExam.Controllers
         /// <summary>
         /// Конец экзамена для студента
         /// </summary>
-        /// <param name="answerBlank"></param>
+        /// <param name="answerBlankId"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("EndExamenForStudent")]
-        public async Task<IActionResult> EndExamenForStudent(AnswerBlank answerBlank)
+        public async Task<IActionResult> EndExamenForStudent(int answerBlankId)
         {
+            var answerBlank = _answerBlankRepository.FindById(answerBlankId);
             answerBlank.EndExamenDateTime = DateTime.Now;
             await _answerBlankRepository.Update(answerBlank);
             return Ok();

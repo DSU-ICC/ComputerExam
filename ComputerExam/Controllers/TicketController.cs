@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ComputerExam.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "testingDepartment, admin, uko")]
     [ApiController]
     [Route("[controller]")]
     public class TicketController : Controller
@@ -36,9 +36,9 @@ namespace ComputerExam.Controllers
 
         [Route("UpdateTicket")]
         [HttpPost]
-        public async Task<IActionResult> UpdateExamen(ExamTicket examen)
+        public async Task<IActionResult> UpdateTicket(ExamTicket examTicket)
         {
-            await _examTicketRepository.Update(examen);
+            await _examTicketRepository.Update(examTicket);
             return Ok();
         }
 

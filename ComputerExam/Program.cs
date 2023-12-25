@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Sentry;
 using Infrastructure.Logger;
 using DSUContextDBService.DBService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Infrastructure.Repositories;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +19,33 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(option =>
+{
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
 
 builder.Services.AddCors(options =>
 {
@@ -34,27 +64,6 @@ builder.Services.AddDbContext<DSUContext>(options =>
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CompExam"), providerOptions => providerOptions.EnableRetryOnFailure()));
 
-builder.Services.AddIdentity<Employee, IdentityRole>(
-               opts =>
-               {
-                   opts.Password.RequiredLength = 2;
-                   opts.Password.RequireNonAlphanumeric = false;
-                   opts.Password.RequireLowercase = false;
-                   opts.Password.RequireUppercase = false;
-                   opts.Password.RequireDigit = false;
-               })
-               .AddEntityFrameworkStores<ApplicationContext>();
-
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    // Cookie settings
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SameSite = SameSiteMode.None;
-
-    options.LoginPath = "/Account/Login";
-    options.SlidingExpiration = true;
-});
-
 builder.WebHost.ConfigureServices(configure => SentrySdk.Init(o =>
 {
     // Tells which project in Sentry to send events to:
@@ -69,9 +78,31 @@ builder.WebHost.ConfigureServices(configure => SentrySdk.Init(o =>
 }));
 
 builder.Services.AddServiceCollection();
-builder.Services.AddAuthorization();
 
-builder.Logging.AddFile(builder.Environment.ContentRootPath + builder.Configuration["FileLoggerFolder"]);
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            // указывает, будет ли валидироваться издатель при валидации токена
+            ValidateIssuer = true,
+            // строка, представляющая издателя
+            ValidIssuer = builder.Configuration["ISSUER"],
+            // будет ли валидироваться потребитель токена
+            ValidateAudience = true,
+            // установка потребителя токена
+            ValidAudience = builder.Configuration["AUDIENCE"],
+            // будет ли валидироваться время существования
+            ValidateLifetime = true,
+            // установка ключа безопасности
+            IssuerSigningKey = new AuthOptions(builder.Configuration).GetSymmetricSecurityKey(),
+            // валидация ключа безопасности
+            ValidateIssuerSigningKey = true,
+        };
+    });
+
+//builder.Logging.AddFile(builder.Environment.ContentRootPath + builder.Configuration["FileLoggerFolder"]);
 
 var app = builder.Build();
 
