@@ -15,7 +15,7 @@ namespace Infrastructure.Repositories
 
         public IQueryable<Question> GetQuestions()
         {
-            return Get().Where(x => x.IsDeleted == false);
+            return Get().Where(x => x.IsDeleted != true);
         }
 
         public async Task DeleteQuestion(int id)

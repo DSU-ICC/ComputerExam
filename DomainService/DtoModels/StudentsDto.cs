@@ -1,9 +1,4 @@
 ﻿using DomainService.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DomainService.DtoModels
 {
@@ -13,6 +8,7 @@ namespace DomainService.DtoModels
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Patr { get; set; }
+        public string? FioTeacher { get; set; }
         public AnswerBlank? AnswerBlank { get; set; }
     }
 }

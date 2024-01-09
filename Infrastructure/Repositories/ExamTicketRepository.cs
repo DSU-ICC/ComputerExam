@@ -25,7 +25,7 @@ namespace Infrastructure.Repositories
 
         public IQueryable<ExamTicket> GetTickets()
         {
-            return Get().Where(x => x.IsDeleted == false);
+            return Get().Where(x => x.IsDeleted != true);
         }
 
         public async Task DeleteTicket(int id)

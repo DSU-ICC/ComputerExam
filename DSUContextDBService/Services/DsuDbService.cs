@@ -87,6 +87,12 @@ namespace DSUContextDBService.Services
         {
             return _dSUContext.CaseSTeachers.FirstOrDefault(x => x.TeachId == id);
         }
+
+        public string? GetFioCaseSTeacherById(int? teacherId)
+        {
+            var teacher = _dSUContext.CaseSTeachers.FirstOrDefault(x => x.TeachId == teacherId);
+            return teacher?.Lastname + " " + teacher?.Firstname + " " + teacher?.Patr;
+        }
         #endregion
 
         public List<int?>? GetCoursesByDepartmentId(int departmentId)

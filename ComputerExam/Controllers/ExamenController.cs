@@ -48,6 +48,19 @@ namespace ComputerExam.Controllers
         }
 
         /// <summary>
+        /// Получение экзаменов по Id аудитории
+        /// </summary>
+        /// <param name="auditoriumId"></param>
+        /// <returns></returns>
+        [Authorize]
+        [Route("GetExamensByAuditoriumId")]
+        [HttpGet]
+        public IActionResult GetExamensByAuditoriumId(Guid auditoriumId)
+        {
+            return Ok(_examenRepository.GetExamensByAuditoriumId(auditoriumId));
+        }
+
+        /// <summary>
         /// Получение экзаменов по Id студента
         /// </summary>
         /// <param name="studentId"></param>
@@ -129,7 +142,7 @@ namespace ComputerExam.Controllers
         /// <param name="examenId"></param>
         /// <param name="newExamDate"></param>
         /// <returns></returns>
-        [Authorize]
+        [Authorize(Roles = "testingDepartment, admin, uko")]
         [Route("CopyExamen")]
         [HttpPost]
         public async Task<IActionResult> CopyExamen(int examenId, DateTime newExamDate)
@@ -138,11 +151,27 @@ namespace ComputerExam.Controllers
         }
 
         /// <summary>
+        /// Сброс экзамена
+        /// </summary>
+        /// <param name="examenId"></param>
+        /// <returns></returns>
+        [Authorize(Roles = "admin")]
+        [Route("ResetExamen")]
+        [HttpPost]
+        public async Task<IActionResult> ResetExamen(int examenId)
+        {
+            var examen = _examenRepository.FindById(examenId);
+            examen.EndExamDate = null;
+            await _examenRepository.UpdateEntity(examen);
+            return Ok();
+        }
+
+        /// <summary>
         /// Создание экзамена
         /// </summary>
         /// <param name="examen"></param>
         /// <returns></returns>
-        [Authorize]
+        [Authorize(Roles = "testingDepartment, admin, uko")]
         [Route("CreateExamen")]
         [HttpPost]
         public async Task<IActionResult> CreateExamen(Examen examen)
@@ -157,7 +186,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="examen"></param>
         /// <returns></returns>
-        [Authorize]
+        [Authorize(Roles = "testingDepartment, admin, uko")]
         [Route("UpdateExamen")]
         [HttpPost]
         public async Task<IActionResult> UpdateExamen(Examen examen)
@@ -172,7 +201,7 @@ namespace ComputerExam.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Authorize]
+        [Authorize(Roles = "testingDepartment, admin, uko")]
         [Route("DeleteExamen")]
         [HttpPost]
         public async Task<IActionResult> DeleteExamen(int id)

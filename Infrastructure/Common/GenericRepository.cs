@@ -43,11 +43,10 @@ namespace Infrastructure.Common
                 await _dbSet.AddAsync(item);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 string create = "создании";
-                SendExceptionInSentry(item, create);
-                throw new Exception();
+                SendExceptionInSentry(item, create, ex);
             }
         }
 
@@ -64,11 +63,10 @@ namespace Infrastructure.Common
                 _context.Entry(item).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 string update = "обновлении";
-                SendExceptionInSentry(item, update);
-                throw new Exception();
+                SendExceptionInSentry(item, update, ex);
             }
         }
 
@@ -79,11 +77,10 @@ namespace Infrastructure.Common
                 _context.Update(item);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 string update = "обновлении";
-                SendExceptionInSentry(item, update);
-                throw new Exception();
+                SendExceptionInSentry(item, update, ex);
             }
         }
 
@@ -94,11 +91,10 @@ namespace Infrastructure.Common
                 _dbSet.Remove(item);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 string delete = "удалении";
-                SendExceptionInSentry(item, delete);
-                throw new Exception();
+                SendExceptionInSentry(item, delete, ex);
             }
         }
 
@@ -113,11 +109,10 @@ namespace Infrastructure.Common
                     await _context.SaveChangesAsync();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 string delete = "удалении";
-                SendExceptionInSentry(item, delete);
-                throw new Exception();
+                SendExceptionInSentry(item, delete, ex);                
             }
         }
 
@@ -127,7 +122,7 @@ namespace Infrastructure.Common
             await _context.SaveChangesAsync();
         }
 
-        private static void SendExceptionInSentry(TEntity item, string methodName)
+        private static void SendExceptionInSentry(TEntity item, string methodName, Exception ex)
         {
             Type myType = item.GetType();
 
@@ -138,7 +133,8 @@ namespace Infrastructure.Common
                 var value = property?.GetValue(item);
                 entity += property.Name + ":" + value + "\n";
             }
-            SentrySdk.CaptureMessage("Ошибка при " + methodName + " объкта " + myType.Name + "\n" + entity);
+            SentrySdk.CaptureMessage("Ошибка при " + methodName + " объкта " + myType.Name + "\n" + entity + "\n" + ex);
+            throw new Exception();
         }
     }
 }
