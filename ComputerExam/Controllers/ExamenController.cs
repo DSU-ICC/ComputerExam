@@ -40,11 +40,19 @@ namespace ComputerExam.Controllers
         }
 
         [Authorize]
-        [Route("GetExamensFromArchiveByEmployeeId")]
+        [Route("GetExamensFromArchiveByAuditoriumId")]
         [HttpGet]
-        public IActionResult GetExamensFromArchiveByEmployeeId(Guid employeeId)
+        public IActionResult GetExamensFromArchiveByAuditoriumId(Guid auditoriumId)
         {
-            return Ok(_examenRepository.GetExamensFromArchiveByEmployeeId(employeeId));
+            return Ok(_examenRepository.GetExamensFromArchiveByAuditoriumId(auditoriumId));
+        }
+
+        [Authorize]
+        [Route("GetExamensFromArchiveByFilter")]
+        [HttpGet]
+        public IActionResult GetExamensFromArchiveByFilter(int? facultyId = null, int? departmentId = null, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            return Ok(_examenRepository.GetExamensFromArchiveByFilter(facultyId, departmentId, startDate, endDate));
         }
 
         /// <summary>

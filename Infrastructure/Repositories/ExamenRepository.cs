@@ -1,8 +1,8 @@
 ﻿using DomainService.DBService;
 using DomainService.DtoModels;
 using DomainService.Entity;
-using DSUContextDBService.DBService;
 using DSUContextDBService.Interface;
+using DSUContextDBService.Models;
 using Infrastructure.Common;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +44,7 @@ namespace Infrastructure.Repositories
             return examenDto;
         }
 
-        public IQueryable<ExamenDto> GetExamensFromArchiveByEmployeeId(Guid employeeId)
+        public IQueryable<ExamenDto> GetExamensFromArchiveByAuditoriumId(Guid employeeId)
         {
             var examenDto = Get().Where(x => x.EmployeeId == employeeId && x.IsInArchive == true)
                .Select(i => new ExamenDto()
@@ -61,6 +61,40 @@ namespace Infrastructure.Repositories
                    AuditoriumId = i.AuditoriumId,
                    TeacherId = i.TeacherId
                });
+            return examenDto;
+        }
+
+        public IQueryable<ExamenDto> GetExamensFromArchiveByFilter(int? facultyId = null, int? departmentId = null, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            var examens = Get().Where(x => x.IsDeleted != true && x.IsInArchive == true).OrderByDescending(x => x.ExamDate).AsQueryable();
+            if (facultyId != null)
+            {
+                var departments = _dsuDbService.GetCaseSDepartmentByFacultyId((int)facultyId).ToList();
+                examens = examens.AsEnumerable().Where(x => departments.Any(c => c.DepartmentId == x.DepartmentId) == true).AsQueryable();
+            }
+            if (departmentId != null)
+                examens = examens.Where(x => x.DepartmentId == departmentId);
+
+            if (startDate != null)
+                examens = examens.Where(x => x.ExamDate >= startDate);
+
+            if (endDate != null)
+                examens = examens.Where(x => x.ExamDate <= endDate);
+
+            var examenDto = examens.Select(i => new ExamenDto()
+            {
+                ExamenId = i.Id,
+                Discipline = i.Discipline,
+                Group = i.NGroup,
+                Course = i.Course,
+                Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId),
+                ExamDate = i.ExamDate,
+                ExamDurationInMitutes = i.ExamDurationInMitutes,
+                ExamTickets = _examTicketRepository.GetTickets().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),
+                EndExamDate = i.EndExamDate,
+                AuditoriumId = i.AuditoriumId,
+                TeacherId = i.TeacherId
+            });
             return examenDto;
         }
 
@@ -157,7 +191,7 @@ namespace Infrastructure.Repositories
 
         public async Task<AnswerBlank?> StartExamen(int studentId, int examId)
         {
-            var answerBlank = _answerBlankRepository.GetAnswerBlanks().Include(x => x.ExamTicket).ThenInclude(x=>x.Questions).FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examId);
+            var answerBlank = _answerBlankRepository.GetAnswerBlanks().Include(x => x.ExamTicket).ThenInclude(x => x.Questions).FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examId);
             if (answerBlank != null)
             {
                 if (answerBlank.EndExamenDateTime == null)
