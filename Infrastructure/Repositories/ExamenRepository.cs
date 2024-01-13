@@ -139,7 +139,7 @@ namespace Infrastructure.Repositories
 
         public async Task<AnswerBlank?> StartExamen(int studentId, int examId)
         {
-            var answerBlank = _answerBlankRepository.GetAnswerBlanks().Include(x => x.ExamTicket).ThenInclude(x=>x.Questions).FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examId);
+            var answerBlank = _answerBlankRepository.GetAnswerBlanks().Include(x => x.ExamTicket).ThenInclude(x => x.Questions).FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examId);
             if (answerBlank != null)
             {
                 if (answerBlank.EndExamenDateTime == null)
@@ -148,14 +148,17 @@ namespace Infrastructure.Repositories
             }
 
             var examen = GetExamens().Include(x => x.Tickets.Where(c => c.IsDeleted == false))
-                                                       .ThenInclude(x => x.Questions.Where(c => c.IsDeleted == false))
-                                                       .FirstOrDefault(x => x.Id == examId);
+                                     .ThenInclude(x => x.Questions.Where(c => c.IsDeleted == false))
+                                     .FirstOrDefault(x => x.Id == examId);
             if (examen == null)
                 return null;
             if (examen.ExamDate?.Date != DateTime.Now.Date)
                 return null;
 
-            var ticket = examen.Tickets?.OrderBy(x => Guid.NewGuid()).First();
+            foreach (var item in examen.Tickets)
+                item.Weigth ??= 0;
+
+            var ticket = examen.Tickets?.OrderBy(x => Guid.NewGuid()).OrderBy(x => x.Weigth).First();
 
             answerBlank = new AnswerBlank()
             {
@@ -164,6 +167,8 @@ namespace Infrastructure.Repositories
             };
             await _answerBlankRepository.Create(answerBlank);
             answerBlank.ExamTicket = ticket;
+            ticket.Weigth += 1;
+            await _examTicketRepository.Update(ticket);
             return answerBlank;
         }
 

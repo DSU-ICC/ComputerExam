@@ -19,6 +19,10 @@
         /// Список вопросов
         /// </summary>
         public List<Question>? Questions { get; set; }
+        /// <summary>
+        /// Вес для уменьшения повторений
+        /// </summary>
+        public int? Weigth { get; set; }
         public bool? IsDeleted { get; set; }
     }
 }
