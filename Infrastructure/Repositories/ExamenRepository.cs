@@ -139,11 +139,15 @@ namespace Infrastructure.Repositories
 
         public async Task<AnswerBlank?> StartExamen(int studentId, int examId)
         {
-            var answerBlank = _answerBlankRepository.GetAnswerBlanks().Include(x => x.ExamTicket).ThenInclude(x => x.Questions).FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examId);
+            var answerBlank = _answerBlankRepository.GetAnswerBlanks().Include(x => x.ExamTicket).ThenInclude(x => x.Questions)
+                                                                      .FirstOrDefault(x => x.StudentId == studentId && x.ExamTicket.ExamenId == examId);
             if (answerBlank != null)
             {
-                if (answerBlank.EndExamenDateTime == null)
+                if (answerBlank.EndExamenDateTime == null && answerBlank.IsAuthorized != true)
+                {
+                    answerBlank.IsAuthorized = true;
                     return answerBlank;
+                }
                 return null;
             }
 
@@ -156,18 +160,19 @@ namespace Infrastructure.Repositories
                 return null;
 
             foreach (var item in examen.Tickets)
-                item.Weigth ??= 0;
+                item.Weight ??= 0;
 
-            var ticket = examen.Tickets?.OrderBy(x => Guid.NewGuid()).OrderBy(x => x.Weigth).First();
+            var ticket = examen.Tickets?.OrderBy(x => Guid.NewGuid()).OrderBy(x => x.Weight).First();
 
             answerBlank = new AnswerBlank()
             {
                 StudentId = studentId,
-                ExamTicketId = ticket.Id
+                ExamTicketId = ticket.Id,
+                IsAuthorized = true
             };
             await _answerBlankRepository.Create(answerBlank);
             answerBlank.ExamTicket = ticket;
-            ticket.Weigth += 1;
+            ticket.Weight++;
             await _examTicketRepository.Update(ticket);
             return answerBlank;
         }

@@ -31,6 +31,10 @@
         /// Дата окончания экзамена
         /// </summary>
         public DateTime? EndExamenDateTime { get; set; }
+        /// <summary>
+        /// Авторизован ли студент
+        /// </summary>
+        public bool? IsAuthorized { get; set; }
         public bool? IsDeleted { get; set; }
     }
 }

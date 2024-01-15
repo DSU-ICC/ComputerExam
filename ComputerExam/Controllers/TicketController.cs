@@ -30,7 +30,7 @@ namespace ComputerExam.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTicket(ExamTicket examen)
         {
-            examen.Weigth = 0;
+            examen.Weight = 0;
             await _examTicketRepository.Create(examen);
             return Ok();
         }

@@ -74,7 +74,7 @@ namespace ComputerExam.Controllers
         [Route("ResetAnswerBlank")]
         public async Task<IActionResult> ResetAnswerBlank(int answerBlankId, bool? isRemoveAnswerBlank)
         {
-            var answerBlank = _answerBlankRepository.GetAnswerBlanks().FirstOrDefault(x=>x.Id == answerBlankId);
+            var answerBlank = _answerBlankRepository.GetAnswerBlanks().FirstOrDefault(x => x.Id == answerBlankId);
             if (answerBlank == null)
                 return BadRequest();
             if (isRemoveAnswerBlank == true)
@@ -83,7 +83,11 @@ namespace ComputerExam.Controllers
                 answerBlank.Answers?.ForEach(x => x.IsDeleted = true);
             }
             else
+            {
                 answerBlank.EndExamenDateTime = null;
+                answerBlank.IsAuthorized = null;
+            }
+
             await _answerBlankRepository.Update(answerBlank);
             return Ok();
         }
@@ -112,6 +116,7 @@ namespace ComputerExam.Controllers
         {
             var answerBlank = _answerBlankRepository.FindById(answerBlankId);
             answerBlank.EndExamenDateTime = DateTime.Now;
+            answerBlank.IsAuthorized = false;
             await _answerBlankRepository.Update(answerBlank);
             return Ok();
         }

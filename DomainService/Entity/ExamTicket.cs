@@ -22,7 +22,7 @@
         /// <summary>
         /// Вес для уменьшения повторений
         /// </summary>
-        public int? Weigth { get; set; }
+        public int? Weight { get; set; }
         public bool? IsDeleted { get; set; }
     }
 }
