@@ -1,4 +1,5 @@
 ﻿using DomainService.Entity;
+using DSUContextDBService.Models;
 
 namespace DomainService.DtoModels
 {
@@ -10,5 +11,6 @@ namespace DomainService.DtoModels
         public string? Patr { get; set; }
         public string? FioTeacher { get; set; }
         public AnswerBlank? AnswerBlank { get; set; }
+        public CaseCFaculty? Faculty { get; set; }
     }
 }
