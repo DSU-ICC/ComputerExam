@@ -1,4 +1,5 @@
-﻿using DomainService.Entity;
+﻿using ComputerExam.Services.Interfaces;
+using DomainService.Entity;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +11,11 @@ namespace ComputerExam.Controllers
     public class ExamenController : Controller
     {
         private readonly IExamenRepository _examenRepository;
-        public ExamenController(IExamenRepository examenRepository)
+        private readonly IGeneratedExcelFile _generatedExcelFile;
+        public ExamenController(IExamenRepository examenRepository, IGeneratedExcelFile generatedExcelFile)
         {
             _examenRepository = examenRepository;
+            _generatedExcelFile = generatedExcelFile;
         }
 
         /// <summary>
@@ -24,6 +27,43 @@ namespace ComputerExam.Controllers
         public IActionResult GetExamens()
         {
             return Ok(_examenRepository.GetExamens());
+        }
+
+        /// <summary>
+        /// Получение всех экзаменов по заданным фильтрам
+        /// </summary>
+        /// <returns></returns>
+        [Route("GetExamensWithFilter")]
+        [HttpGet]
+        public IActionResult GetExamensWithFilter(int? departmentId = null, int? course = null, string? ngroup = null)
+        {
+            return Ok(_examenRepository.GetExamensWithFilter(departmentId, course, ngroup));
+        }
+
+        /// <summary>
+        /// Запрос на получение данных об успеваемости студентов по examenId
+        /// </summary>
+        /// <param name="examenId"></param>
+        /// <returns></returns>
+        [Authorize]
+        [Route("GetStatisticForReport")]
+        [HttpGet]
+        public IActionResult GetStatisticForReport(int examenId)
+        {
+            return Ok(_examenRepository.GetStatisticForReport(examenId));
+        }
+
+        /// <summary>
+        /// Запрос на генерацию эксель файла об успеваемости студентов по examenId
+        /// </summary>
+        /// <param name="examenId"></param>
+        /// <returns>Строка с именем файла</returns>
+        [Authorize]
+        [Route("GenerateExcelFile")]
+        [HttpGet]
+        public IActionResult GenerateExcelFile(int examenId)
+        {            
+            return Ok(_generatedExcelFile.GenerateExcelFile(examenId));
         }
 
         /// <summary>

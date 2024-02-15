@@ -114,5 +114,10 @@ namespace DSUContextDBService.Services
                 .OrderBy(x => x)
                 .ToList();
         }
+
+        public IQueryable<CaseUkoModule?>? GetCaseUkoModules()
+        {
+            return _dSUContext.CaseUkoModules.Where(x => x.Closed);
+        }
     }
 }

@@ -26,6 +26,51 @@ namespace Infrastructure.Repositories
             return Get().Where(x => x.IsDeleted != true && x.IsInArchive != true);
         }
 
+        public IQueryable<Examen> GetExamensWithFilter(int? departmentId = null, int? course = null, string? ngroup = null)
+        {
+            var examens = Get();
+            if (departmentId != null)
+                examens = examens.Where(x => x.DepartmentId == departmentId);
+            
+            if (course != null)
+                examens = examens.Where(x => x.Course == course);
+            
+            if (ngroup != null)
+                examens = examens.Where(x => x.NGroup == ngroup);
+
+            return examens;
+        }
+
+        public List<StudentForStatisticsDto> GetStatisticForReport(int examenId)
+        {
+            Examen examen = FindById(examenId);
+            var caseUkoModules = _dsuDbService.GetCaseUkoModules().Where(x => x.DeptId == examen.DepartmentId &&
+                                                                        x.Ngroup == examen.NGroup).AsEnumerable();
+            List<StudentForStatisticsDto> studentForStatisticsDtos = new();
+            var modulesByDiscipline = caseUkoModules.Where(x => examen.ExamDate - x.Veddate < TimeSpan.FromDays(180) && examen.ExamDate > x.Veddate && examen.Discipline == x.Predmet)
+                                              .GroupBy(x => x.Id).Select(x => new
+                                              {
+                                                  Id = x.Key,
+                                                  SessId = x.Max(c=>c.SessId),
+                                                  Average = x.Average(c => c.Rb)
+                                              }).ToList();
+            foreach (var item in modulesByDiscipline)
+            {
+                var student = caseUkoModules.FirstOrDefault(x => x.Id == item.Id);
+                var answerBlank = _answerBlankRepository.GetAnswerBlankByStudentIdAndExamenId(item.Id, examenId);
+                studentForStatisticsDtos.Add(new StudentForStatisticsDto()
+                {
+                    FirstName = student.Firstname,
+                    LastName = student.Lastname,
+                    Patr = student.Patr,
+                    SessId = item.SessId,
+                    AverageAcademicScore = Math.Round(item.Average, 2),
+                    ExamenScore = answerBlank?.TotalScore
+                });
+            };
+            return studentForStatisticsDtos;
+        }
+
         public IQueryable<ExamenDto> GetExamensByEmployeeId(Guid employeeId)
         {
             var examenDto = GetExamens().Where(x => x.EmployeeId == employeeId)

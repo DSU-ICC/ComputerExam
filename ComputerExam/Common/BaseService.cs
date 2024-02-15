@@ -1,4 +1,6 @@
-﻿using DSUContextDBService.Interface;
+﻿using ComputerExam.Services;
+using ComputerExam.Services.Interfaces;
+using DSUContextDBService.Interface;
 using DSUContextDBService.Services;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.Interfaces;
@@ -12,7 +14,9 @@ namespace ComputerExam.Common
         {
             services.AddScoped<IDsuDbService, DsuDbService>();
             services.AddSingleton<AuthOptions>();
+            services.AddSingleton<IHostEnvironment>(new HostingEnvironment());
 
+            services.AddScoped<IGeneratedExcelFile, GeneratedExcelFile>();
             #region Repositories            
             services.AddScoped<IExamenRepository, ExamenRepository>();
             services.AddScoped<IExamTicketRepository, ExamTicketRepository>();

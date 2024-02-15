@@ -1,14 +1,10 @@
 using ComputerExam.Common;
 using DomainService.DBService;
-using DomainService.Entity;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sentry;
-using Infrastructure.Logger;
 using DSUContextDBService.DBService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Infrastructure.Repositories;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);

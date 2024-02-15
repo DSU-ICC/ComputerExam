@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.Logger
+namespace ComputerExam.Logger
 {
     public static class FileLoggerExtension
     {

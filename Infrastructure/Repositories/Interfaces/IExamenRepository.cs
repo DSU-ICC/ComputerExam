@@ -7,6 +7,8 @@ namespace Infrastructure.Repositories.Interfaces
     public interface IExamenRepository : IGenericRepository<Examen>
     {
         public IQueryable<Examen> GetExamens();
+        public IQueryable<Examen> GetExamensWithFilter(int? departmentId = null, int? course = null, string? ngroup = null);
+        public List<StudentForStatisticsDto> GetStatisticForReport(int examenId);
         public IQueryable<ExamenDto> GetExamensByEmployeeId(Guid employeeId);
         public IQueryable<ExamenDto> GetExamensByAuditoriumId(Guid auditoriumId);
         public List<ExamenStudentDto> GetExamensByStudentId(int studentId);
