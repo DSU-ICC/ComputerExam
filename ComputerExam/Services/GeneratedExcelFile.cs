@@ -83,6 +83,7 @@ namespace ComputerExam.Services
 
             ObjWorkExcel.Quit(); // выйти из экселя
             GC.Collect(); // убрать за собой
+            GC.WaitForPendingFinalizers(); // Подождать окончания выполняемых операций
 
             File.Move(ExcelDefaultSavePath + fileName, _appEnvironment.ContentRootPath + Path + fileName, true);
             return Path + fileName;
