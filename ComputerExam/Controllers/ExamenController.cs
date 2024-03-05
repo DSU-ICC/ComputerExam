@@ -61,7 +61,7 @@ namespace ComputerExam.Controllers
         [Authorize]
         [Route("GenerateExcelFile")]
         [HttpGet]
-        public IActionResult GenerateExcelFile(int examenId)
+        public IActionResult GenerateExcelFile(int examenId = 2439)
         {            
             return Ok(_generatedExcelFile.GenerateExcelFile(examenId));
         }

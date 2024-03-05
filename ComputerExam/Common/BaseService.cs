@@ -14,7 +14,7 @@ namespace ComputerExam.Common
         {
             services.AddScoped<IDsuDbService, DsuDbService>();
             services.AddSingleton<AuthOptions>();
-            services.AddSingleton<IHostEnvironment>(new HostingEnvironment());
+            //services.AddSingleton<IHostEnvironment>(new HostingEnvironment());
 
             services.AddScoped<IGeneratedExcelFile, GeneratedExcelFile>();
             #region Repositories            

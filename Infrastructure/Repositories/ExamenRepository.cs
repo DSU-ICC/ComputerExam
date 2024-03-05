@@ -31,10 +31,10 @@ namespace Infrastructure.Repositories
             var examens = Get();
             if (departmentId != null)
                 examens = examens.Where(x => x.DepartmentId == departmentId);
-            
+
             if (course != null)
                 examens = examens.Where(x => x.Course == course);
-            
+
             if (ngroup != null)
                 examens = examens.Where(x => x.NGroup == ngroup);
 
@@ -48,10 +48,13 @@ namespace Infrastructure.Repositories
                                                                         x.Ngroup == examen.NGroup).AsEnumerable();
             List<StudentForStatisticsDto> studentForStatisticsDtos = new();
             var modulesByDiscipline = caseUkoModules.Where(x => examen.ExamDate - x.Veddate < TimeSpan.FromDays(180) && examen.ExamDate > x.Veddate && examen.Discipline == x.Predmet)
+                                              .OrderBy(x => x.Lastname)
+                                              .ThenBy(x => x.Firstname)
+                                              .ThenBy(x => x.Patr)
                                               .GroupBy(x => x.Id).Select(x => new
                                               {
                                                   Id = x.Key,
-                                                  SessId = x.Max(c=>c.SessId),
+                                                  SessId = x.Max(c => c.SessId),
                                                   Average = x.Average(c => c.Rb)
                                               }).ToList();
             foreach (var item in modulesByDiscipline)

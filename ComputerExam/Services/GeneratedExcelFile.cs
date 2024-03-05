@@ -1,7 +1,7 @@
 ﻿using ComputerExam.Services.Interfaces;
 using DSUContextDBService.Interface;
 using Infrastructure.Repositories.Interfaces;
-using Excel = Microsoft.Office.Interop.Excel;
+using ClosedXML.Excel;
 
 namespace ComputerExam.Services
 {
@@ -9,84 +9,79 @@ namespace ComputerExam.Services
     {
         private readonly IExamenRepository _examenRepository;
         private readonly IDsuDbService _dsuDbService;
-        private readonly IWebHostEnvironment _appEnvironment;
         private string Path { get; set; }
-        private string ExcelDefaultSavePath { get; set; }
-        public GeneratedExcelFile(IWebHostEnvironment appEnvironment, IExamenRepository examenRepository, IDsuDbService dsuDbService, IConfiguration configuration, IHostEnvironment hostEnvironment)
+        public GeneratedExcelFile(IWebHostEnvironment appEnvironment, IExamenRepository examenRepository, IDsuDbService dsuDbService, IConfiguration configuration)
         {
             _examenRepository = examenRepository;
             _dsuDbService = dsuDbService;
-            _appEnvironment = appEnvironment;
 
-            Path = hostEnvironment.ContentRootPath + configuration["FileFolder"];
-            ExcelDefaultSavePath = hostEnvironment.ContentRootPath + configuration["ExcelDefaultSavePath"];
+            Path = appEnvironment.ContentRootPath + configuration["FileFolder"];
         }
 
         public string GenerateExcelFile(int examenId)
         {
+            var fileName = examenId.ToString() + DateTime.Now.ToString("dd-MM-yyyy") + "_" + DateTime.Now.ToString("ss-mm-HH") + ".xlsx";
+
             var examen = _examenRepository.FindById(examenId);
             var studentForStatisticsDtos = _examenRepository.GetStatisticForReport(examenId);
-            var fileName = examenId.ToString() + DateTime.Now.ToString("dd-MM-yyyy") + "_" + DateTime.Now.ToString("ss-mm-HH") + ".xlsx";
-            
-            Excel.Application ObjWorkExcel = new(); //открыть эксель
-            var workBooks = ObjWorkExcel.Workbooks;
-            var workBook = workBooks.Add();
-            var workSheet = (Excel.Worksheet)ObjWorkExcel.ActiveSheet;
 
-            workSheet.Cells[1, "A"] = "Учебный год";
+            var workbook = new XLWorkbook();
+            var workSheet = workbook.Worksheets.Add("Лист1");
+
+            workSheet.Cell(1, "A").Value = "Учебный год";
 
             var lastYear = examen.ExamDate.Value.AddYears(-1);
 
-            workSheet.Cells[2, "A"] = lastYear.ToString("yyyy") + "-" + examen.ExamDate.Value.ToString("yyyy");
+            workSheet.Cell(2, "A").Value = lastYear.ToString("yyyy") + "-" + examen.ExamDate.Value.ToString("yyyy");
 
             if (studentForStatisticsDtos.Any(x => x.SessId % 2 == 0))
-                workSheet.Cells[3, "A"] = "Летняя сессия";
+                workSheet.Cell(3, "A").Value = "Летняя сессия";
             else
-                workSheet.Cells[3, "A"] = "Зимняя сессия";
+                workSheet.Cell(3, "A").Value = "Зимняя сессия";
+            
+            AddBorder(workSheet.Range("A1:A3"));
 
-            workSheet.Cells[1, "C"] = "МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ";
-            workSheet.Cells[2, "C"] = "Дагестанский государственный университет";
+            workSheet.Cell(1, "C").Value = "МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ";
+            workSheet.Cell(2, "C").Value = "Дагестанский государственный университет";
 
             var department = _dsuDbService.GetCaseSDepartmentById((int)examen.DepartmentId);
-            workSheet.Cells[5, "A"] = "Факультет/институт: "; workSheet.Cells[5, "C"] = _dsuDbService.GetFacultyById(department.FacId).FacName;
-            Excel.Range _excelCells1 = workSheet.get_Range("A5", "B5").Cells;
-            _excelCells1.Merge(Type.Missing);
-            workSheet.Cells[6, "A"] = "Направление/специальность: "; workSheet.Cells[6, "C"] = department.DeptName;
-            Excel.Range _excelCells2 = workSheet.get_Range("A6", "B6").Cells;
-            _excelCells2.Merge(Type.Missing);
-            workSheet.Cells[7, "A"] = "Курс: "; workSheet.Cells[7, "C"] = examen.Course;
-            Excel.Range _excelCells3 = workSheet.get_Range("A7", "B7").Cells;
-            _excelCells3.Merge(Type.Missing);
-            workSheet.Cells[8, "A"] = "Группа: "; workSheet.Cells[8, "C"] = examen.NGroup;
-            Excel.Range _excelCells4 = workSheet.get_Range("A8", "B8").Cells;
-            _excelCells4.Merge(Type.Missing);
-            workSheet.Cells[9, "A"] = "Дисциплина: "; workSheet.Cells[9, "C"] = examen.Discipline;
-            Excel.Range _excelCells5 = workSheet.get_Range("A9", "B9").Cells;
-            _excelCells5.Merge(Type.Missing);
+            workSheet.Cell(5, "A").Value = "Факультет/институт: "; workSheet.Cell(5, "B").Value = _dsuDbService.GetFacultyById(department.FacId).FacName;
+             workSheet.Cell(6, "A").Value = "Направление/специальность: "; workSheet.Cell(6, "B").Value = department.DeptName;
+            workSheet.Cell(7, "A").Value = "Курс: "; workSheet.Cell(7, "B").Value = examen.Course;
+            workSheet.Cell(8, "A").Value = "Группа: "; workSheet.Cell(8, "B").Value = examen.NGroup;
+            workSheet.Cell(9, "A").Value = "Дисциплина: "; workSheet.Cell(9, "B").Value = examen.Discipline;
+                        
+            AddBorder(workSheet.Range("A5:B9"));
 
+            workSheet.Cell(12, "A").Value = "№";
+            workSheet.Cell(12, "B").Value = "ФИО ";
+            workSheet.Cell(12, "C").Value = "Средний балл успеваемости (из ИС деканат)";
+            workSheet.Cell(12, "D").Value = "Балл, полученный на комп экзамене";
+            
             for (int i = 0; i < studentForStatisticsDtos.Count; i++)
             {
-                workSheet.Cells[11, "A"] = "№";
-                workSheet.Cells[11, "B"] = "ФИО ";
-                workSheet.Cells[11, "C"] = "Средний балл успеваемости (из ИС деканат)";
-                workSheet.Cells[11, "D"] = "Балл, полученный на комп экзамене";
-
-                workSheet.Cells[i + 11, "A"] = i;
-                workSheet.Cells[i + 11, "B"] = studentForStatisticsDtos[i].LastName + " " + studentForStatisticsDtos[i].FirstName + " " + studentForStatisticsDtos[i].Patr;
-                workSheet.Cells[i + 11, "C"] = studentForStatisticsDtos[i].AverageAcademicScore;
-                workSheet.Cells[i + 11, "D"] = studentForStatisticsDtos[i].ExamenScore;
+                workSheet.Cell(i + 13, "A").Value = i + 1;
+                workSheet.Cell(i + 13, "B").Value = studentForStatisticsDtos[i].LastName + " " + studentForStatisticsDtos[i].FirstName + " " + studentForStatisticsDtos[i].Patr;
+                workSheet.Cell(i + 13, "C").Value = studentForStatisticsDtos[i].AverageAcademicScore;
+                workSheet.Cell(i + 13, "D").Value = studentForStatisticsDtos[i].ExamenScore;
             }
 
-            workBook.SaveAs(fileName, Type.Missing,
-              Type.Missing, Type.Missing, Type.Missing, Type.Missing, Excel.XlSaveAsAccessMode.xlNoChange,
-              Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+            //// создание сетки в диапазоне            
+            AddBorder(workSheet.Range("A12:D" + (studentForStatisticsDtos.Count + 12).ToString()));
 
-            ObjWorkExcel.Quit(); // выйти из экселя
-            GC.Collect(); // убрать за собой
-            GC.WaitForPendingFinalizers(); // Подождать окончания выполняемых операций
+            workSheet.Columns().AdjustToContents(); //ширина столбца по содержимому
 
-            File.Move(ExcelDefaultSavePath + fileName, _appEnvironment.ContentRootPath + Path + fileName, true);
+            // вернем пользователю файл без сохранения его на сервере
+            workbook.SaveAs(Path + fileName);
             return Path + fileName;
+        }
+
+        private void AddBorder(IXLRange table)
+        {
+            table.Style.Border.TopBorder = XLBorderStyleValues.Thin;
+            table.Style.Border.LeftBorder = XLBorderStyleValues.Thin;
+            table.Style.Border.RightBorder = XLBorderStyleValues.Thin;
+            table.Style.Border.BottomBorder = XLBorderStyleValues.Thin;
         }
     }
 }
