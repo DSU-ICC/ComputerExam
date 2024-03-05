@@ -4,7 +4,6 @@ using DSUContextDBService.Interface;
 using DSUContextDBService.Services;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.Interfaces;
-using Microsoft.Extensions.Hosting.Internal;
 
 namespace ComputerExam.Common
 {
@@ -14,7 +13,6 @@ namespace ComputerExam.Common
         {
             services.AddScoped<IDsuDbService, DsuDbService>();
             services.AddSingleton<AuthOptions>();
-            //services.AddSingleton<IHostEnvironment>(new HostingEnvironment());
 
             services.AddScoped<IGeneratedExcelFile, GeneratedExcelFile>();
             #region Repositories            

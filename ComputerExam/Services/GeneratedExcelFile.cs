@@ -10,12 +10,12 @@ namespace ComputerExam.Services
         private readonly IExamenRepository _examenRepository;
         private readonly IDsuDbService _dsuDbService;
         private string Path { get; set; }
-        public GeneratedExcelFile(IWebHostEnvironment appEnvironment, IExamenRepository examenRepository, IDsuDbService dsuDbService, IConfiguration configuration)
+        public GeneratedExcelFile(IExamenRepository examenRepository, IDsuDbService dsuDbService, IConfiguration configuration)
         {
             _examenRepository = examenRepository;
             _dsuDbService = dsuDbService;
 
-            Path = appEnvironment.ContentRootPath + configuration["FileFolder"];
+            Path = configuration["FileFolder"];
         }
 
         public string GenerateExcelFile(int examenId)
@@ -73,7 +73,7 @@ namespace ComputerExam.Services
 
             // вернем пользователю файл без сохранения его на сервере
             workbook.SaveAs(Path + fileName);
-            return Path + fileName;
+            return fileName;
         }
 
         private void AddBorder(IXLRange table)
