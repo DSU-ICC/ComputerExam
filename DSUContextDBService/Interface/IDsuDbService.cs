@@ -1,4 +1,5 @@
-﻿using DSUContextDBService.Models;
+﻿using DomainService.DtoModels;
+using DSUContextDBService.Models;
 
 namespace DSUContextDBService.Interface
 {
@@ -11,10 +12,11 @@ namespace DSUContextDBService.Interface
         public IQueryable<CaseSDepartment>? GetCaseSDepartmentByFacultyId(int id);
         public IQueryable<CaseSSpecialization> GetCaseSSpecializations();
         public CaseSSpecialization? GetCaseSSpecializationById(int? id);
-        public List<int?>? GetCoursesByDepartmentId(int departmentId);
+        public List<int>? GetCoursesByDepartmentId(int departmentId);
         public List<string?>? GetGroupsByDepartmentId(int departmentId, int course);
         public IQueryable<CaseSStudent> GetCaseSStudents(int filId = 0);
         public CaseSStudent? GetCaseSStudentById(int id);
+        public IQueryable<Discipline>? GetDisciplinesWithFilter(int deptId, int course, string nGroup, int edukindId, int filId = 0);
         public IQueryable<CaseSTeacher> GetCaseSTeachers();
         public CaseSTeacher? GetCaseSTeacherById(int id);
         public string? GetFioCaseSTeacherById(int? teacherId);

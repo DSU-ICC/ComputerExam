@@ -23,6 +23,14 @@
         /// </summary>
         public int? Course { get; set; }
         /// <summary>
+        /// Форма обучения
+        /// </summary>
+        public int? EdukindId { get; set; }
+        /// <summary>
+        /// Id дисциплины. Связь с полем S_ID из базы деканат
+        /// </summary>
+        public int? DisciplineId { get; set; }
+        /// <summary>
         /// Номер группы
         /// </summary>
         public string? NGroup { get; set; }

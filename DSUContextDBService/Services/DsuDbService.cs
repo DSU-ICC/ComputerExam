@@ -1,4 +1,5 @@
-﻿using DSUContextDBService.DBService;
+﻿using DomainService.DtoModels;
+using DSUContextDBService.DBService;
 using DSUContextDBService.Interface;
 using DSUContextDBService.Models;
 
@@ -59,7 +60,7 @@ namespace DSUContextDBService.Services
         public IQueryable<CaseSStudent> GetCaseSStudents(int filId = 0)
         {
             return filId switch
-            { 
+            {
                 > 0 => _dSUContext.CaseSStudents.Where(x => x.Status == 0 && x.FilId == filId)
                             .OrderBy(x => x.Lastname)
                             .ThenBy(x => x.Firstname)
@@ -68,13 +69,33 @@ namespace DSUContextDBService.Services
                             .OrderBy(x => x.Lastname)
                             .ThenBy(x => x.Firstname)
                             .ThenBy(x => x.Patr)
-            } ;
+            };
         }
 
         public CaseSStudent? GetCaseSStudentById(int id)
         {
             return _dSUContext.CaseSStudents.FirstOrDefault(x => x.Id == id);
         }
+
+        public IQueryable<Discipline>? GetDisciplinesWithFilter(int deptId, int course, string nGroup, int edukindId, int filId = 1)
+        {
+            var yearStartEdu = DateTime.Now.Year - course;
+            var tplans = _dSUContext.CaseSTplans.Where(x => x.FilId == filId && x.DeptId == deptId && x.EdukindId == edukindId && x.Y == yearStartEdu);
+            var tplanDetails = _dSUContext.CaseSTplandetails.Where(x => x.Exam == 1 && x.PId == tplans.First().PId);
+            
+            var modules = _dSUContext.CaseUkoModules.Where(x => tplanDetails.Any(c => c.SessId == x.SessId && c.SId == x.SId) && 
+                    x.StudentStatus == 0 && x.Nmod == 1 && x.DeptId == deptId && x.EdukindId == edukindId && x.Ngroup == nGroup);
+            int maxSemestr = modules.Max(x => x.SessId);
+
+            var disciplines = modules.Where(x => x.SessId == maxSemestr).Select(x => new Discipline()
+            {
+                DisciplineId = x.SId,
+                Predmet = x.Predmet,
+            });
+
+            return disciplines.Distinct();
+        }
+
         #endregion
 
         #region Teachers
@@ -95,7 +116,7 @@ namespace DSUContextDBService.Services
         }
         #endregion
 
-        public List<int?>? GetCoursesByDepartmentId(int departmentId)
+        public List<int>? GetCoursesByDepartmentId(int departmentId)
         {
             return GetCaseSStudents()
                 .Where(x => x.DepartmentId == departmentId)

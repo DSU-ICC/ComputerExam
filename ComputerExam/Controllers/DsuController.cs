@@ -58,6 +58,14 @@ namespace ComputerExam.Controllers
             return Ok(_dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == departmentId && x.Course == course && x.Ngroup == ngroup));
         }
 
+        [Route("GetDisciplinesWithFilter")]
+        [HttpGet]
+        public IActionResult GetDisciplinesByStudentInfo(int departmentId = 110, int course = 2, string ngroup = "2", int edukindId = 1, int filId = 1)
+        {
+            return Ok(_dsuDbService.GetDisciplinesWithFilter(departmentId, course, ngroup, edukindId, filId));
+        }
+        
+
         [Route("GetTeachers")]
         [HttpGet]
         public IActionResult GetTeachers()
