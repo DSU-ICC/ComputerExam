@@ -85,6 +85,7 @@ namespace Infrastructure.Repositories
                    Group = i.NGroup,
                    Course = i.Course,
                    Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId!),
+                   Edukind = _dsuDbService.GetEdukindById((int)i.EdukindId!),
                    ExamDate = i.ExamDate,
                    ExamDurationInMitutes = i.ExamDurationInMitutes,
                    ExamTickets = _examTicketRepository.GetTickets().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),

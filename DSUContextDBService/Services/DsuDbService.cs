@@ -82,8 +82,8 @@ namespace DSUContextDBService.Services
             var yearStartEdu = DateTime.Now.Year - course;
             var tplans = _dSUContext.CaseSTplans.Where(x => x.FilId == filId && x.DeptId == deptId && x.EdukindId == edukindId && x.Y == yearStartEdu);
             var tplanDetails = _dSUContext.CaseSTplandetails.Where(x => x.Exam == 1 && x.PId == tplans.First().PId);
-            
-            var modules = _dSUContext.CaseUkoModules.Where(x => tplanDetails.Any(c => c.SessId == x.SessId && c.SId == x.SId) && 
+
+            var modules = _dSUContext.CaseUkoModules.Where(x => tplanDetails.Any(c => c.SessId == x.SessId && c.SId == x.SId) &&
                     x.StudentStatus == 0 && x.Nmod == 1 && x.DeptId == deptId && x.EdukindId == edukindId && x.Ngroup == nGroup);
             int maxSemestr = modules.Max(x => x.SessId);
 
@@ -119,6 +119,11 @@ namespace DSUContextDBService.Services
         public List<CaseCEdukind>? GetEdukinds()
         {
             return _dSUContext.CaseCEdukinds.ToList();
+        }
+
+        public CaseCEdukind GetEdukindById(int edukindId)
+        {
+            return _dSUContext.CaseCEdukinds.FirstOrDefault(x => x.EdukindId == edukindId);
         }
 
         public List<int>? GetCoursesByDepartmentId(int departmentId)
