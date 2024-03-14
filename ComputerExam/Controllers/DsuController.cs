@@ -1,7 +1,5 @@
 ﻿using DSUContextDBService.Interface;
-using Infrastructure.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ComputerExam.Controllers
 {
@@ -14,6 +12,13 @@ namespace ComputerExam.Controllers
         public DsuController(IDsuDbService dsuDbService)
         {
             _dsuDbService = dsuDbService;
+        }
+
+        [Route("GetEdukinds")]
+        [HttpGet]
+        public IActionResult GetEdukinds()
+        {
+            return Ok(_dsuDbService.GetEdukinds());
         }
 
         [Route("GetFaculties")]

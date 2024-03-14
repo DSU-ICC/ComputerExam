@@ -21,5 +21,6 @@ namespace DSUContextDBService.Interface
         public CaseSTeacher? GetCaseSTeacherById(int id);
         public string? GetFioCaseSTeacherById(int? teacherId);
         public IQueryable<CaseUkoModule?>? GetCaseUkoModules();
+        public List<CaseCEdukind>? GetEdukinds();
     }
 }

@@ -116,6 +116,11 @@ namespace DSUContextDBService.Services
         }
         #endregion
 
+        public List<CaseCEdukind>? GetEdukinds()
+        {
+            return _dSUContext.CaseCEdukinds.ToList();
+        }
+
         public List<int>? GetCoursesByDepartmentId(int departmentId)
         {
             return GetCaseSStudents()
