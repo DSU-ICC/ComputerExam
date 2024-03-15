@@ -79,7 +79,7 @@ namespace ComputerExam.Controllers
             return Ok(_examenRepository.GetExamensByEmployeeId(employeeId));
         }
 
-        [Authorize]
+        //[Authorize]
         [Route("GetExamensFromArchiveByAuditoriumId")]
         [HttpGet]
         public IActionResult GetExamensFromArchiveByAuditoriumId(Guid auditoriumId)
@@ -87,7 +87,7 @@ namespace ComputerExam.Controllers
             return Ok(_examenRepository.GetExamensFromArchiveByAuditoriumId(auditoriumId));
         }
 
-        [Authorize]
+        //[Authorize]
         [Route("GetExamensFromArchiveByFilter")]
         [HttpGet]
         public IActionResult GetExamensFromArchiveByFilter(int? facultyId = null, int? departmentId = null, DateTime? startDate = null, DateTime? endDate = null)
