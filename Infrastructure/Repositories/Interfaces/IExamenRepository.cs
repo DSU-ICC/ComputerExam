@@ -11,6 +11,8 @@ namespace Infrastructure.Repositories.Interfaces
         public List<StudentForStatisticsDto> GetStatisticForReport(int examenId);
         public IQueryable<ExamenDto> GetExamensByEmployeeId(Guid employeeId);
         public IQueryable<ExamenDto> GetExamensByAuditoriumId(Guid auditoriumId);
+        public IQueryable<ExamenDto> GetExamensFromArchiveByAuditoriumId(Guid employeeId);
+        public IQueryable<ExamenDto> GetExamensFromArchiveByFilter(int? facultyId = null, int? departmentId = null, DateTime? startDate = null, DateTime? endDate = null);
         public List<ExamenStudentDto> GetExamensByStudentId(int studentId);
         public List<StudentsDto> GetStudentsByExamenId(int examenId);
         public List<ForCheckingDto>? GetStudentsByExamenIdForChecking(int examenId);

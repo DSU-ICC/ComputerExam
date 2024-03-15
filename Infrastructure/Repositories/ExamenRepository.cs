@@ -1,8 +1,8 @@
 ﻿using DomainService.DBService;
 using DomainService.DtoModels;
 using DomainService.Entity;
-using DSUContextDBService.DBService;
 using DSUContextDBService.Interface;
+using DSUContextDBService.Models;
 using Infrastructure.Common;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -77,6 +77,73 @@ namespace Infrastructure.Repositories
 
         public IQueryable<ExamenDto> GetExamensByEmployeeId(Guid employeeId)
         {
+            var examenDto = GetExamens().Where(x => x.EmployeeId == employeeId)
+               .Select(i => new ExamenDto()
+               {
+                   ExamenId = i.Id,
+                   Discipline = i.Discipline,
+                   Group = i.NGroup,
+                   Course = i.Course,
+                   Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId),
+                   ExamDate = i.ExamDate,
+                   ExamDurationInMitutes = i.ExamDurationInMitutes,
+                   ExamTickets = _examTicketRepository.Get().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),
+                   EndExamDate = i.EndExamDate
+               });
+            return examenDto;
+        }
+
+        public IQueryable<ExamenDto> GetExamensFromArchiveByAuditoriumId(Guid employeeId)
+        {
+            var examenDto = Get().Where(x => x.EmployeeId == employeeId && x.IsInArchive == true)
+               .Select(i => new ExamenDto()
+               {
+                   ExamenId = i.Id,
+                   Discipline = i.Discipline,
+                   Group = i.NGroup,
+                   Course = i.Course,
+                   Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId),
+                   ExamDate = i.ExamDate,
+                   ExamDurationInMitutes = i.ExamDurationInMitutes,
+                   ExamTickets = _examTicketRepository.GetTickets().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),
+                   EndExamDate = i.EndExamDate,
+                   AuditoriumId = i.AuditoriumId,
+                   TeacherId = i.TeacherId
+               });
+            return examenDto;
+        }
+
+        public IQueryable<ExamenDto> GetExamensFromArchiveByFilter(int? facultyId = null, int? departmentId = null, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            var examens = Get().Where(x => x.IsDeleted != true && x.IsInArchive == true).OrderByDescending(x => x.ExamDate).AsQueryable();
+            if (facultyId != null)
+            {
+                var departments = _dsuDbService.GetCaseSDepartmentByFacultyId((int)facultyId).ToList();
+                examens = examens.AsEnumerable().Where(x => departments.Any(c => c.DepartmentId == x.DepartmentId) == true).AsQueryable();
+            }
+            if (departmentId != null)
+                examens = examens.Where(x => x.DepartmentId == departmentId);
+
+            if (startDate != null)
+                examens = examens.Where(x => x.ExamDate >= startDate);
+
+            if (endDate != null)
+                examens = examens.Where(x => x.ExamDate <= endDate);
+
+            var examenDto = examens.Select(i => new ExamenDto()
+            {
+                ExamenId = i.Id,
+                Discipline = i.Discipline,
+                Group = i.NGroup,
+                Course = i.Course,
+                Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId),
+                ExamDate = i.ExamDate,
+                ExamDurationInMitutes = i.ExamDurationInMitutes,
+                ExamTickets = _examTicketRepository.GetTickets().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),
+                EndExamDate = i.EndExamDate,
+                AuditoriumId = i.AuditoriumId,
+                TeacherId = i.TeacherId
+            });
             var examenDto = GetExamens().Where(x => x.EmployeeId == employeeId).Select(i => new ExamenDto()
             {
                 ExamenId = i.Id,
