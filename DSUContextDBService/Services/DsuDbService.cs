@@ -77,23 +77,29 @@ namespace DSUContextDBService.Services
             return _dSUContext.CaseSStudents.FirstOrDefault(x => x.Id == id);
         }
 
-        public IQueryable<Discipline>? GetDisciplinesWithFilter(int deptId, int course, string nGroup, int edukindId, int filId = 1)
+        public IQueryable<Discipline>? GetDisciplinesWithFilter(int deptId, int course, string nGroup, int edukindId, int filId)
         {
             var yearStartEdu = DateTime.Now.Year - course;
             var tplans = _dSUContext.CaseSTplans.Where(x => x.FilId == filId && x.DeptId == deptId && x.EdukindId == edukindId && x.Y == yearStartEdu);
-            var tplanDetails = _dSUContext.CaseSTplandetails.Where(x => x.Exam == 1 && x.PId == tplans.First().PId);
-
-            var modules = _dSUContext.CaseUkoModules.Where(x => tplanDetails.Any(c => c.SessId == x.SessId && c.SId == x.SId) &&
-                    x.StudentStatus == 0 && x.Nmod == 1 && x.DeptId == deptId && x.EdukindId == edukindId && x.Ngroup == nGroup);
-            int maxSemestr = modules.Max(x => x.SessId);
-
-            var disciplines = modules.Where(x => x.SessId == maxSemestr).Select(x => new Discipline()
+            if (tplans.Any())
             {
-                DisciplineId = x.SId,
-                Predmet = x.Predmet,
-            });
+                var tplanDetails = _dSUContext.CaseSTplandetails.Where(x => x.Exam == 1 && x.PId == tplans.First().PId);
+                if (tplanDetails.Any())
+                {
+                    var modules = _dSUContext.CaseUkoModules.Where(x => tplanDetails.Any(c => c.SessId == x.SessId && c.SId == x.SId) &&
+                        x.StudentStatus == 0 && x.Nmod == 1 && x.DeptId == deptId && x.EdukindId == edukindId && x.Ngroup == nGroup);
+                    int maxSemestr = modules.Max(x => x.SessId);
 
-            return disciplines.Distinct();
+                    var disciplines = modules.Where(x => x.SessId == maxSemestr).Select(x => new Discipline()
+                    {
+                        DisciplineId = x.SId,
+                        Predmet = x.Predmet,
+                    });
+
+                    return disciplines.Distinct();
+                }
+            }
+            return null;
         }
 
         #endregion

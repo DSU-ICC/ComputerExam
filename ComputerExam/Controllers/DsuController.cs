@@ -65,12 +65,11 @@ namespace ComputerExam.Controllers
 
         [Route("GetDisciplinesWithFilter")]
         [HttpGet]
-        public IActionResult GetDisciplinesByStudentInfo(int departmentId = 110, int course = 2, string ngroup = "2", int edukindId = 1, int filId = 1)
+        public IActionResult GetDisciplinesByStudentInfo(int departmentId, int course, string ngroup, int edukindId, int filId = 1)
         {
             return Ok(_dsuDbService.GetDisciplinesWithFilter(departmentId, course, ngroup, edukindId, filId));
         }
         
-
         [Route("GetTeachers")]
         [HttpGet]
         public IActionResult GetTeachers()

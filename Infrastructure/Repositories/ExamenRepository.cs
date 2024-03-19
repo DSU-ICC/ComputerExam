@@ -45,10 +45,12 @@ namespace Infrastructure.Repositories
         {
             Examen examen = FindById(examenId);
             var caseUkoModules = _dsuDbService.GetCaseUkoModules().Where(x => x.DeptId == examen.DepartmentId &&
-                                                                              x.Ngroup == examen.NGroup &&
-                                                                              x.EdukindId == examen.EdukindId).AsEnumerable();
+                                                                              x.Ngroup == examen.NGroup);
+            if (examen.EdukindId != null)
+                caseUkoModules = caseUkoModules.Where(x => x.EdukindId == examen.EdukindId);
+
             List<StudentForStatisticsDto> studentForStatisticsDtos = new();
-            var modulesByDiscipline = caseUkoModules.Where(x => examen.ExamDate - x.Veddate < TimeSpan.FromDays(180) && examen.ExamDate > x.Veddate && examen.Discipline == x.Predmet)
+            var modulesByDiscipline = caseUkoModules.AsEnumerable().Where(x => examen.ExamDate - x.Veddate < TimeSpan.FromDays(180) && examen.ExamDate > x.Veddate && examen.Discipline == x.Predmet)
                                               .OrderBy(x => x.Lastname)
                                               .ThenBy(x => x.Firstname)
                                               .ThenBy(x => x.Patr)
@@ -176,8 +178,7 @@ namespace Infrastructure.Repositories
                 ?? throw new Exception("Student not found. " + studentId.ToString());
             var examens = GetExamens().Where(x => x.DepartmentId == student.DepartmentId &&
                                                   x.Course == student.Course &&
-                                                  x.NGroup == student.Ngroup &&
-                                                  x.EdukindId == student.EdukindId);
+                                                  x.NGroup == student.Ngroup);
 
             List<ExamenStudentDto> examenStudentDtos = new();
 
@@ -201,8 +202,10 @@ namespace Infrastructure.Repositories
                 ?? throw new Exception("Exam not found.");
             var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId &&
                                                                        x.Course == examen.Course &&
-                                                                       x.Ngroup == examen.NGroup &&
-                                                                       x.EdukindId == examen.EdukindId);
+                                                                       x.Ngroup == examen.NGroup);
+            if (examen.EdukindId != null)
+                students = students.Where(x => x.EdukindId == examen.EdukindId);
+
             var answerBlanks = _answerBlankRepository.GetAnswerBlanks().Include(x => x.ExamTicket).ThenInclude(x => x.Questions)
                                                            .Include(x => x.ExamTicket).ThenInclude(x => x.Examen)
                                                            .Where(x => x.ExamTicket.ExamenId == examenId);
@@ -232,8 +235,10 @@ namespace Infrastructure.Repositories
 
             var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId &&
                                                                        x.Course == examen.Course &&
-                                                                       x.Ngroup == examen.NGroup &&
-                                                                       x.EdukindId == examen.EdukindId);
+                                                                       x.Ngroup == examen.NGroup);
+            if (examen.EdukindId != null)
+                students = students.Where(x => x.EdukindId == examen.EdukindId);
+
             var answerBlanks = _answerBlankRepository.GetAnswerBlanks().Include(x => x.ExamTicket).ThenInclude(x => x.Questions)
                                                            .Include(x => x.ExamTicket).ThenInclude(x => x.Examen)
                                                            .Where(x => x.ExamTicket.ExamenId == examenId);
