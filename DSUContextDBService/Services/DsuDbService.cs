@@ -88,12 +88,15 @@ namespace DSUContextDBService.Services
                 {
                     var modules = _dSUContext.CaseUkoModules.Where(x => tplanDetails.Any(c => c.SessId == x.SessId && c.SId == x.SId) &&
                         x.StudentStatus == 0 && x.Nmod == 1 && x.DeptId == deptId && x.EdukindId == edukindId && x.Ngroup == nGroup);
-                    int maxSemestr = modules.Max(x => x.SessId);
-
-                    var disciplines = modules.Where(x => x.SessId == maxSemestr).Select(x => new Discipline()
+                    int maxSemestr = 1;
+                    if (modules.Any())
+                        maxSemestr = modules.Max(x => x.SessId);
+                                        
+                    var disciplines = tplanDetails.Where(x => x.SessId == maxSemestr).Select(x => new Discipline()
                     {
                         DisciplineId = x.SId,
-                        Predmet = x.Predmet,
+                        Predmet = _dSUContext.CaseUkoModules.FirstOrDefault(d => d.SId == x.SId) == null ? null : 
+                                  _dSUContext.CaseUkoModules.FirstOrDefault(d => d.SId == x.SId).Predmet,
                     });
 
                     return disciplines.Distinct();
