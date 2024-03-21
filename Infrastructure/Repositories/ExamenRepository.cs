@@ -87,10 +87,13 @@ namespace Infrastructure.Repositories
                    Group = i.NGroup,
                    Course = i.Course,
                    Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId),
+                   Edukind = i.EdukindId == null ? null : _dsuDbService.GetEdukindById((int)i.EdukindId!),
                    ExamDate = i.ExamDate,
                    ExamDurationInMitutes = i.ExamDurationInMitutes,
                    ExamTickets = _examTicketRepository.Get().Include(x => x.Questions).Where(x => x.ExamenId == i.Id).ToList(),
-                   EndExamDate = i.EndExamDate
+                   EndExamDate = i.EndExamDate,
+                   AuditoriumId = i.AuditoriumId,
+                   TeacherId = i.TeacherId
                });
             return examenDto;
         }
