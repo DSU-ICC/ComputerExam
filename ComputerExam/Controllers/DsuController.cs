@@ -1,4 +1,5 @@
-﻿using DSUContextDBService.Interface;
+﻿using DSUContextDBService.DtoModels;
+using DSUContextDBService.Interface;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ComputerExam.Controllers
@@ -60,7 +61,18 @@ namespace ComputerExam.Controllers
         [HttpGet]
         public IActionResult GetStudentsByCourseAndGroup(int departmentId, int course, string ngroup)
         {
-            return Ok(_dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == departmentId && x.Course == course && x.Ngroup == ngroup));
+            return Ok(_dsuDbService.GetCaseSStudents()
+                    .Where(x => x.DepartmentId == departmentId && 
+                                x.Course == course && 
+                                x.Ngroup == ngroup)
+                    .Select(x => new StudentDtoForListOutput()
+                    {
+                        Id = x.Id,
+                        Firstname = x.Firstname,
+                        Lastname = x.Lastname,
+                        Patr = x.Patr,
+                        Nzachkn = x.Nzachkn
+                    }));
         }
 
         [Route("GetDisciplinesWithFilter")]
@@ -69,7 +81,7 @@ namespace ComputerExam.Controllers
         {
             return Ok(_dsuDbService.GetDisciplinesWithFilter(departmentId, course, ngroup, edukindId, filId));
         }
-        
+
         [Route("GetTeachers")]
         [HttpGet]
         public IActionResult GetTeachers()
@@ -85,6 +97,6 @@ namespace ComputerExam.Controllers
             if (student != null)
                 return Ok();
             return BadRequest();
-        }        
+        }
     }
 }

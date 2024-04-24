@@ -175,7 +175,7 @@ namespace ComputerExam.Controllers
         [HttpGet]
         public async Task<IActionResult> EndExamenForEmployee(int examId)
         {
-            var examen = _examenRepository.FindById(examId);
+            var examen = _examenRepository.Get().FirstOrDefault(x=>x.Id == examId);
             if (examen == null)
                 return BadRequest("Экзамен не найден");
 

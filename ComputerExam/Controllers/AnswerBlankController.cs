@@ -114,7 +114,7 @@ namespace ComputerExam.Controllers
         [Route("EndExamenForStudent")]
         public async Task<IActionResult> EndExamenForStudent(int answerBlankId)
         {
-            var answerBlank = _answerBlankRepository.FindById(answerBlankId);
+            var answerBlank = _answerBlankRepository.Get().FirstOrDefault(x=>x.Id == answerBlankId);
             answerBlank.EndExamenDateTime = DateTime.Now;
             answerBlank.IsAuthorized = false;
             await _answerBlankRepository.Update(answerBlank);

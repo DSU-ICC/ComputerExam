@@ -20,7 +20,7 @@ namespace Infrastructure.Repositories
 
         public async Task DeleteQuestion(int id)
         {
-            var question = FindById(id);
+            var question = Get().FirstOrDefault(x=>x.Id == id);
             if (question != null)
             {
                 if (_answerRepository.Get().Any(x => x.QuestionId == id))

@@ -43,7 +43,7 @@ namespace Infrastructure.Repositories
 
         public List<StudentForStatisticsDto> GetStatisticForReport(int examenId)
         {
-            Examen examen = FindById(examenId);
+            Examen examen = Get().FirstOrDefault(x=>x.Id == examenId);
             var caseUkoModules = _dsuDbService.GetCaseUkoModules().Where(x => x.DeptId == examen.DepartmentId &&
                                                                               x.Ngroup == examen.NGroup);
             if (examen.EdukindId != null)

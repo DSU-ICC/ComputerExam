@@ -28,7 +28,7 @@ namespace ComputerExam.Controllers
         [HttpGet]
         public IActionResult GetAnswerById(int id)
         {
-            return Ok(_answerRepository.FindById(id));
+            return Ok(_answerRepository.Get().FirstOrDefault(x=>x.Id == id));
         }
 
         [Route("CreateAnswer")]

@@ -35,7 +35,7 @@ namespace ComputerExam.Controllers
         [HttpGet]
         public IActionResult GetQuestionById(int id)
         {
-            return Ok(_questionRepository.FindById(id));
+            return Ok(_questionRepository.Get().FirstOrDefault(x => x.Id == id));
         }
 
         [Authorize(Roles = "testingDepartment, admin, uko")]

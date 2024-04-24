@@ -45,7 +45,7 @@ namespace ComputerExam.Controllers
         [HttpPost]
         public async Task<IActionResult> EditRole(Guid employeeId, Guid roleId)
         {
-            Employee? employee = _employeeRepository.Get().FirstOrDefault(x=>x.Id == employeeId);
+            Employee? employee = _employeeRepository.Get().FirstOrDefault(x => x.Id == employeeId);
             if (employee != null)
             {
                 employee.RoleId = roleId;
@@ -60,7 +60,7 @@ namespace ComputerExam.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteRole(int id)
         {
-            Role? role = _roleRepository.FindById(id);
+            Role? role = _roleRepository.Get().FirstOrDefault(x => x.Id == Guid.Parse(id.ToString()));
             if (role != null)
                 await _roleRepository.Remove(role);
             return Ok();
