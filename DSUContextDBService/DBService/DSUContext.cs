@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 using DSUContextDBService.Models;
 
 namespace DSUContextDBService.DBService
@@ -27,14 +24,7 @@ namespace DSUContextDBService.DBService
         public virtual DbSet<CaseSTplan> CaseSTplans { get; set; } = null!;
         public virtual DbSet<CaseSTplandetail> CaseSTplandetails { get; set; } = null!;
         public virtual DbSet<CaseUkoModule> CaseUkoModules { get; set; } = null!;
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Name=ConnectionStrings:BaseDekanat");
-            }
-        }
+        public virtual DbSet<CaseSSubject> CaseSSubjects { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -527,6 +517,33 @@ namespace DSUContextDBService.DBService
                 entity.Property(e => e.Veddate)
                     .HasColumnType("datetime")
                     .HasColumnName("VEDDATE");
+            });
+
+            modelBuilder.Entity<CaseSSubject>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("CASE_S_SUBJECT");
+
+                entity.Property(e => e.CathId).HasColumnName("CATH_ID");
+
+                entity.Property(e => e.CycleId).HasColumnName("CYCLE_ID");
+
+                entity.Property(e => e.Deleted).HasColumnName("DELETED");
+
+                entity.Property(e => e.SAbr)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("S_ABR");
+
+                entity.Property(e => e.SId)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("S_ID");
+
+                entity.Property(e => e.SName)
+                    .HasMaxLength(800)
+                    .IsUnicode(false)
+                    .HasColumnName("S_NAME");
             });
 
             OnModelCreatingPartial(modelBuilder);

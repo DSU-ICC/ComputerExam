@@ -77,6 +77,11 @@ namespace DSUContextDBService.Services
             return _dSUContext.CaseSStudents.FirstOrDefault(x => x.Id == id);
         }
 
+        public IQueryable<CaseSSubject>? GetPredmets()
+        {
+            return _dSUContext.CaseSSubjects.Where(x => x.Deleted == false);
+        }
+
         public IQueryable<Discipline>? GetDisciplinesWithFilter(int deptId, int course, string nGroup, int edukindId, int filId)
         {
             var yearStartEdu = DateTime.Now.Year - course;
@@ -89,14 +94,19 @@ namespace DSUContextDBService.Services
                     var modules = _dSUContext.CaseUkoModules.Where(x => tplanDetails.Any(c => c.SessId == x.SessId && c.SId == x.SId) &&
                         x.StudentStatus == 0 && x.Nmod == 1 && x.DeptId == deptId && x.EdukindId == edukindId && x.Ngroup == nGroup);
                     int maxSemestr = 1;
+                    IQueryable<CaseSSubject> predmets;
                     if (modules.Any())
+                    {
                         maxSemestr = modules.Max(x => x.SessId);
-                                        
-                    var disciplines = tplanDetails.Where(x => x.SessId == maxSemestr).Select(x => new Discipline()
+                        predmets = GetPredmets().Where(x => tplanDetails.Any(c => c.SId == x.SId && c.SessId == maxSemestr));
+                    }
+                    else
+                        predmets = GetPredmets().Where(x => tplanDetails.Any(c => c.SId == x.SId));
+
+                    var disciplines = predmets.Select(x => new Discipline()
                     {
                         DisciplineId = x.SId,
-                        Predmet = _dSUContext.CaseUkoModules.FirstOrDefault(d => d.SId == x.SId) == null ? null : 
-                                  _dSUContext.CaseUkoModules.FirstOrDefault(d => d.SId == x.SId).Predmet,
+                        Predmet = x.SName,
                     });
 
                     return disciplines.Distinct();
