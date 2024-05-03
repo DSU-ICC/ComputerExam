@@ -22,6 +22,13 @@ namespace ComputerExam.Controllers
             return Ok(_dsuDbService.GetEdukinds());
         }
 
+        [Route("GetFilials")]
+        [HttpGet]
+        public IActionResult GetFilials()
+        {
+            return Ok(_dsuDbService.GetFilials());
+        }
+
         [Route("GetFaculties")]
         [HttpGet]
         public IActionResult GetFaculties()
@@ -38,31 +45,34 @@ namespace ComputerExam.Controllers
 
         [Route("GetCourseByDepartmentId")]
         [HttpGet]
-        public IActionResult GetCourseByDepartmentId(int departmentId)
+        public IActionResult GetCourseByDepartmentId(int departmentId, int filialId = 1)
         {
-            return Ok(_dsuDbService.GetCoursesByDepartmentId(departmentId));
+            return Ok(_dsuDbService.GetCoursesByDepartmentId(filialId, departmentId));
         }
 
         [Route("GetGroupsByDepartmentIdAndCourse")]
         [HttpGet]
-        public IActionResult GetGroupsByDepartmentIdAndCourse(int departmentId, int course)
+        public IActionResult GetGroupsByDepartmentIdAndCourse(int departmentId, int course, int filialId = 1)
         {
-            return Ok(_dsuDbService.GetGroupsByDepartmentId(departmentId, course));
+            return Ok(_dsuDbService.GetGroupsByDepartmentId(filialId, departmentId, course));
         }
 
         [Route("GetStudentsByCourse")]
         [HttpGet]
-        public IActionResult GetStudentsByCourse(int departmentId, int course)
+        public IActionResult GetStudentsByCourse(int departmentId, int course, int? filialId = 1)
         {
-            return Ok(_dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == departmentId && x.Course == course));
+            return Ok(_dsuDbService.GetCaseSStudents().Where(x => x.FilId == filialId && 
+                                                                  x.DepartmentId == departmentId && 
+                                                                  x.Course == course));
         }
 
         [Route("GetStudentsByCourseAndGroup")]
         [HttpGet]
-        public IActionResult GetStudentsByCourseAndGroup(int departmentId, int course, string ngroup)
+        public IActionResult GetStudentsByCourseAndGroup(int departmentId, int course, string ngroup, int? filialId = 1)
         {
             return Ok(_dsuDbService.GetCaseSStudents()
-                    .Where(x => x.DepartmentId == departmentId && 
+                    .Where(x => x.FilId == filialId &&
+                                x.DepartmentId == departmentId &&
                                 x.Course == course && 
                                 x.Ngroup == ngroup)
                     .Select(x => new StudentDtoForListOutput()

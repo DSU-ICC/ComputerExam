@@ -1,5 +1,6 @@
 ﻿using DomainService.DtoModels;
 using DSUContextDBService.DBService;
+using DSUContextDBService.DtoModels;
 using DSUContextDBService.Interface;
 using DSUContextDBService.Models;
 
@@ -13,6 +14,18 @@ namespace DSUContextDBService.Services
         {
             _dSUContext = dSUContext;
         }
+
+        #region Filial
+        public IQueryable<CaseCFilial> GetFilials()
+        {
+            return _dSUContext.CaseCFilials.Where(x => x.Deleted == false).OrderBy(x => x.Filial);
+        }
+
+        public CaseCFilial? GetFilialsById(int id)
+        {
+            return _dSUContext.CaseCFilials.FirstOrDefault(x => x.FilId == id);
+        }
+        #endregion
 
         #region Faculties
         public IQueryable<CaseCFaculty> GetFaculties()
@@ -57,19 +70,29 @@ namespace DSUContextDBService.Services
         #endregion
 
         #region Students
-        public IQueryable<CaseSStudent> GetCaseSStudents(int filId = 0)
+        public IQueryable<StudentDtoForListOutput> GetStudentDtoForListOutput(int filId = 1)
         {
-            return filId switch
-            {
-                > 0 => _dSUContext.CaseSStudents.Where(x => x.Status == 0 && x.FilId == filId)
+            return _dSUContext.CaseSStudents.Where(x => x.Status == 0 && x.FilId == filId)
                             .OrderBy(x => x.Lastname)
                             .ThenBy(x => x.Firstname)
-                            .ThenBy(x => x.Patr),
-                _ => _dSUContext.CaseSStudents.Where(x => x.Status == 0 && x.FilId == 1)
+                            .ThenBy(x => x.Patr).Select(x => new StudentDtoForListOutput()
+                            {
+                                Id = x.Id,
+                                Firstname = x.Firstname,
+                                Lastname = x.Lastname,
+                                Patr = x.Patr,
+                                Nzachkn = x.Nzachkn
+                            });
+
+        }
+
+        public IQueryable<CaseSStudent> GetCaseSStudents(int filId = 1)
+        {
+            return _dSUContext.CaseSStudents.Where(x => x.Status == 0 && x.FilId == filId)
                             .OrderBy(x => x.Lastname)
                             .ThenBy(x => x.Firstname)
-                            .ThenBy(x => x.Patr)
-            };
+                            .ThenBy(x => x.Patr);
+
         }
 
         public CaseSStudent? GetCaseSStudentById(int id)
@@ -145,20 +168,22 @@ namespace DSUContextDBService.Services
             return _dSUContext.CaseCEdukinds.FirstOrDefault(x => x.EdukindId == edukindId);
         }
 
-        public List<int>? GetCoursesByDepartmentId(int departmentId)
+        public List<int>? GetCoursesByDepartmentId(int filialId, int departmentId)
         {
             return GetCaseSStudents()
-                .Where(x => x.DepartmentId == departmentId)
+                .Where(x => x.FilId == filialId && x.DepartmentId == departmentId)
                 .Select(c => c.Course)
                 .Distinct()
                 .OrderBy(x => x)
                 .ToList();
         }
 
-        public List<string?>? GetGroupsByDepartmentId(int departmentId, int course)
+        public List<string?>? GetGroupsByDepartmentId(int filialId, int departmentId, int course)
         {
             return GetCaseSStudents()
-                .Where(x => x.DepartmentId == departmentId && x.Course == course)
+                .Where(x => x.FilId == filialId &&
+                            x.DepartmentId == departmentId &&
+                            x.Course == course)
                 .Select(c => c.Ngroup)
                 .Distinct()
                 .OrderBy(x => x)
