@@ -15,9 +15,13 @@
         /// </summary>
         public Guid? AuditoriumId { get; set; }
         /// <summary>
+        /// Id филиала
+        /// </summary>
+        public int? FilialId { get; set; }
+        /// <summary>
         /// Id направления
         /// </summary>
-        public int? DepartmentId { get; set; }
+        public int? DepartmentId { get; set; }        
         /// <summary>
         /// Курс
         /// </summary>

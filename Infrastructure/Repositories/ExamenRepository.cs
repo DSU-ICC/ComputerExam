@@ -14,6 +14,7 @@ namespace Infrastructure.Repositories
         private readonly IDsuDbService _dsuDbService;
         private readonly IExamTicketRepository _examTicketRepository;
         private readonly IAnswerBlankRepository _answerBlankRepository;
+        private readonly int QuantityDayBeforeWxamToTakeModules = 180;
         public ExamenRepository(ApplicationContext dbContext, IDsuDbService dsuDbService, IExamTicketRepository examTicketRepository, IAnswerBlankRepository answerBlankRepository) : base(dbContext)
         {
             _dsuDbService = dsuDbService;
@@ -26,9 +27,12 @@ namespace Infrastructure.Repositories
             return Get().Where(x => x.IsDeleted != true && x.IsInArchive != true);
         }
 
-        public IQueryable<Examen> GetExamensWithFilter(int? departmentId = null, int? course = null, string? ngroup = null)
+        public IQueryable<Examen> GetExamensWithFilter(int? filialId = null, int? departmentId = null, int? course = null, string? ngroup = null)
         {
             var examens = Get();
+            if (filialId != null)
+                examens = examens.Where(x => x.FilialId == filialId);
+
             if (departmentId != null)
                 examens = examens.Where(x => x.DepartmentId == departmentId);
 
@@ -44,13 +48,14 @@ namespace Infrastructure.Repositories
         public List<StudentForStatisticsDto> GetStatisticForReport(int examenId)
         {
             Examen examen = Get().FirstOrDefault(x=>x.Id == examenId);
-            var caseUkoModules = _dsuDbService.GetCaseUkoModules().Where(x => x.DeptId == examen.DepartmentId &&
+            var caseUkoModules = _dsuDbService.GetCaseUkoModules().Where(x => x.FilId == examen.FilialId && 
+                                                                              x.DeptId == examen.DepartmentId &&
                                                                               x.Ngroup == examen.NGroup);
             if (examen.EdukindId != null)
                 caseUkoModules = caseUkoModules.Where(x => x.EdukindId == examen.EdukindId);
 
             List<StudentForStatisticsDto> studentForStatisticsDtos = new();
-            var modulesByDiscipline = caseUkoModules.AsEnumerable().Where(x => examen.ExamDate - x.Veddate < TimeSpan.FromDays(180) && examen.ExamDate > x.Veddate && examen.Discipline == x.Predmet)
+            var modulesByDiscipline = caseUkoModules.AsEnumerable().Where(x => examen.ExamDate - x.Veddate < TimeSpan.FromDays(QuantityDayBeforeWxamToTakeModules) && examen.ExamDate > x.Veddate && examen.Discipline == x.Predmet)
                                               .OrderBy(x => x.Lastname)
                                               .ThenBy(x => x.Firstname)
                                               .ThenBy(x => x.Patr)
@@ -87,6 +92,7 @@ namespace Infrastructure.Repositories
                    Group = i.NGroup,
                    Course = i.Course,
                    Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId),
+                   Filial = _dsuDbService.GetFilialsById((int)i.FilialId),
                    Edukind = i.EdukindId == null ? null : _dsuDbService.GetEdukindById((int)i.EdukindId!),
                    ExamDate = i.ExamDate,
                    ExamDurationInMitutes = i.ExamDurationInMitutes,
@@ -108,6 +114,7 @@ namespace Infrastructure.Repositories
                    Group = i.NGroup,
                    Course = i.Course,
                    Department = i.DepartmentId == null ? null : _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId),
+                   Filial = _dsuDbService.GetFilialsById((int)i.FilialId),
                    ExamDate = i.ExamDate,
                    Edukind = i.EdukindId == null ? null : _dsuDbService.GetEdukindById((int)i.EdukindId),
                    ExamDurationInMitutes = i.ExamDurationInMitutes,
@@ -119,7 +126,7 @@ namespace Infrastructure.Repositories
             return examenDto;
         }
 
-        public IQueryable<ExamenDto> GetExamensFromArchiveByFilter(int? facultyId = null, int? departmentId = null, DateTime? startDate = null, DateTime? endDate = null)
+        public IQueryable<ExamenDto> GetExamensFromArchiveByFilter(int? filialId = null, int? facultyId = null, int? departmentId = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             var examens = Get().Where(x => x.IsDeleted != true && x.IsInArchive == true).OrderByDescending(x => x.ExamDate).AsQueryable();
             if (facultyId != null)
@@ -129,6 +136,9 @@ namespace Infrastructure.Repositories
             }
             if (departmentId != null)
                 examens = examens.Where(x => x.DepartmentId == departmentId);
+
+            if (filialId != null)
+                examens = examens.Where(x => x.FilialId == filialId);
 
             if (startDate != null)
                 examens = examens.Where(x => x.ExamDate >= startDate);
@@ -143,6 +153,7 @@ namespace Infrastructure.Repositories
                 Group = i.NGroup,
                 Course = i.Course,
                 Department = i.DepartmentId == null ? null : _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId),
+                Filial = _dsuDbService.GetFilialsById((int)i.FilialId),
                 ExamDate = i.ExamDate,
                 Edukind = i.EdukindId == null ? null : _dsuDbService.GetEdukindById((int)i.EdukindId),
                 ExamDurationInMitutes = i.ExamDurationInMitutes,
@@ -164,6 +175,7 @@ namespace Infrastructure.Repositories
                    Group = i.NGroup,
                    Course = i.Course,
                    Department = i.DepartmentId == null ? null : _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId!),
+                   Filial = _dsuDbService.GetFilialsById((int)i.FilialId),
                    ExamDate = i.ExamDate,
                    Edukind = i.EdukindId == null ? null : _dsuDbService.GetEdukindById((int)i.EdukindId!),
                    ExamDurationInMitutes = i.ExamDurationInMitutes,
@@ -179,7 +191,8 @@ namespace Infrastructure.Repositories
         {
             var student = _dsuDbService.GetCaseSStudentById(studentId)
                 ?? throw new Exception("Student not found. " + studentId.ToString());
-            var examens = GetExamens().Where(x => x.DepartmentId == student.DepartmentId &&
+            var examens = GetExamens().Where(x => x.FilialId == student.FilId &&
+                                                  x.DepartmentId == student.DepartmentId &&
                                                   x.Course == student.Course &&
                                                   x.NGroup == student.Ngroup);
 
@@ -203,7 +216,8 @@ namespace Infrastructure.Repositories
         {
             var examen = GetExamens().FirstOrDefault(x => x.Id == examenId)
                 ?? throw new Exception("Exam not found.");
-            var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId &&
+            var students = _dsuDbService.GetCaseSStudents().Where(x => x.FilId== examen.FilialId &&
+                                                                       x.DepartmentId == examen.DepartmentId &&
                                                                        x.Course == examen.Course &&
                                                                        x.Ngroup == examen.NGroup);
             if (examen.EdukindId != null)
@@ -236,7 +250,8 @@ namespace Infrastructure.Repositories
             if (examen == null)
                 return null;
 
-            var students = _dsuDbService.GetCaseSStudents().Where(x => x.DepartmentId == examen.DepartmentId &&
+            var students = _dsuDbService.GetCaseSStudents().Where(x => x.FilId == examen.FilialId &&
+                                                                       x.DepartmentId == examen.DepartmentId &&
                                                                        x.Course == examen.Course &&
                                                                        x.Ngroup == examen.NGroup);
             if (examen.EdukindId != null)
@@ -338,9 +353,7 @@ namespace Infrastructure.Repositories
                     await Update(examen);
                 }
                 else
-                {
                     await Remove(id);
-                }
             }
             else
                 throw new Exception();

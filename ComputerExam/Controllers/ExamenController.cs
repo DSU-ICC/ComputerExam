@@ -35,9 +35,9 @@ namespace ComputerExam.Controllers
         /// <returns></returns>
         [Route("GetExamensWithFilter")]
         [HttpGet]
-        public IActionResult GetExamensWithFilter(int? departmentId = null, int? course = null, string? ngroup = null)
+        public IActionResult GetExamensWithFilter(int? filialId = null, int? departmentId = null, int? course = null, string? ngroup = null)
         {
-            return Ok(_examenRepository.GetExamensWithFilter(departmentId, course, ngroup));
+            return Ok(_examenRepository.GetExamensWithFilter(filialId, departmentId, course, ngroup));
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace ComputerExam.Controllers
         [Authorize]
         [Route("GenerateExcelFile")]
         [HttpGet]
-        public IActionResult GenerateExcelFile(int examenId = 2439)
+        public IActionResult GenerateExcelFile(int examenId)
         {            
             return Ok(_generatedExcelFile.GenerateExcelFile(examenId));
         }
@@ -90,9 +90,9 @@ namespace ComputerExam.Controllers
         [Authorize]
         [Route("GetExamensFromArchiveByFilter")]
         [HttpGet]
-        public IActionResult GetExamensFromArchiveByFilter(int? facultyId = null, int? departmentId = null, DateTime? startDate = null, DateTime? endDate = null)
+        public IActionResult GetExamensFromArchiveByFilter(int? filialId = null, int? facultyId = null, int? departmentId = null, DateTime? startDate = null, DateTime? endDate = null)
         {
-            return Ok(_examenRepository.GetExamensFromArchiveByFilter(facultyId, departmentId, startDate, endDate));
+            return Ok(_examenRepository.GetExamensFromArchiveByFilter(filialId, facultyId, departmentId, startDate, endDate));
         }
 
         /// <summary>
@@ -208,7 +208,9 @@ namespace ComputerExam.Controllers
         [HttpPost]
         public async Task<IActionResult> ResetExamen(int examenId)
         {
-            var examen = _examenRepository.FindById(examenId);
+            var examen = _examenRepository.GetExamens().FirstOrDefault(x=>x.Id == examenId);
+            if (examen == null)
+                return BadRequest("Экзамен не найден");
             examen.EndExamDate = null;
             await _examenRepository.UpdateEntity(examen);
             return Ok();

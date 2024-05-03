@@ -7,6 +7,7 @@ namespace DomainService.DtoModels
     {
         public int? ExamenId { get; set; }
         public string? Discipline { get; set; }
+        public CaseCFilial? Filial { get; set; }
         public CaseSDepartment? Department { get; set; }
         public CaseCEdukind? Edukind { get; set; }
         public int? Course { get; set; }
