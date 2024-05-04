@@ -48,7 +48,7 @@ namespace Infrastructure.Repositories
         public List<StudentForStatisticsDto> GetStatisticForReport(int examenId)
         {
             Examen examen = Get().FirstOrDefault(x=>x.Id == examenId);
-            var caseUkoModules = _dsuDbService.GetCaseUkoModules().Where(x => x.FilId == examen.FilialId && 
+            var caseUkoModules = _dsuDbService.GetCaseUkoModules().Where(x => examen.FilialId == null ? x.FilId == 1 : x.FilId == examen.FilialId && 
                                                                               x.DeptId == examen.DepartmentId &&
                                                                               x.Ngroup == examen.NGroup);
             if (examen.EdukindId != null)
@@ -92,7 +92,7 @@ namespace Infrastructure.Repositories
                    Group = i.NGroup,
                    Course = i.Course,
                    Department = _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId),
-                   Filial = _dsuDbService.GetFilialsById((int)i.FilialId),
+                   Filial = i.FilialId == null ? null : _dsuDbService.GetFilialsById((int)i.FilialId),
                    Edukind = i.EdukindId == null ? null : _dsuDbService.GetEdukindById((int)i.EdukindId!),
                    ExamDate = i.ExamDate,
                    ExamDurationInMitutes = i.ExamDurationInMitutes,
@@ -114,7 +114,7 @@ namespace Infrastructure.Repositories
                    Group = i.NGroup,
                    Course = i.Course,
                    Department = i.DepartmentId == null ? null : _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId),
-                   Filial = _dsuDbService.GetFilialsById((int)i.FilialId),
+                   Filial = i.FilialId == null ? null : _dsuDbService.GetFilialsById((int)i.FilialId),
                    ExamDate = i.ExamDate,
                    Edukind = i.EdukindId == null ? null : _dsuDbService.GetEdukindById((int)i.EdukindId),
                    ExamDurationInMitutes = i.ExamDurationInMitutes,
@@ -153,7 +153,7 @@ namespace Infrastructure.Repositories
                 Group = i.NGroup,
                 Course = i.Course,
                 Department = i.DepartmentId == null ? null : _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId),
-                Filial = _dsuDbService.GetFilialsById((int)i.FilialId),
+                Filial = i.FilialId == null ? null : _dsuDbService.GetFilialsById((int)i.FilialId),
                 ExamDate = i.ExamDate,
                 Edukind = i.EdukindId == null ? null : _dsuDbService.GetEdukindById((int)i.EdukindId),
                 ExamDurationInMitutes = i.ExamDurationInMitutes,
@@ -175,7 +175,7 @@ namespace Infrastructure.Repositories
                    Group = i.NGroup,
                    Course = i.Course,
                    Department = i.DepartmentId == null ? null : _dsuDbService.GetCaseSDepartmentById((int)i.DepartmentId!),
-                   Filial = _dsuDbService.GetFilialsById((int)i.FilialId),
+                   Filial = i.FilialId == null ? null : _dsuDbService.GetFilialsById((int)i.FilialId),
                    ExamDate = i.ExamDate,
                    Edukind = i.EdukindId == null ? null : _dsuDbService.GetEdukindById((int)i.EdukindId!),
                    ExamDurationInMitutes = i.ExamDurationInMitutes,
@@ -191,7 +191,7 @@ namespace Infrastructure.Repositories
         {
             var student = _dsuDbService.GetCaseSStudentById(studentId)
                 ?? throw new Exception("Student not found. " + studentId.ToString());
-            var examens = GetExamens().Where(x => x.FilialId == student.FilId &&
+            var examens = GetExamens().Where(x => x.FilialId == null ? true : x.FilialId == student.FilId &&
                                                   x.DepartmentId == student.DepartmentId &&
                                                   x.Course == student.Course &&
                                                   x.NGroup == student.Ngroup);
@@ -216,7 +216,7 @@ namespace Infrastructure.Repositories
         {
             var examen = GetExamens().FirstOrDefault(x => x.Id == examenId)
                 ?? throw new Exception("Exam not found.");
-            var students = _dsuDbService.GetCaseSStudents().Where(x => x.FilId== examen.FilialId &&
+            var students = _dsuDbService.GetCaseSStudents().Where(x => examen.FilialId == null ? x.FilId == 1 : x.FilId == examen.FilialId &&
                                                                        x.DepartmentId == examen.DepartmentId &&
                                                                        x.Course == examen.Course &&
                                                                        x.Ngroup == examen.NGroup);
@@ -250,7 +250,7 @@ namespace Infrastructure.Repositories
             if (examen == null)
                 return null;
 
-            var students = _dsuDbService.GetCaseSStudents().Where(x => x.FilId == examen.FilialId &&
+            var students = _dsuDbService.GetCaseSStudents().Where(x => examen.FilialId == null ? x.FilId == 1 : x.FilId == examen.FilialId &&
                                                                        x.DepartmentId == examen.DepartmentId &&
                                                                        x.Course == examen.Course &&
                                                                        x.Ngroup == examen.NGroup);
