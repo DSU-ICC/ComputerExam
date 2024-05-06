@@ -191,7 +191,7 @@ namespace Infrastructure.Repositories
         {
             var student = _dsuDbService.GetCaseSStudentById(studentId)
                 ?? throw new Exception("Student not found. " + studentId.ToString());
-            var examens = GetExamens().Where(x => x.FilialId == null ? true : x.FilialId == student.FilId &&
+            var examens = GetExamens().Where(x => (x.FilialId == null ? true : x.FilialId == student.FilId) &&
                                                   x.DepartmentId == student.DepartmentId &&
                                                   x.Course == student.Course &&
                                                   x.NGroup == student.Ngroup);
