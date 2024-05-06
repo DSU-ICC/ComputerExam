@@ -48,7 +48,7 @@ namespace Infrastructure.Repositories
         public List<StudentForStatisticsDto> GetStatisticForReport(int examenId)
         {
             Examen examen = Get().FirstOrDefault(x=>x.Id == examenId);
-            var caseUkoModules = _dsuDbService.GetCaseUkoModules().Where(x => examen.FilialId == null ? x.FilId == 1 : x.FilId == examen.FilialId && 
+            var caseUkoModules = _dsuDbService.GetCaseUkoModules().Where(x => (examen.FilialId == null ? x.FilId == 1 : x.FilId == examen.FilialId) && 
                                                                               x.DeptId == examen.DepartmentId &&
                                                                               x.Ngroup == examen.NGroup);
             if (examen.EdukindId != null)
@@ -216,7 +216,7 @@ namespace Infrastructure.Repositories
         {
             var examen = GetExamens().FirstOrDefault(x => x.Id == examenId)
                 ?? throw new Exception("Exam not found.");
-            var students = _dsuDbService.GetCaseSStudents().Where(x => examen.FilialId == null ? x.FilId == 1 : x.FilId == examen.FilialId &&
+            var students = _dsuDbService.GetCaseSStudents().Where(x => (examen.FilialId == null ? x.FilId == 1 : x.FilId == examen.FilialId) &&
                                                                        x.DepartmentId == examen.DepartmentId &&
                                                                        x.Course == examen.Course &&
                                                                        x.Ngroup == examen.NGroup);
@@ -250,7 +250,7 @@ namespace Infrastructure.Repositories
             if (examen == null)
                 return null;
 
-            var students = _dsuDbService.GetCaseSStudents().Where(x => examen.FilialId == null ? x.FilId == 1 : x.FilId == examen.FilialId &&
+            var students = _dsuDbService.GetCaseSStudents().Where(x => (examen.FilialId == null ? x.FilId == 1 : x.FilId == examen.FilialId) &&
                                                                        x.DepartmentId == examen.DepartmentId &&
                                                                        x.Course == examen.Course &&
                                                                        x.Ngroup == examen.NGroup);
