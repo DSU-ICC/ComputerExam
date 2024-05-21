@@ -70,7 +70,7 @@ namespace ComputerExam.Controllers
         [HttpGet]
         public IActionResult GetStudentsByCourseAndGroup(int departmentId, int course, string ngroup, int? filialId = 1)
         {
-            return Ok(_dsuDbService.GetCaseSStudents()
+            return Ok(_dsuDbService.GetCaseSStudents((int)filialId)
                     .Where(x => x.FilId == filialId &&
                                 x.DepartmentId == departmentId &&
                                 x.Course == course && 
