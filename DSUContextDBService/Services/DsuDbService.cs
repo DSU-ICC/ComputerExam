@@ -170,7 +170,7 @@ namespace DSUContextDBService.Services
 
         public List<int>? GetCoursesByDepartmentId(int filialId, int departmentId)
         {
-            return GetCaseSStudents()
+            return GetCaseSStudents(filialId)
                 .Where(x => x.FilId == filialId && x.DepartmentId == departmentId)
                 .Select(c => c.Course)
                 .Distinct()
@@ -180,7 +180,7 @@ namespace DSUContextDBService.Services
 
         public List<string?>? GetGroupsByDepartmentId(int filialId, int departmentId, int course)
         {
-            return GetCaseSStudents()
+            return GetCaseSStudents(filialId)
                 .Where(x => x.FilId == filialId &&
                             x.DepartmentId == departmentId &&
                             x.Course == course)
