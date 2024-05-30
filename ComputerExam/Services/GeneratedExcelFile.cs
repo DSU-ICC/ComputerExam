@@ -22,7 +22,7 @@ namespace ComputerExam.Services
         {
             var fileName = examenId.ToString() + DateTime.Now.ToString("dd-MM-yyyy") + "_" + DateTime.Now.ToString("ss-mm-HH") + ".xlsx";
 
-            var examen = _examenRepository.FindById(examenId);
+            var examen = _examenRepository.Get().FirstOrDefault(x=>x.Id == examenId);
             var studentForStatisticsDtos = _examenRepository.GetStatisticForReport(examenId);
 
             var workbook = new XLWorkbook();

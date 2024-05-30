@@ -21,19 +21,9 @@ namespace Infrastructure.Common
             return _dbSet.AsNoTracking();
         }
 
-        public IQueryable<TEntity> GetWithTracking()
-        {
-            return _dbSet;
-        }
-
         public IEnumerable<TEntity> Get(Func<TEntity, bool> predicate)
         {
             return _dbSet.AsNoTracking().Where(predicate);
-        }
-
-        public TEntity FindById(int id)
-        {
-            return _dbSet.Find(id);
         }
 
         public async Task Create(TEntity item)

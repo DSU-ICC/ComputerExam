@@ -30,7 +30,7 @@ namespace Infrastructure.Repositories
 
         public async Task DeleteTicket(int id)
         {
-            var ticket = GetWithTracking().Include(x => x.Questions).FirstOrDefault(x => x.Id == id);
+            var ticket = Get().Include(x => x.Questions).FirstOrDefault(x => x.Id == id);
             if (ticket != null)
             {
                 if (ticket.Questions.Any())

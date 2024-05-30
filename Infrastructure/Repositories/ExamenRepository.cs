@@ -338,7 +338,7 @@ namespace Infrastructure.Repositories
 
         public async Task DeleteExamen(int id)
         {
-            var examen = GetWithTracking().Include(x => x.Tickets).ThenInclude(c => c.Questions).FirstOrDefault(x => x.Id == id);
+            var examen = Get().Include(x => x.Tickets).ThenInclude(c => c.Questions).FirstOrDefault(x => x.Id == id);
             if (examen != null)
             {
                 if (examen.Tickets.Any())
