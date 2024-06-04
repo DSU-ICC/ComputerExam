@@ -52,9 +52,9 @@ namespace ComputerExam.Controllers
 
         [Route("GetGroupsByDepartmentIdAndCourse")]
         [HttpGet]
-        public IActionResult GetGroupsByDepartmentIdAndCourse(int departmentId, int course, int filialId = 1)
+        public IActionResult GetGroupsByDepartmentIdAndCourse(int departmentId, int course, int? filialId)
         {
-            return Ok(_dsuDbService.GetGroupsByDepartmentId(filialId, departmentId, course));
+            return Ok(_dsuDbService.GetGroupsByDepartmentId(departmentId, course, filialId));
         }
 
         [Route("GetStudentsByCourse")]
@@ -70,7 +70,7 @@ namespace ComputerExam.Controllers
         [HttpGet]
         public IActionResult GetStudentsByCourseAndGroup(int departmentId, int course, string ngroup, int? filialId = 1)
         {
-            return Ok(_dsuDbService.GetCaseSStudents((int)filialId)
+            return Ok(_dsuDbService.GetCaseSStudents()
                     .Where(x => x.FilId == filialId &&
                                 x.DepartmentId == departmentId &&
                                 x.Course == course && 

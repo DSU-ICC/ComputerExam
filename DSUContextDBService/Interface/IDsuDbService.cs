@@ -17,8 +17,8 @@ namespace DSUContextDBService.Interface
         public IQueryable<CaseSSpecialization> GetCaseSSpecializations();
         public CaseSSpecialization? GetCaseSSpecializationById(int? id);
         public List<int>? GetCoursesByDepartmentId(int filialId, int departmentId);
-        public List<string?>? GetGroupsByDepartmentId(int filialId, int departmentId, int course);
-        public IQueryable<CaseSStudent> GetCaseSStudents(int filId = 1);
+        public List<string?>? GetGroupsByDepartmentId(int departmentId, int course, int? filialId);
+        public IQueryable<CaseSStudent> GetCaseSStudents();
         public IQueryable<StudentDtoForListOutput> GetStudentDtoForListOutput(int filId = 1);
         public CaseSStudent? GetCaseSStudentById(int id);
         public IQueryable<Discipline>? GetDisciplinesWithFilter(int deptId, int course, string nGroup, int edukindId, int filId);

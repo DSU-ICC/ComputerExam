@@ -86,9 +86,9 @@ namespace DSUContextDBService.Services
 
         }
 
-        public IQueryable<CaseSStudent> GetCaseSStudents(int filId = 1)
+        public IQueryable<CaseSStudent> GetCaseSStudents()
         {
-            return _dSUContext.CaseSStudents.Where(x => x.Status == 0 && x.FilId == filId)
+            return _dSUContext.CaseSStudents.Where(x => x.Status == 0)
                             .OrderBy(x => x.Lastname)
                             .ThenBy(x => x.Firstname)
                             .ThenBy(x => x.Patr);
@@ -170,7 +170,7 @@ namespace DSUContextDBService.Services
 
         public List<int>? GetCoursesByDepartmentId(int filialId, int departmentId)
         {
-            return GetCaseSStudents(filialId)
+            return GetCaseSStudents()
                 .Where(x => x.FilId == filialId && x.DepartmentId == departmentId)
                 .Select(c => c.Course)
                 .Distinct()
@@ -178,10 +178,10 @@ namespace DSUContextDBService.Services
                 .ToList();
         }
 
-        public List<string?>? GetGroupsByDepartmentId(int filialId, int departmentId, int course)
+        public List<string?>? GetGroupsByDepartmentId(int departmentId, int course, int? filialId)
         {
-            return GetCaseSStudents(filialId)
-                .Where(x => x.FilId == filialId &&
+            return GetCaseSStudents()
+                .Where(x => (filialId == null ? true : x.FilId == filialId) &&
                             x.DepartmentId == departmentId &&
                             x.Course == course)
                 .Select(c => c.Ngroup)
