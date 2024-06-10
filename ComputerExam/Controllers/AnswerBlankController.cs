@@ -74,7 +74,7 @@ namespace ComputerExam.Controllers
         [Route("ResetAnswerBlank")]
         public async Task<IActionResult> ResetAnswerBlank(int answerBlankId, bool? isRemoveAnswerBlank)
         {
-            var answerBlank = _answerBlankRepository.GetAnswerBlanks().FirstOrDefault(x => x.Id == answerBlankId);
+            var answerBlank = _answerBlankRepository.Get().Include(x => x.Answers).FirstOrDefault(x => x.Id == answerBlankId);
             if (answerBlank == null)
                 return BadRequest();
             if (isRemoveAnswerBlank == true)
@@ -87,7 +87,7 @@ namespace ComputerExam.Controllers
                 answerBlank.EndExamenDateTime = null;
                 answerBlank.IsAuthorized = null;
             }
-
+            answerBlank.ExamTicket = null;
             await _answerBlankRepository.Update(answerBlank);
             return Ok();
         }
@@ -101,6 +101,9 @@ namespace ComputerExam.Controllers
         [Route("UpdateAnswerBlank")]
         public async Task<IActionResult> UpdateAnswerBlank(AnswerBlank answerBlank)
         {
+            if (answerBlank.Answers != null)
+                answerBlank.Answers.ForEach(x => x.Question = null);
+            answerBlank.ExamTicket = null;
             await _answerBlankRepository.Update(answerBlank);
             return Ok();
         }
@@ -114,7 +117,7 @@ namespace ComputerExam.Controllers
         [Route("EndExamenForStudent")]
         public async Task<IActionResult> EndExamenForStudent(int answerBlankId)
         {
-            var answerBlank = _answerBlankRepository.Get().FirstOrDefault(x=>x.Id == answerBlankId);
+            var answerBlank = _answerBlankRepository.Get().FirstOrDefault(x => x.Id == answerBlankId);
             answerBlank.EndExamenDateTime = DateTime.Now;
             answerBlank.IsAuthorized = false;
             await _answerBlankRepository.Update(answerBlank);
