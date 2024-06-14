@@ -70,7 +70,7 @@ namespace DSUContextDBService.Services
         #endregion
 
         #region Students
-        public IQueryable<StudentDtoForListOutput> GetStudentDtoForListOutput(int filId = 1)
+        public IQueryable<StudentDtoForListOutput> GetStudentDtoForListOutput(int filId)
         {
             return _dSUContext.CaseSStudents.Where(x => x.Status == 0 && x.FilId == filId)
                             .OrderBy(x => x.Lastname)
@@ -178,10 +178,10 @@ namespace DSUContextDBService.Services
                 .ToList();
         }
 
-        public List<string?>? GetGroupsByDepartmentId(int departmentId, int course, int? filialId)
+        public List<string?>? GetGroupsByDepartmentId(int departmentId, int course, int filialId)
         {
             return GetCaseSStudents()
-                .Where(x => (filialId == null ? true : x.FilId == filialId) &&
+                .Where(x => x.FilId == filialId &&
                             x.DepartmentId == departmentId &&
                             x.Course == course)
                 .Select(c => c.Ngroup)

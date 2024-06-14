@@ -196,7 +196,7 @@ namespace Infrastructure.Repositories
                                                   x.Course == student.Course &&
                                                   x.NGroup == student.Ngroup);
 
-            //    students = examens.Where(x => x.EdukindId == student.EdukindId);
+            examens = examens.Where(x => x.EdukindId == student.EdukindId);
 
             List<ExamenStudentDto> examenStudentDtos = new();
 
@@ -222,8 +222,8 @@ namespace Infrastructure.Repositories
                                                                        x.DepartmentId == examen.DepartmentId &&
                                                                        x.Course == examen.Course &&
                                                                        x.Ngroup == examen.NGroup);
-            //if (examen.EdukindId != null)
-            //    students = students.Where(x => x.EdukindId == examen.EdukindId);
+            if (examen.EdukindId != null)
+                students = students.Where(x => x.EdukindId == examen.EdukindId);
 
             var answerBlanks = _answerBlankRepository.GetAnswerBlanks().Include(x => x.ExamTicket).ThenInclude(x => x.Questions)
                                                            .Include(x => x.ExamTicket).ThenInclude(x => x.Examen)
@@ -256,8 +256,8 @@ namespace Infrastructure.Repositories
                                                                        x.DepartmentId == examen.DepartmentId &&
                                                                        x.Course == examen.Course &&
                                                                        x.Ngroup == examen.NGroup);
-            //if (examen.EdukindId != null)
-            //    students = students.Where(x => x.EdukindId == examen.EdukindId);
+            if (examen.EdukindId != null)
+                students = students.Where(x => x.EdukindId == examen.EdukindId);
 
             var answerBlanks = _answerBlankRepository.GetAnswerBlanks().Include(x => x.ExamTicket).ThenInclude(x => x.Questions)
                                                            .Include(x => x.ExamTicket).ThenInclude(x => x.Examen)

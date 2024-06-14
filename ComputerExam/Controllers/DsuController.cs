@@ -45,21 +45,21 @@ namespace ComputerExam.Controllers
 
         [Route("GetCourseByDepartmentId")]
         [HttpGet]
-        public IActionResult GetCourseByDepartmentId(int departmentId, int filialId = 1)
+        public IActionResult GetCourseByDepartmentId(int departmentId, int filialId)
         {
             return Ok(_dsuDbService.GetCoursesByDepartmentId(filialId, departmentId));
         }
 
         [Route("GetGroupsByDepartmentIdAndCourse")]
         [HttpGet]
-        public IActionResult GetGroupsByDepartmentIdAndCourse(int departmentId, int course, int? filialId)
+        public IActionResult GetGroupsByDepartmentIdAndCourse(int departmentId, int course, int filialId)
         {
             return Ok(_dsuDbService.GetGroupsByDepartmentId(departmentId, course, filialId));
         }
 
         [Route("GetStudentsByCourse")]
         [HttpGet]
-        public IActionResult GetStudentsByCourse(int departmentId, int course, int? filialId = 1)
+        public IActionResult GetStudentsByCourse(int departmentId, int course, int filialId)
         {
             return Ok(_dsuDbService.GetCaseSStudents().Where(x => x.FilId == filialId && 
                                                                   x.DepartmentId == departmentId && 
@@ -68,7 +68,7 @@ namespace ComputerExam.Controllers
 
         [Route("GetStudentsByCourseAndGroup")]
         [HttpGet]
-        public IActionResult GetStudentsByCourseAndGroup(int departmentId, int course, string ngroup, int? filialId = 1)
+        public IActionResult GetStudentsByCourseAndGroup(int departmentId, int course, string ngroup, int filialId)
         {
             return Ok(_dsuDbService.GetCaseSStudents()
                     .Where(x => x.FilId == filialId &&
@@ -87,7 +87,7 @@ namespace ComputerExam.Controllers
 
         [Route("GetDisciplinesWithFilter")]
         [HttpGet]
-        public IActionResult GetDisciplinesByStudentInfo(int departmentId, int course, string ngroup, int edukindId, int filId = 1)
+        public IActionResult GetDisciplinesByStudentInfo(int departmentId, int course, string ngroup, int edukindId, int filId)
         {
             return Ok(_dsuDbService.GetDisciplinesWithFilter(departmentId, course, ngroup, edukindId, filId));
         }
