@@ -1,6 +1,8 @@
 ﻿using Infrastructure.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Sentry;
+using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Infrastructure.Common
@@ -50,6 +52,9 @@ namespace Infrastructure.Common
         {
             try
             {
+                string create = "обновленииTest";
+                Exception ex = new Exception();
+                SendExceptionInSentry(item, create, ex);
                 _context.Entry(item).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
@@ -121,6 +126,19 @@ namespace Infrastructure.Common
             foreach (var property in properties)
             {
                 var value = property?.GetValue(item);
+                if (value.GetType() == typeof(IEnumerable))
+                {
+                    var listObjects = value as IEnumerable;
+                    foreach (var obj in listObjects)
+                    {
+                        var propertiesObj = value.GetType().GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+                        foreach (var propObj in propertiesObj)
+                        {
+                            var valueObj = property?.GetValue(obj);
+                            entity += property.Name + ":" + valueObj + "\n";
+                        }
+                    }
+                }
                 entity += property.Name + ":" + value + "\n";
             }
             SentrySdk.CaptureMessage("Ошибка при " + methodName + " объкта " + myType.Name + "\n" + entity + "\n" + ex);

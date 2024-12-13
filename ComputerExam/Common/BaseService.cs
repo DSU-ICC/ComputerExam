@@ -15,9 +15,9 @@ namespace ComputerExam.Common
             services.AddSingleton<AuthOptions>();
 
             services.AddScoped<IGeneratedExcelFile, GeneratedExcelFile>();
-            #region Repositories            
+            #region Repositories   
             services.AddScoped<IExamenRepository, ExamenRepository>();
-            services.AddScoped<IExamTicketRepository, ExamTicketRepository>();
+            services.AddScoped<IExamTicketRepository, ExamTicketRepository>();          
             services.AddScoped<IAnswerBlankRepository, AnswerBlankRepository>();
             services.AddScoped<IQuestionRepository, QuestionRepository>();
             services.AddScoped<IAnswerRepository, AnswerRepository>();

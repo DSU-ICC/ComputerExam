@@ -1,5 +1,6 @@
 ﻿using DSUContextDBService.DtoModels;
 using DSUContextDBService.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ComputerExam.Controllers
@@ -92,6 +93,7 @@ namespace ComputerExam.Controllers
             return Ok(_dsuDbService.GetDisciplinesWithFilter(departmentId, course, ngroup, edukindId, filId));
         }
 
+        [Authorize]
         [Route("GetTeachers")]
         [HttpGet]
         public IActionResult GetTeachers()

@@ -10,7 +10,7 @@ namespace ComputerExam.Common
         {
             app.UseExceptionHandler(appError =>
             {
-                appError.Run(async context =>
+                appError.Run(async context => await Task.Run(() =>
                 {
                     context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     context.Response.ContentType = "application/json";
@@ -19,7 +19,7 @@ namespace ComputerExam.Common
                     {
                         SentrySdk.CaptureException(contextFeature.Error);
                     }
-                });
+                }));
             });
         }
     }

@@ -22,7 +22,7 @@ namespace ComputerExam.Services
         {
             var fileName = examenId.ToString() + DateTime.Now.ToString("dd-MM-yyyy") + "_" + DateTime.Now.ToString("ss-mm-HH") + ".xlsx";
 
-            var examen = _examenRepository.Get().FirstOrDefault(x=>x.Id == examenId);
+            var examen = _examenRepository.Get().FirstOrDefault(x => x.Id == examenId);
             var studentForStatisticsDtos = _examenRepository.GetStatisticForReport(examenId);
 
             var workbook = new XLWorkbook();
@@ -30,15 +30,19 @@ namespace ComputerExam.Services
 
             workSheet.Cell(1, "A").Value = "Учебный год";
 
-            var lastYear = examen.ExamDate.Value.AddYears(-1);
-
-            workSheet.Cell(2, "A").Value = lastYear.ToString("yyyy") + "-" + examen.ExamDate.Value.ToString("yyyy");
+            if (examen.ExamDate.Value.Month > 9)
+                workSheet.Cell(2, "A").Value = examen.ExamDate.Value.ToString("yyyy") + "-" + examen.ExamDate.Value.ToString("yyyy");
+            else
+            {
+                var lastYear = examen.ExamDate.Value.AddYears(-1);
+                workSheet.Cell(2, "A").Value = lastYear.ToString("yyyy") + "-" + examen.ExamDate.Value.ToString("yyyy");
+            }
 
             if (studentForStatisticsDtos.Any(x => x.SessId % 2 == 0))
                 workSheet.Cell(3, "A").Value = "Летняя сессия";
             else
                 workSheet.Cell(3, "A").Value = "Зимняя сессия";
-            
+
             AddBorder(workSheet.Range("A1:A3"));
 
             workSheet.Cell(1, "C").Value = "МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ";
@@ -46,18 +50,18 @@ namespace ComputerExam.Services
 
             var department = _dsuDbService.GetCaseSDepartmentById((int)examen.DepartmentId);
             workSheet.Cell(5, "A").Value = "Факультет/институт: "; workSheet.Cell(5, "B").Value = _dsuDbService.GetFacultyById(department.FacId).FacName;
-             workSheet.Cell(6, "A").Value = "Направление/специальность: "; workSheet.Cell(6, "B").Value = department.DeptName;
+            workSheet.Cell(6, "A").Value = "Направление/специальность: "; workSheet.Cell(6, "B").Value = department.DeptName;
             workSheet.Cell(7, "A").Value = "Курс: "; workSheet.Cell(7, "B").Value = examen.Course;
             workSheet.Cell(8, "A").Value = "Группа: "; workSheet.Cell(8, "B").Value = examen.NGroup;
             workSheet.Cell(9, "A").Value = "Дисциплина: "; workSheet.Cell(9, "B").Value = examen.Discipline;
-                        
+
             AddBorder(workSheet.Range("A5:B9"));
 
             workSheet.Cell(12, "A").Value = "№";
             workSheet.Cell(12, "B").Value = "ФИО ";
             workSheet.Cell(12, "C").Value = "Средний балл успеваемости (из ИС деканат)";
             workSheet.Cell(12, "D").Value = "Балл, полученный на комп экзамене";
-            
+
             for (int i = 0; i < studentForStatisticsDtos.Count; i++)
             {
                 workSheet.Cell(i + 13, "A").Value = i + 1;
