@@ -93,7 +93,7 @@ namespace ComputerExam.Controllers
             return Ok(_dsuDbService.GetDisciplinesWithFilter(departmentId, course, ngroup, edukindId, filId));
         }
 
-        [Authorize]
+        //[Authorize]
         [Route("GetTeachers")]
         [HttpGet]
         public IActionResult GetTeachers()

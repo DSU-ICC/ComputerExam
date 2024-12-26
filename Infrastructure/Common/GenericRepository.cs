@@ -1,9 +1,5 @@
 ﻿using Infrastructure.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Sentry;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace Infrastructure.Common
 {
@@ -30,16 +26,8 @@ namespace Infrastructure.Common
 
         public async Task Create(TEntity item)
         {
-            try
-            {
-                await _dbSet.AddAsync(item);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                string create = "создании";
-                SendExceptionInSentry(item, create, ex);
-            }
+            await _dbSet.AddAsync(item);
+            await _context.SaveChangesAsync();
         }
 
         public async Task CreateRange(IEnumerable<TEntity> items)
@@ -50,64 +38,29 @@ namespace Infrastructure.Common
 
         public async Task UpdateEntity(TEntity item)
         {
-            try
-            {
-                string create = "обновленииTest";
-                Exception ex = new Exception();
-                SendExceptionInSentry(item, create, ex);
-                _context.Entry(item).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                string update = "обновлении";
-                SendExceptionInSentry(item, update, ex);
-            }
+            _context.Entry(item).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
         }
 
         public async Task Update(TEntity item)
         {
-            try
-            {
-                _context.Update(item);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                string update = "обновлении";
-                SendExceptionInSentry(item, update, ex);
-            }
+            _context.Update(item);
+            await _context.SaveChangesAsync();
         }
 
         public async Task Remove(TEntity item)
         {
-            try
-            {
-                _dbSet.Remove(item);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                string delete = "удалении";
-                SendExceptionInSentry(item, delete, ex);
-            }
+            _dbSet.Remove(item);
+            await _context.SaveChangesAsync();
         }
 
         public async Task Remove(int id)
         {
             var item = await _dbSet.FindAsync(id);
-            try
+            if (item != null)
             {
-                if (item != null)
-                {
-                    _dbSet.Remove(item);
-                    await _context.SaveChangesAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                string delete = "удалении";
-                SendExceptionInSentry(item, delete, ex);                
+                _dbSet.Remove(item);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -115,34 +68,6 @@ namespace Infrastructure.Common
         {
             _dbSet.RemoveRange(items);
             await _context.SaveChangesAsync();
-        }
-
-        private static void SendExceptionInSentry(TEntity item, string methodName, Exception ex)
-        {
-            Type myType = item.GetType();
-
-            var properties = myType.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
-            string entity = "";
-            foreach (var property in properties)
-            {
-                var value = property?.GetValue(item);
-                if (value.GetType() == typeof(IEnumerable))
-                {
-                    var listObjects = value as IEnumerable;
-                    foreach (var obj in listObjects)
-                    {
-                        var propertiesObj = value.GetType().GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
-                        foreach (var propObj in propertiesObj)
-                        {
-                            var valueObj = property?.GetValue(obj);
-                            entity += property.Name + ":" + valueObj + "\n";
-                        }
-                    }
-                }
-                entity += property.Name + ":" + value + "\n";
-            }
-            SentrySdk.CaptureMessage("Ошибка при " + methodName + " объкта " + myType.Name + "\n" + entity + "\n" + ex);
-            throw new Exception();
         }
     }
 }
