@@ -6,6 +6,7 @@ using DSUContextDBService.DBService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -98,7 +99,26 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-//builder.Logging.AddFile(builder.Environment.ContentRootPath + builder.Configuration["FileLoggerFolder"]);
+if (!Directory.Exists(builder.Environment.ContentRootPath + "//logs//Errorlogs"))
+    Directory.CreateDirectory(builder.Environment.ContentRootPath + "//logs//Errorlogs");
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.File(builder.Environment.ContentRootPath + "//logs//Errorlogs//error.txt",
+        Serilog.Events.LogEventLevel.Error,
+        rollingInterval: RollingInterval.Month,
+        fileSizeLimitBytes: 1024 * 1024 * 1,//1 MB        
+        rollOnFileSizeLimit: true)
+    .WriteTo.File(builder.Environment.ContentRootPath + "//logs//log.txt",
+        Serilog.Events.LogEventLevel.Verbose,
+        rollingInterval: RollingInterval.Month,
+        fileSizeLimitBytes: 1024 * 1024 * 10,//10 MB
+        rollOnFileSizeLimit: true)
+    .CreateLogger();
+
+builder.Services.AddLogging(logging =>
+{
+    logging.AddSerilog();
+});
 
 var app = builder.Build();
 
