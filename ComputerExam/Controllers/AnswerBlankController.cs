@@ -118,8 +118,7 @@ namespace ComputerExam.Controllers
         public async Task<IActionResult> EndExamenForStudent(int answerBlankId)
         {
             var answerBlank = _answerBlankRepository.Get().FirstOrDefault(x => x.Id == answerBlankId);
-            answerBlank.EndExamenDateTime = DateTime.Now;
-            answerBlank.IsAuthorized = false;
+            answerBlank.EndAnswerBlank();
             await _answerBlankRepository.Update(answerBlank);
             return Ok();
         }

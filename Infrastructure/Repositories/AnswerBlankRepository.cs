@@ -38,8 +38,7 @@ namespace Infrastructure.Repositories
             var answerBlankDto = new AnswerBlankDto()
             {
                 AnswerBlank = answerBlank,
-                TimeToEndInSeconds = (int?)
-                        (answerBlank.CreateDateTime.Value.AddMinutes((double)answerBlank.ExamTicket.Examen.ExamDurationInMitutes) - DateTime.Now).TotalSeconds
+                TimeToEndInSeconds = answerBlank.GetTimeToEndInSeconds()
             };
 
             return answerBlankDto;

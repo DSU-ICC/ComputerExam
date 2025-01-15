@@ -1,5 +1,6 @@
 ﻿using ComputerExam.Services;
 using ComputerExam.Services.Interfaces;
+using ComputerExam.Tasks;
 using DSUContextDBService.Interface;
 using DSUContextDBService.Services;
 using Infrastructure.Repositories;
@@ -24,6 +25,10 @@ namespace ComputerExam.Common
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             #endregion
+
+
+            services.AddTransient<JobFactory>();
+            services.AddScoped<EndAnswerBlankJob>();
         }
     }
 }

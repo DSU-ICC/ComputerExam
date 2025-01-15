@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Quartz;
+using ComputerExam.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -120,9 +122,18 @@ builder.Services.AddLogging(logging =>
     logging.AddSerilog();
 });
 
+builder.Services.AddQuartz();
+builder.Services.AddQuartzHostedService(opt =>
+{
+    opt.WaitForJobsToComplete = true;
+});
+
 var app = builder.Build();
 
 app.ConfigureExceptionHandler();
+
+var scope = app.Services.CreateScope();
+await ComputerExamSheduler.Start(scope.ServiceProvider);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

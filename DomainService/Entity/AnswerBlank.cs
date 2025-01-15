@@ -32,9 +32,28 @@
         /// </summary>
         public DateTime? EndExamenDateTime { get; set; }
         /// <summary>
+        /// Количество минут добавленных к времени прохождения
+        /// </summary>
+        public int? AdditionalTimeInMinutes { get; set; }
+        /// <summary>
         /// Авторизован ли студент
         /// </summary>
         public bool? IsAuthorized { get; set; }
         public bool? IsDeleted { get; set; }
+
+        public void EndAnswerBlank()
+        {
+            this.EndExamenDateTime = DateTime.Now;
+            this.IsAuthorized = false;
+        }
+
+        public int? GetTimeToEndInSeconds()
+        {
+            if (this.ExamTicket != null && this.ExamTicket.Examen != null)
+                return (int?)(this.CreateDateTime!.Value.AddMinutes((double)(this.ExamTicket.Examen.ExamDurationInMitutes
+                    + (this.AdditionalTimeInMinutes ?? 0)))
+                    - DateTime.Now).TotalSeconds;
+            return null;
+        }
     }
 }
