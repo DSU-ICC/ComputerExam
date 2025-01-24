@@ -72,7 +72,7 @@ namespace ComputerExam.Controllers
         [Authorize(Roles = "admin")]
         [HttpPost]
         [Route("ResetAnswerBlank")]
-        public async Task<IActionResult> ResetAnswerBlank(int answerBlankId, bool? isRemoveAnswerBlank)
+        public async Task<IActionResult> ResetAnswerBlank(int answerBlankId, int? additionalTimeInMinutes, bool? isRemoveAnswerBlank)
         {
             var answerBlank = _answerBlankRepository.Get().Include(x => x.Answers).FirstOrDefault(x => x.Id == answerBlankId);
             if (answerBlank == null)
@@ -87,6 +87,9 @@ namespace ComputerExam.Controllers
                 answerBlank.EndExamenDateTime = null;
                 answerBlank.IsAuthorized = null;
             }
+            if (additionalTimeInMinutes != null)
+                answerBlank.AdditionalTimeInMinutes = additionalTimeInMinutes;
+
             answerBlank.ExamTicket = null;
             await _answerBlankRepository.Update(answerBlank);
             return Ok();
